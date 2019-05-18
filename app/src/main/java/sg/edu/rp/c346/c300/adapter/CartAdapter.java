@@ -109,6 +109,7 @@ public class CartAdapter extends BaseAdapter {
                 totalPriceIndividual.setText(String.format("$%.2f", individual * Integer.parseInt(cartQuantity.getNumber())));
                 FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("totalPrice").setValue(individual * Integer.parseInt(cartQuantity.getNumber()));
 
+                
             }
         });
 
