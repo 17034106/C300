@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_page_background"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="211dp"
+        android:layout_height="132dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="128dp"
+        app:srcCompat="@drawable/eating2" />
+
+    <AutoCompleteTextView
+        android:id="@+id/etEmailLogin"
+        android:layout_width="280dp"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="270dp"
+        android:textColor="#FFFFFF"
+        android:paddingLeft="5dp"
+        android:background="#11000000"
+        android:drawableLeft="@drawable/ic_action_username"
+        android:hint="Email"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        android:textColorHint="#FFFFFF"
+        android:textSize="16dp" />
+
+    <!--<EditText-->
+        <!--android:id="@+id/etUsername"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="237dp"-->
+        <!--android:background="#11000000"-->
+        <!--android:drawableLeft="@drawable/ic_action_username"-->
+        <!--android:ems="10"-->
+        <!--android:hint="Username"-->
+        <!--android:inputType="textPersonName"-->
+        <!--android:textColorHint="#9a1fd8"-->
+        <!--android:textSize="16dp" />-->
+
+    <EditText
+        android:id="@+id/etPasswordLogin"
+        android:layout_width="280dp"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="210dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="10dp"
+        android:background="#11000000"
+        android:drawableLeft="@drawable/ic_action_password"
+        android:drawableRight="@drawable/ic_password_eye"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textColorHint="#F1F1F1"
+        android:textColor="#FFFFFF"
+        android:textSize="16dp" />
+
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/btnLogin"-->
+        <!--android:layout_width="300dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="85dp"-->
+        <!--app:cardBackgroundColor="@color/colorPrimary"-->
+        <!--app:cardCornerRadius="25dp"-->
+        <!--app:cardElevation="10dp">-->
+
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/tvLogin"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_centerInParent="true"-->
+                <!--android:gravity="center"-->
+                <!--android:text="Login"-->
+                <!--android:textColor="#fff"-->
+                <!--android:textSize="22dp" />-->
+        <!--</RelativeLayout>-->
+    <!--</android.support.v7.widget.CardView>-->
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/btnLogin"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@drawable/custom_background_loading_button_login"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="85dp"
+        android:text="Register"
+        android:textSize="22dp"
+        android:textColor="#fff"
+        app:spinning_bar_color="#fff"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp"
+        android:layout_marginTop="20dp"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp">
+
+        <CheckBox
+            android:id="@+id/rememberMe"
+            android:layout_width="200dp"
+            android:layout_height="25dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="43dp"
+            android:layout_marginBottom="174dp"
+            android:text="Remember Me"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:text="Register Account" />
+
+
+</RelativeLayout>

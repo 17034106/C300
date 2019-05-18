@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".app.MainpageActivity">
+
+    <fragment
+        android:id="@+id/fragmentMainPage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="sg.edu.rp.c346.c300.app.nothingMenu"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+    </fragment>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/fragmentMainPage"
+        >
+
+        <Button
+            android:id="@+id/btnFoodMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:background="#E0DADA"
+            android:text="Menu"
+            android:onClick="changeFragment"/>
+
+        <Button
+            android:id="@+id/btnFeed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:background="#E0DADA"
+            android:text="Feed"
+            android:onClick="changeFragment"/>
+
+        <Button
+            android:id="@+id/btnNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:background="#E0DADA"
+            android:text="Notification"
+            android:onClick="changeFragment"/>
+
+        <Button
+            android:id="@+id/btnAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:background="#E0DADA"
+            android:text="Account"
+            android:onClick="changeFragment"/>
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

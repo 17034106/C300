@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ad5fec</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="editTextColor">#DADADA</color>
+    <color name="everythingColorSame">#5621EE</color>
+
+    <color name="dark_blue">#3023AE</color>
+    <color name="purple">#c86dd7</color>
+    
+    
+    <color name="login_form_details">#ccffffff</color>
+    <color name="login_form_details_light">#1AF7F1F1</color>
+    <color name="login_form_details_medium">#66ffffff</color>
+    
+</resources>
