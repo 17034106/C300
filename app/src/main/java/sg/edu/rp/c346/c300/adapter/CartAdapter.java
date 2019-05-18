@@ -64,7 +64,7 @@ public class CartAdapter extends BaseAdapter {
         final ElegantNumberButton cartQuantity = convertView.findViewById(R.id.cartQuantity);
         TextView addon = convertView.findViewById(R.id.tvAddOn);
         TextView additionalNote = convertView.findViewById(R.id.tvAdditionalNote);
-        TextView totalPriceIndividual = convertView.findViewById(R.id.totalPriceIndividual);
+        final TextView totalPriceIndividual = convertView.findViewById(R.id.totalPriceIndividual);
 
 
         final Cart cart = carts.get(position);
@@ -105,11 +105,10 @@ public class CartAdapter extends BaseAdapter {
                 final DatabaseReference databaseReferenceCart = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("quantity");
                 databaseReferenceCart.setValue(cartQuantity.getNumber());
 
+                double individual = cart.getTotalPrice() / cart.getQuantity();
+                totalPriceIndividual.setText(String.format("$%.2f", individual * Integer.parseInt(cartQuantity.getNumber())));
+                FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("totalPrice").setValue(individual * Integer.parseInt(cartQuantity.getNumber()));
 
-                for (int i =0; i<carts.size();i++){
-                    Log.d("What is the food Name", "Tell me the food name: "+carts.get(i).getName());
-                    Log.d("What is the Quantity", "Tell me the food quantity: "+carts.get(i).getQuantity());
-                }
             }
         });
 
