@@ -93,6 +93,15 @@
                         />
 
                     <TextView
+                        android:id="@+id/tvFoodStallDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Start - End"
+                        android:textSize="15dp"
+                        android:textColor="#0A0A0A"
+                        />
+
+                    <TextView
                         android:id="@+id/tvLastChanges"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

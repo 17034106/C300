@@ -14,7 +14,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.model.AddOn;
@@ -65,6 +68,8 @@ public class CartAdapter extends BaseAdapter {
         TextView addon = convertView.findViewById(R.id.tvAddOn);
         TextView additionalNote = convertView.findViewById(R.id.tvAdditionalNote);
         final TextView totalPriceIndividual = convertView.findViewById(R.id.totalPriceIndividual);
+        TextView tvStartTime = convertView.findViewById(R.id.tvStartTime);
+        TextView tvEndTime = convertView.findViewById(R.id.tvEndTime);
 
 
         final Cart cart = carts.get(position);
@@ -78,6 +83,26 @@ public class CartAdapter extends BaseAdapter {
 
         }
 
+        String inputPattern = "HHmm";
+        String outputPattern = "h:mm a";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        String startTimeDisplay=null;
+        String endTimeDisplay =null;
+
+        try{
+            Date startTimeDate = inputFormat.parse(cart.getStartTime());
+            Date endTimeDate = inputFormat.parse(cart.getEndTime());
+            startTimeDisplay = outputFormat.format(startTimeDate);
+            endTimeDisplay = outputFormat.format(endTimeDate);
+        }
+        catch (ParseException e){
+
+        }
+
+        tvStartTime.setText(startTimeDisplay);
+        tvEndTime.setText(endTimeDisplay);
 
 
         cartStallName.setText(cart.getStallName());
@@ -109,7 +134,7 @@ public class CartAdapter extends BaseAdapter {
                 totalPriceIndividual.setText(String.format("$%.2f", individual * Integer.parseInt(cartQuantity.getNumber())));
                 FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("totalPrice").setValue(individual * Integer.parseInt(cartQuantity.getNumber()));
 
-                
+
             }
         });
 

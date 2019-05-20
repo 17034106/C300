@@ -107,6 +107,8 @@ public class CartDisplay extends AppCompatActivity {
                         String dateTimeOrder = dataSnapshot.child(Integer.toString(i)).child("dateTimeOrder").getValue().toString();
                         double totalPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
                         String additionalNote = dataSnapshot.child(Integer.toString(i)).child("additionalNote").getValue().toString();
+                        String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
+                        String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -120,7 +122,10 @@ public class CartDisplay extends AppCompatActivity {
 
                         }
 
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, totalPrice, addOnList,additionalNote);
+
+
+
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, totalPrice, addOnList,additionalNote, startTime, endTime);
                         cartList.add(cart);
 
                         Log.d("------------","--------------------------------------------------------------------");

@@ -29,7 +29,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Customer;
@@ -43,6 +46,8 @@ public class Food_display extends AppCompatActivity {
     TextView stallName;
     TextView lastChanges;
     TextView checkOutPrice;
+    TextView tvFoodStallDuration;
+
 
 
     TextView quantityDisplay;
@@ -89,13 +94,32 @@ public class Food_display extends AppCompatActivity {
         quantityDecrease = findViewById(R.id.QuantityDecrease);
         checkOutPrice = findViewById(R.id.tvTotalPrice);
         additionalNote = findViewById(R.id.etAddtionalNotes);
+        tvFoodStallDuration = findViewById(R.id.tvFoodStallDuration);
 
         eachPrice = intent.getDoubleExtra("foodPrice",0);
         totalPrice =  eachPrice * quantityValue;
 
         school = intent.getStringExtra("school");
 
+        //region displaying the stall's operation hour
+        String inputPattern = "HHmm";
+        String outputPattern = "h:mm a";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
+        String startTime=null;
+        String endTime = null;
+        try{
+            Date startTimeDate = inputFormat.parse(intent.getStringExtra("startTime"));
+            Date endTimeDate = inputFormat.parse(intent.getStringExtra("endTime"));
+            startTime = outputFormat.format(startTimeDate);
+            endTime = outputFormat.format(endTimeDate);
+        }catch (ParseException e){
+
+        }
+
+        tvFoodStallDuration.setText(String.format("Working from %s to %s", startTime,endTime));
+        //endregion
 
 
 
@@ -143,7 +167,7 @@ public class Food_display extends AppCompatActivity {
                     tvAddOnPrice.setTextSize(17);
                     tvAddOnPrice.setTextColor(Color.BLACK);
 
-
+                    addOnArray.clear();
 
 
                     RelativeLayout.LayoutParams layoutParamsCheckBox = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -288,6 +312,8 @@ public class Food_display extends AppCompatActivity {
                 intentCheckOut.putExtra("quantity", quantityValue);
                 intentCheckOut.putExtra("additionalNote", additionalNote.getText().toString().trim());
                 intentCheckOut.putExtra("totalPrice", totalPrice);
+                intentCheckOut.putExtra("startTime", intent.getStringExtra("startTime"));
+                intentCheckOut.putExtra("endTime", intent.getStringExtra("endTime"));
 
 
 

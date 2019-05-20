@@ -50,5 +50,7 @@ dependencies {
     //ElegantNumberButton (Plus minus)
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
 
+    //for Custom DateTimePickerDialog
+    implementation 'com.wdullaer:materialdatetimepicker:3.6.3'
 
 }

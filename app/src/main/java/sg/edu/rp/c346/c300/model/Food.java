@@ -10,6 +10,8 @@ public class Food {
     private int stallId;
     private int foodId;
     private String school;
+    private String startTime;
+    private String endTime;
 
 
 
@@ -20,7 +22,7 @@ public class Food {
 //    }
 
 
-    public Food(String name, double price, int lastChanges, String stallName,String school, int stallId, int foodId) {
+    public Food(String name, double price, int lastChanges, String stallName,String school, int stallId, int foodId, String startTime, String endTime) {
         this.name = name;
         this.price = price;
         this.lastChanges = lastChanges;
@@ -28,6 +30,8 @@ public class Food {
         this.school = school;
         this.stallId = stallId;
         this.foodId = foodId;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
 //    public int getImageId() {
@@ -93,5 +97,21 @@ public class Food {
 
     public void setFoodId(int foodId) {
         this.foodId = foodId;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

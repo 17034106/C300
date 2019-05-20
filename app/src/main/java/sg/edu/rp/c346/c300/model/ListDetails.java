@@ -96,10 +96,12 @@ public class ListDetails {
                             String price = dataSnapshot.child(school).child("stall").child(num).child("food").child(StringNumOfFood).child("price").getValue().toString();
                             String lastChanges = dataSnapshot.child(school).child("stall").child(num).child("food").child(StringNumOfFood).child("lastChanges").getValue().toString();
                             String stallName = dataSnapshot.child(school).child("stall").child(num).child("StallName").getValue().toString();
+                            String startTime = dataSnapshot.child(school).child("stall").child(num).child("startTime").getValue().toString();
+                            String endTime = dataSnapshot.child(school).child("stall").child(num).child("endTime").getValue().toString();
                             int stallId = Integer.parseInt(num);
                             int foodId = h;
                             //Food food = dataSnapshot.child("0").child("stall").child(num).child("food").child(StringNumOfFood).getValue(Food.class);
-                            menuList.add(new Food(name, Double.parseDouble(price), Integer.parseInt(lastChanges),stallName, school,stallId,foodId));
+                            menuList.add(new Food(name, Double.parseDouble(price), Integer.parseInt(lastChanges),stallName, school,stallId,foodId, startTime,endTime));
                         }
                         //endregion
 
