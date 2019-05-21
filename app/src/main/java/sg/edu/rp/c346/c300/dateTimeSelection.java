@@ -53,6 +53,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
     int lastChanges;
 
+    Date dateFormatSelectedByUser; // store the selected date by user in date format
+
     // use for finding the earliest timing to make the pre-order
     int earliestMinute;
     int earlierHour;
@@ -60,11 +62,15 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
     // use for finding the last changes timing to make changes
     int lastChangesMinute;
     int lastChangesHour;
+    String lastChangesToEdit;
 
     DatabaseReference databaseReferenceGettingNumOfCartFood;
     int numOfCartFood=-0;
 
     Date currentTime = Calendar.getInstance().getTime();
+    Date stringCurrentDateConverted;
+    Date stringSelectedUserDateConverted;
+
 
     String timePattern = "h:mm a";
     SimpleDateFormat timeFormat = new SimpleDateFormat(timePattern);
@@ -166,6 +172,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
 
 
+
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("dateTimeOrder").setValue(String.format("%02d/%02d/%02d %02d:%02d",dayFinal,monthFinal,yearFinal,hourFinal,minuteFinal));
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("name").setValue(foodName);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("price").setValue(foodPrice);
@@ -175,6 +182,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("additionalNote").setValue(additionalNote+"");
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("startTime").setValue(startTime);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("endTime").setValue(endTime);
+                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("lastChanges").setValue(lastChangesToEdit);
 
 
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child("numOfAddOn").setValue(0);
@@ -214,6 +222,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 day = c.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(dateTimeSelection.this, dateTimeSelection.this, year, month, day);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)5.184e+8);
+                datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
             }
         });
@@ -230,10 +240,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 Log.d("-----====", "What is c.getTimeInMillis: "+c.getTimeInMillis());
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(dateTimeSelection.this, dateTimeSelection.this, year, month, day);
-                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)6.048e+8);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)5.184e+8);
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
-
-
                 datePickerDialog.show();
             }
         });
@@ -345,23 +353,32 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
                                     earliestMinute = currentTime.getMinutes()+lastChanges+1;
                                     earlierHour = currentTime.getHours();
-                                    if (earliestMinute>59){
+                                    if (earliestMinute>59){ //check whether to plus one hour if the minute is more than 59
                                         earliestMinute=earliestMinute-60;
                                         earlierHour++;
                                     }
 
-                                    if (earlierHour==endTimeDate.getHours()){
+                                    if (earlierHour==endTimeDate.getHours()){ //check whether the current timing is after the last order or not. If yes, then add one day and set the earliest hour and minute to start time (minute)
                                         if (earliestMinute>endTimeDate.getMinutes()){
                                             earliestDate.add(Calendar.DATE,1);
                                             earlierHour = startTimeDate.getHours();
                                             earliestMinute =startTimeDate.getMinutes();
                                         }
                                     }
-                                    else{
-                                        if (earlierHour>endTimeDate.getHours()){
+                                    else if (earlierHour>endTimeDate.getHours()){ //hour
                                             earliestDate.add(Calendar.DATE,1);
                                             earlierHour = startTimeDate.getHours();
                                             earliestMinute =startTimeDate.getMinutes();
+
+                                    }
+
+                                    if (currentTime.getHours()<startTimeDate.getHours()){ // check whether the current timing is before the start time, if yes, then change the earliest hour and minute to start time (hour)
+                                        earlierHour=startTimeDate.getHours();
+                                        earliestMinute = startTimeDate.getMinutes();
+                                    }
+                                    else if (currentTime.getHours()==startTimeDate.getHours()){ //minute
+                                        if (currentTime.getMinutes()<startTimeDate.getMinutes()){
+                                            earliestMinute = startTimeDate.getMinutes();
                                         }
                                     }
 
@@ -381,112 +398,96 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
                                 SimpleDateFormat datePattern = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                                 String dateSelectedByUser = String.format("%02d/%02d/%02d %02d:%02d", dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal);
-                                Date dateFormatSelectedByUser =null; // store the selected date by user in date format
+                                dateFormatSelectedByUser =null; // store the selected date by user in date format
+
+                                SimpleDateFormat dateComparePattern = new SimpleDateFormat("ddMMyyyy");
+
 
                                 try {
                                     dateFormatSelectedByUser = datePattern.parse(dateSelectedByUser);
-
-
+                                    stringCurrentDateConverted = dateComparePattern.parse(currentTime.getDate()+""+(currentTime.getMonth()+1)+(currentTime.getYear()+1900));
+                                    stringSelectedUserDateConverted = dateComparePattern.parse(dateFormatSelectedByUser.getDate()+""+(dateFormatSelectedByUser.getMonth()+1)+(dateFormatSelectedByUser.getYear()+1900));
 
 
                                 }catch (ParseException e){
 
                                 }
 
-                                //Check condition to enable or disable the foodDisplayCheckOut
-                                if (currentTime.compareTo(dateFormatSelectedByUser)==0){
-                                        if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<=endTimeDate.getHours()){
-                                            if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() && dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                                foodDisplyCheckOut.setEnabled(true);
-                                                tvEarliestCollection.setVisibility(View.VISIBLE);
-                                                tvLastChanges.setText("11");
+                                //region Check condition to enable or disable the foodDisplayCheckOut
+                                Log.d("456487", "54621: " +currentTime.compareTo(dateFormatSelectedByUser));
+                                if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){
+                                        if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+                                            if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
+                                                correctTimeSelected(true, "11");
                                             }
                                             else{
-                                                tvEarliestCollection.setTextColor(Color.RED);
-                                                blink(tvEarliestCollection);
-                                                tvLastChanges.setText("1");
+                                                correctTimeSelected(false,"Earliest timing to pre-order is above");
 
                                             }
                                         }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
 
-                                            foodDisplyCheckOut.setEnabled(true);
-                                            tvEarliestCollection.setVisibility(View.VISIBLE);
-                                            tvLastChanges.setText("12");
-
+                                            correctTimeSelected(true, "12");
 
                                         }
                                         else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
                                             if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                                foodDisplyCheckOut.setEnabled(true);
-                                                tvEarliestCollection.setVisibility(View.VISIBLE);
-                                                tvLastChanges.setText("121");
+                                                correctTimeSelected(true, "121");
+
                                             }
                                             else{
-                                                tvEarliestCollection.setTextColor(Color.RED);
-                                                blink(tvEarliestCollection);
-                                                tvLastChanges.setText("9");
+                                                correctTimeSelected(false,"Stall is closed during that timing");
+
                                             }
                                         }
+                                        else if (dateFormatSelectedByUser.getHours()<earlierHour){
+                                            correctTimeSelected(false,"Earliest timing to pre-order is above");
+
+                                        }
                                         else{
-                                            tvEarliestCollection.setTextColor(Color.RED);
-                                            blink(tvEarliestCollection);
-                                            tvLastChanges.setText("3");
+                                            correctTimeSelected(false,"Stall is closed during that timing");
                                         }
 
                                     }
-                                    else if (currentTime.compareTo(dateFormatSelectedByUser)<0){
-                                        if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<=endTimeDate.getHours()){
-                                            if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() && dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                                foodDisplyCheckOut.setEnabled(true);
-                                                tvEarliestCollection.setVisibility(View.VISIBLE);
-                                                tvLastChanges.setText("13");
+                                    else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){
+                                        if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+                                            if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
+                                                correctTimeSelected(true, "41");
 
                                             }
                                             else{
-                                                tvEarliestCollection.setTextColor(Color.RED);
-                                                blink(tvEarliestCollection);
-                                                tvLastChanges.setText("4");
-                                                Log.d("now", "now: "+currentTime);
-                                                Log.d("Selected", "Selected: "+dateFormatSelectedByUser);
+                                                correctTimeSelected(false,"Stall is closed during that timing");
 
 
                                             }
-                                        }
-                                        else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                            foodDisplyCheckOut.setEnabled(true);
-                                            tvEarliestCollection.setVisibility(View.VISIBLE);
-                                            tvLastChanges.setText("14");
+                                        }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+
+                                            correctTimeSelected(true, "21");
 
                                         }
-                                        else if (dateFormatSelectedByUser.getHours() == endTimeDate.getHours()){
+                                        else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
                                             if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                                foodDisplyCheckOut.setEnabled(true);
-                                                tvEarliestCollection.setVisibility(View.VISIBLE);
-                                                tvLastChanges.setText("121");
+                                                correctTimeSelected(true, "421");
+
                                             }
                                             else{
-                                                tvEarliestCollection.setTextColor(Color.RED);
-                                                blink(tvEarliestCollection);
-                                                tvLastChanges.setText("8");
+                                                correctTimeSelected(false,"Stall is closed during that timing");
+
                                             }
+                                        }
+                                        else if (dateFormatSelectedByUser.getHours()<earlierHour){
+                                            correctTimeSelected(false,"Stall is closed during that timing");
 
                                         }
-
                                         else{
-                                            tvEarliestCollection.setTextColor(Color.RED);
-                                            blink(tvEarliestCollection);
-                                            tvLastChanges.setText("6");
-
+                                            correctTimeSelected(false,"Stall is closed during that timing");
                                         }
                                     }
-                                    else if (currentTime.compareTo(dateFormatSelectedByUser)>0){
-                                        tvEarliestCollection.setTextColor(Color.RED);
-                                        blink(tvEarliestCollection);
-                                        tvLastChanges.setText("7");
-                                        Log.d("now", "now: "+currentTime);
-                                        Log.d("Selected", "Selected: "+dateFormatSelectedByUser);
+                                    else {
+                                    correctTimeSelected(false,"Earliest timing to pre-order is above");
+                                    }
 
-                                }
+
+                                    //endregion
 
 
 
@@ -501,7 +502,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         //endregion
 
 
-
+    // make the textview blink
     public void blink(final TextView txt) {
         if (txt.getVisibility()==View.VISIBLE){
             txt.setVisibility(View.INVISIBLE);
@@ -511,6 +512,35 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         }
     }
 
+    // if true, then it will allow the user to press the foodDisplayCheckOut
+    public void correctTimeSelected(boolean b, String d){
+        if (b== true){
+            foodDisplyCheckOut.setEnabled(true);
+            tvEarliestCollection.setVisibility(View.VISIBLE);
+            tvEarliestCollection.setTextColor(Color.BLACK);
+            lastChangesHour = dateFormatSelectedByUser.getHours();
+            lastChangesMinute = dateFormatSelectedByUser.getMinutes();
+
+            lastChangesMinute = lastChangesMinute - lastChanges;
+            if (lastChangesMinute<0){
+                lastChangesHour--;
+                lastChangesMinute+=60;
+            }
+
+            lastChangesToEdit = String.format("%02d/%02d/%02d %02d:%02d", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth(), dateFormatSelectedByUser.getYear()+1900, lastChangesHour, lastChangesMinute);
+            tvLastChanges.setText(Html.fromHtml(String.format("<b>Latest</b> Editable: %s",lastChangesToEdit)));
+            tvLastChanges.setTextColor(Color.rgb(16,124,16));
+
+
+        }
+        else{
+            blink(tvEarliestCollection);
+            foodDisplyCheckOut.setEnabled(false);
+            tvEarliestCollection.setTextColor(Color.RED);
+            tvLastChanges.setText(d);
+            tvLastChanges.setTextColor(Color.RED);
+        }
+    }
 
 
 }
