@@ -55,6 +55,10 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
     Date dateFormatSelectedByUser; // store the selected date by user in date format
 
+
+    Date startTimeDate =null; // use to store the start time in date format
+    Date endTimeDate = null;
+
     // use for finding the earliest timing to make the pre-order
     int earliestMinute;
     int earlierHour;
@@ -279,7 +283,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         hourFinal = hourOfDay;
         minuteFinal = minute;
 
-        String timeInputPattern = "HH:mm";
+        String timeInputPattern = "h:mm";
         SimpleDateFormat timeInputFormat = new SimpleDateFormat(timeInputPattern);
         Date timeConverted=null;
 
@@ -341,8 +345,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                                 String earliestTimeInputPattern = "HHmm";
                                 SimpleDateFormat earliestTimeInputFormat = new SimpleDateFormat(earliestTimeInputPattern);
                                 Date earliestTimeConverted = null; // use to store the earliest time to make order, in date format
-                                Date startTimeDate =null; // use to store the start time in date format
-                                Date endTimeDate = null; // use to store the end time in date format
+                                startTimeDate =null; // use to store the start time in date format
+                                endTimeDate = null; // use to store the end time in date format
 
                                 Calendar earliestDate = Calendar.getInstance();
 
@@ -396,95 +400,90 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                                 //endregion
 
 
-                                SimpleDateFormat datePattern = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-                                String dateSelectedByUser = String.format("%02d/%02d/%02d %02d:%02d", dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal);
+                                SimpleDateFormat datePattern = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                                String dateSelectedByUser = String.format("%02d/%02d/%02d %d:%02d", dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal);
+
                                 dateFormatSelectedByUser =null; // store the selected date by user in date format
-
                                 SimpleDateFormat dateComparePattern = new SimpleDateFormat("ddMMyyyy");
-
 
                                 try {
                                     dateFormatSelectedByUser = datePattern.parse(dateSelectedByUser);
                                     stringCurrentDateConverted = dateComparePattern.parse(currentTime.getDate()+""+(currentTime.getMonth()+1)+(currentTime.getYear()+1900));
                                     stringSelectedUserDateConverted = dateComparePattern.parse(dateFormatSelectedByUser.getDate()+""+(dateFormatSelectedByUser.getMonth()+1)+(dateFormatSelectedByUser.getYear()+1900));
+                                    Log.d("0","qwertyuio--++++++++: "+dateFormatSelectedByUser);
 
 
                                 }catch (ParseException e){
 
                                 }
 
+
+
                                 //region Check condition to enable or disable the foodDisplayCheckOut
                                 Log.d("456487", "54621: " +currentTime.compareTo(dateFormatSelectedByUser));
+
                                 if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){
-                                        if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                            if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
-                                                correctTimeSelected(true, "11");
-                                            }
-                                            else{
-                                                correctTimeSelected(false,"Earliest timing to pre-order is above");
-
-                                            }
-                                        }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-
-                                            correctTimeSelected(true, "12");
-
+                                    if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+                                        if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
+                                            correctTimeSelected(true, "11");
                                         }
-                                        else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
-                                            if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                                correctTimeSelected(true, "121");
-
-                                            }
-                                            else{
-                                                correctTimeSelected(false,"Stall is closed during that timing");
-
-                                            }
-                                        }
-                                        else if (dateFormatSelectedByUser.getHours()<earlierHour){
+                                        else{
                                             correctTimeSelected(false,"Earliest timing to pre-order is above");
 
                                         }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-                                        }
+                                    }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+
+                                        correctTimeSelected(true, "12");
 
                                     }
-                                    else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){
-                                        if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                            if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
-                                                correctTimeSelected(true, "41");
-
-                                            }
-                                            else{
-                                                correctTimeSelected(false,"Stall is closed during that timing");
-
-
-                                            }
-                                        }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-
-                                            correctTimeSelected(true, "21");
-
-                                        }
-                                        else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
-                                            if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                                correctTimeSelected(true, "421");
-
-                                            }
-                                            else{
-                                                correctTimeSelected(false,"Stall is closed during that timing");
-
-                                            }
-                                        }
-                                        else if (dateFormatSelectedByUser.getHours()<earlierHour){
-                                            correctTimeSelected(false,"Stall is closed during that timing");
+                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
+                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
+                                            correctTimeSelected(true, "121");
 
                                         }
                                         else{
                                             correctTimeSelected(false,"Stall is closed during that timing");
+
                                         }
                                     }
-                                    else {
+                                    else if (dateFormatSelectedByUser.getHours()<earlierHour){
+                                        correctTimeSelected(false,"Earliest timing to pre-order is above");
+
+                                    }
+                                    else{
+                                        correctTimeSelected(false,"Stall is closed during that timing");
+                                    }
+
+                                }
+                                else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){
+                                    if ( dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+                                        if ( dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
+                                            correctTimeSelected(true, "41");
+
+                                        }
+                                        else{
+                                            correctTimeSelected(false,"Stall is closed during that timing");
+
+
+                                        }
+                                    }
+                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
+                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
+                                            correctTimeSelected(true, "421");
+
+                                        }
+                                        else{
+                                            correctTimeSelected(false,"Stall is closed during that timing");
+
+                                        }
+                                    }
+                                    else{
+                                        correctTimeSelected(false,"Stall is closed during that timing");
+                                    }
+                                }
+                                else {
                                     correctTimeSelected(false,"Earliest timing to pre-order is above");
-                                    }
+                                }
 
 
                                     //endregion
@@ -521,13 +520,46 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
             lastChangesHour = dateFormatSelectedByUser.getHours();
             lastChangesMinute = dateFormatSelectedByUser.getMinutes();
 
+            Log.d("hhhhhhhhh", "What is the lastChangeHour: "+lastChangesHour+" What is the start time hour: "+startTimeDate.getHours());
+
+            if (lastChangesHour<startTimeDate.getHours()){
+                lastChangesHour = startTimeDate.getHours();
+                lastChangesMinute = startTimeDate.getMinutes();
+            }
+            else if (lastChangesHour == startTimeDate.getHours()){
+                if (lastChangesMinute<startTimeDate.getMinutes()){
+                    lastChangesMinute = startTimeDate.getMinutes();
+                }
+            }
+
+
             lastChangesMinute = lastChangesMinute - lastChanges;
             if (lastChangesMinute<0){
                 lastChangesHour--;
                 lastChangesMinute+=60;
             }
 
-            lastChangesToEdit = String.format("%02d/%02d/%02d %02d:%02d", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth(), dateFormatSelectedByUser.getYear()+1900, lastChangesHour, lastChangesMinute);
+            Log.d("--------------", "What is the lastChangeHour: "+lastChangesHour+" What is the start time hour: "+startTimeDate.getHours());
+
+
+            SimpleDateFormat timeSelectedToDatePattern = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            SimpleDateFormat timeSelectedToStringPattern = new SimpleDateFormat("h:mm a");
+            String timeSelectedLastChanges =null;
+
+            try{
+                Date change = timeSelectedToDatePattern.parse(dateFormatSelectedByUser.getDate()+"/"+dateFormatSelectedByUser.getMonth()+1+"/"+ dateFormatSelectedByUser.getYear()+1900+" "+lastChangesHour+":"+lastChangesMinute);
+                Log.d("change", "what is change: "+change);
+                Log.d("123445665454", "What is the lastChangeHour: "+lastChangesHour+" What is the lastChangesMinute: "+lastChangesMinute);
+
+                timeSelectedLastChanges = timeSelectedToStringPattern.format(change);
+            }
+            catch (ParseException e){
+
+            }
+
+            Log.d("timeSelectedLastChanges", "TimeSelctedLastChanges is "+timeSelectedLastChanges);
+
+            lastChangesToEdit = String.format("%02d/%02d/%02d %s", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth(), dateFormatSelectedByUser.getYear()+1900, timeSelectedLastChanges);
             tvLastChanges.setText(Html.fromHtml(String.format("<b>Latest</b> Editable: %s",lastChangesToEdit)));
             tvLastChanges.setTextColor(Color.rgb(16,124,16));
 

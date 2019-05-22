@@ -1,6 +1,7 @@
 package sg.edu.rp.c346.c300.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import sg.edu.rp.c346.c300.CartDisplay;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Cart;
@@ -129,14 +131,28 @@ public class CartAdapter extends BaseAdapter {
 
                 final DatabaseReference databaseReferenceCart = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("quantity");
                 databaseReferenceCart.setValue(cartQuantity.getNumber());
+//                carts.get(position).setQuantity(Integer.parseInt(cartQuantity.getNumber()));
+
 
                 double individual = cart.getTotalPrice() / cart.getQuantity();
+                Log.d("Wjat is this 787","))))))))))))))++++++++: "+cart.getQuantity());
+
                 totalPriceIndividual.setText(String.format("$%.2f", individual * Integer.parseInt(cartQuantity.getNumber())));
                 FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("totalPrice").setValue(individual * Integer.parseInt(cartQuantity.getNumber()));
+//                carts.get(position).setTotalPrice(individual * Integer.parseInt(cartQuantity.getNumber()));
 
+                if (cart.getQuantity()==5){
+                    Intent intent = new Intent(context, CartDisplay.class);
+                    context.startActivity(intent);
+
+                }
+
+                Log.d("Wjat is this 787",")))))))))))))))))))))): "+carts.get(position).getQuantity());
+//                Log.d("Wjat is this 787","))))))))))))))++++++++: "+cart.getQuantity());
 
             }
         });
+
 
 
 
