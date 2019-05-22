@@ -1,10 +1,13 @@
 package sg.edu.rp.c346.c300;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,9 +23,15 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,15 +49,21 @@ import sg.edu.rp.c346.c300.model.Customer;
 
 public class CartDisplay extends AppCompatActivity {
 
-    ListView listView;
+    SwipeMenuListView listView;
     CartAdapter cartAdapter;
 
 
-    ArrayList<Cart> cartList = new ArrayList<>();
+    public static ArrayList<Cart> cartList = new ArrayList<>();
+
+    static double overallTotalPrice=0;
 
 
     //Showing the loading
     ProgressDialog dialog;
+
+
+    static TextView tvOveralLTotalPrice;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +90,16 @@ public class CartDisplay extends AppCompatActivity {
 
         //endregion
 
+        cartList.clear();
 
         //Showing the loading
         dialog = new ProgressDialog(this);
         dialog.setMessage("Loading...");
         dialog.show();
+
+        tvOveralLTotalPrice = findViewById(R.id.tvOverallTotalPrice);
+        calculateOverallTotalPrice();
+
 
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         final FirebaseUser mUser = mAuth.getCurrentUser();
@@ -109,6 +129,7 @@ public class CartDisplay extends AppCompatActivity {
                         String additionalNote = dataSnapshot.child(Integer.toString(i)).child("additionalNote").getValue().toString();
                         String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
                         String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
+                        String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -118,21 +139,19 @@ public class CartDisplay extends AppCompatActivity {
                             double addOnPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("addOn").child(Integer.toString(h)).child("price").getValue().toString());
                             AddOn addOn = new AddOn(addOnName, addOnPrice);
                             addOnList.add(addOn);
-                            Log.d("What is h", "123456 What is h now: "+h);
+//                            Log.d("What is h", "123456 What is h now: "+h);
 
                         }
 
 
-
-
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, totalPrice, addOnList,additionalNote, startTime, endTime);
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
                         cartList.add(cart);
 
-                        Log.d("------------","--------------------------------------------------------------------");
-                        Log.d("What is cart", "Tell me what is cart now: "+cart.getName());
-                        Log.d("What is cartList", "Tell me what is addOnList size in cartList now: "+cartList.get(0).getAddOnList().size());
-                        Log.d("What is name", "Tell me what is name now: "+cartList.get(0).getName());
-                        Log.d("What is addOnList", "Tell me what is addOnList size now: "+addOnList.size());
+//                        Log.d("------------","--------------------------------------------------------------------");
+//                        Log.d("What is cart", "Tell me what is cart now: "+cart.getName());
+//                        Log.d("What is cartList", "Tell me what is addOnList size in cartList now: "+cartList.get(0).getAddOnList().size());
+//                        Log.d("What is name", "Tell me what is name now: "+cartList.get(0).getName());
+//                        Log.d("What is addOnList", "Tell me what is addOnList size now: "+addOnList.size());
 
 
                     }
@@ -157,16 +176,79 @@ public class CartDisplay extends AppCompatActivity {
             public void run() {
                 // Do something after 5s = 5000ms
                 dialog.dismiss();
-                Log.d("CartList", "123456789 what is the cartList "+cartList);
+//                Log.d("CartList", "123456789 what is the cartList "+cartList);
 
 
                 listView = findViewById(R.id.recycle_cart);
 
                 cartAdapter = new CartAdapter(CartDisplay.this, cartList);
                 listView.setAdapter(cartAdapter);
+
+
+                //region Swiping left to display the delete button
+                SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+                    @Override
+                    public void create(SwipeMenu menu) {
+
+
+                        // create "delete" item
+                        SwipeMenuItem deleteItem = new SwipeMenuItem(
+                                getApplicationContext());
+                        // set item background
+                        deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                                0x3F, 0x25)));
+                        // set item width
+                        deleteItem.setWidth(170);
+                        // set a icon
+                        deleteItem.setIcon(R.drawable.ic_delete_bin_white);
+                        //set item title
+                        deleteItem.setTitle("Delete");
+                        // set item title fontsize
+                        deleteItem.setTitleSize(18);
+                        //set item title font color
+                        deleteItem.setTitleColor(Color.WHITE);
+                        // add to menu
+                        menu.addMenuItem(deleteItem);
+                    }
+                };
+
+                // set creator
+                listView.setMenuCreator(creator);
+
+                listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                        switch (index) {
+                            case 0:
+                                Toast.makeText(CartDisplay.this, "hi " +position, Toast.LENGTH_SHORT).show();
+                                deleteCart(position);
+                                final Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Do something after 5s = 5000ms
+                                        calculateOverallTotalPrice();
+                                    }
+                                }, 1000);
+
+                                break;
+
+                        }
+                        // false : close the menu; true : not close the menu
+                        return false;
+                    }
+                });
+
+                //endregion
+
+
             }
         }, 1000);
         //endregion
+
+
+
 
 
         findViewById(R.id.btnCartBack).setOnClickListener(new View.OnClickListener() {
@@ -351,4 +433,121 @@ public class CartDisplay extends AppCompatActivity {
 //endregion
 
     }
+
+
+
+    //Deleting the cart food
+    public void deleteCart(int position){
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser mUser = mAuth.getCurrentUser();
+
+        DatabaseReference databaseReferenceGettingNumOfCartFood = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child("numOfCartFood");
+
+
+        DatabaseReference drDeleteCart = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid());
+        drDeleteCart.child(Integer.toString(position)).removeValue();
+        databaseReferenceGettingNumOfCartFood.setValue(position); //set the numOfCartFood after removing all the items after the position and itself
+
+
+
+        ArrayList<Cart> readdedCartList = new ArrayList<Cart>();
+
+        int nextPosition = position+1;
+
+        if (nextPosition<cartList.size()){
+            for (int i =nextPosition;i<cartList.size();i++){
+                readdedCartList.add(cartList.get(i));
+                drDeleteCart.child(Integer.toString(i)).removeValue();
+            }
+        }
+
+
+        final DatabaseReference databaseReferenceAddFoodCart = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid());
+
+
+
+        for (int t =0; t<readdedCartList.size();t++){
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("dateTimeOrder").setValue(readdedCartList.get(t).getDateTimeOrder());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("name").setValue(readdedCartList.get(t).getName());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("price").setValue(readdedCartList.get(t).getPrice());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("quantity").setValue(readdedCartList.get(t).getQuantity());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("stallName").setValue(readdedCartList.get(t).getStallName());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("totalPrice").setValue(readdedCartList.get(t).getTotalPrice());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("additionalNote").setValue(readdedCartList.get(t).getAdditionalNote());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("startTime").setValue(readdedCartList.get(t).getStartTime());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("endTime").setValue(readdedCartList.get(t).getEndTime());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("lastChanges").setValue(readdedCartList.get(t).getLastChanges());
+
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child("numOfAddOn").setValue(0);
+
+            ArrayList<AddOn> readdedAddOnList = readdedCartList.get(t).getAddOnList();
+
+            for (int i =0; i<readdedAddOnList.size();i++) {
+                databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child(Integer.toString(i)).child("name").setValue(readdedAddOnList.get(i).getName());
+                databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child(Integer.toString(i)).child("price").setValue(readdedAddOnList.get(i).getPrice());
+                databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child("numOfAddOn").setValue(i+1);
+
+            }
+
+        }
+
+        databaseReferenceGettingNumOfCartFood.setValue(position+readdedCartList.size());
+        Log.d("-=-=-=-=-=-=","what is position: "+position+" what is readdedCartList: "+readdedCartList.size());
+
+
+        Intent intent = new Intent(CartDisplay.this, CartDisplay.class);
+        startActivity(intent);
+        finish();
+
+    }
+
+
+    //Calculate the overall total price in the cart
+    public static void calculateOverallTotalPrice(){
+        DatabaseReference drOverallTotalPrice = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+//        drOverallTotalPrice.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
+//                overallTotalPrice=0;
+//
+//
+//                for (int i =0; i<numOfCartFood;i++){
+//                    overallTotalPrice += Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
+//                }
+//                tvOveralLTotalPrice.setText(String.format("$%.2f", overallTotalPrice));
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        drOverallTotalPrice.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
+                overallTotalPrice=0;
+
+
+                for (int i =0; i<numOfCartFood;i++){
+                    overallTotalPrice += Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
+                }
+                tvOveralLTotalPrice.setText(String.format("$%.2f", overallTotalPrice));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+    }
+
 }

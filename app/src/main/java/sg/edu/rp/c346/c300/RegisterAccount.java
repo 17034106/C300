@@ -9,9 +9,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
@@ -35,9 +40,16 @@ import sg.edu.rp.c346.c300.model.Customer;
 
 public class RegisterAccount extends AppCompatActivity {
 
-    EditText etName,etNRIC, etDob, etSchool, etPhone, etEmail, etPassword1, etPassword2;
+    EditText etName,etNRIC, etDob, etPhone, etEmail, etPassword1, etPassword2;
     TextView tvMember;
     CircularProgressButton btnRegister;
+
+    MaterialBetterSpinner etSchool;
+
+    ArrayList<String> schoolList = new ArrayList<>();
+    ArrayAdapter<String> schoolAdapter;
+
+
 
     //Firebase Authentication
     FirebaseAuth mAuth;
@@ -70,6 +82,29 @@ public class RegisterAccount extends AppCompatActivity {
 
         //Showing the loading
         dialog = new ProgressDialog(this);
+
+        FirebaseDatabase.getInstance().getReference().child("school").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int numOfSchool = Integer.parseInt(dataSnapshot.child("numOfSchool").getValue().toString());
+                for (int i=0; i<numOfSchool; i++){
+                    schoolList.add(dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        schoolAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,schoolList);
+        etSchool.setAdapter(schoolAdapter);
+
+
+
+
+
 
         //region DatePicker
         ivDobArrow.setOnClickListener(new View.OnClickListener() {
@@ -130,8 +165,7 @@ public class RegisterAccount extends AppCompatActivity {
                 final String password2 = etPassword2.getText().toString().trim();
                 final String name = etName.getText().toString().trim();
                 final String dob = etDob.getText().toString();
-                final String school = etSchool.getText().toString().trim();
-
+                final String school = etSchool.getText().toString();
 
 
 

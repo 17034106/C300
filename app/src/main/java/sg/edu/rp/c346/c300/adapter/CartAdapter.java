@@ -39,6 +39,7 @@ public class CartAdapter extends BaseAdapter {
     Context context;
     ArrayList<Cart> carts;
 
+
     @Override
     public int getCount() {
         return carts.size();
@@ -72,6 +73,7 @@ public class CartAdapter extends BaseAdapter {
         final TextView totalPriceIndividual = convertView.findViewById(R.id.totalPriceIndividual);
         TextView tvStartTime = convertView.findViewById(R.id.tvStartTime);
         TextView tvEndTime = convertView.findViewById(R.id.tvEndTime);
+        TextView tvLastChanges = convertView.findViewById(R.id.lastChanges);
 
 
         final Cart cart = carts.get(position);
@@ -111,10 +113,12 @@ public class CartAdapter extends BaseAdapter {
         cartFoodImage.setImageResource(R.drawable.fishball);
         tvCartFoodName.setText(cart.getName());
         tvCartFoodPrice.setText(String.format("$%.2f", cart.getPrice()));
-        tvCartOrderTime.setText(cart.getDateTimeOrder());
+        tvCartOrderTime.setText("Collection Time: "+cart.getDateTimeOrder());
+        tvLastChanges.setText("Last Editable: "+cart.getLastChanges());
         cartQuantity.setNumber(Integer.toString(cart.getQuantity()));
         totalPriceIndividual.setText(String.format("$%.2f", cart.getTotalPrice()));
         additionalNote.setText(cart.getAdditionalNote());
+
 
         if (addOnValue.isEmpty()){
             addon.setText("No Add On");
@@ -131,25 +135,14 @@ public class CartAdapter extends BaseAdapter {
 
                 final DatabaseReference databaseReferenceCart = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("quantity");
                 databaseReferenceCart.setValue(cartQuantity.getNumber());
-//                carts.get(position).setQuantity(Integer.parseInt(cartQuantity.getNumber()));
 
 
                 double individual = cart.getTotalPrice() / cart.getQuantity();
-                Log.d("Wjat is this 787","))))))))))))))++++++++: "+cart.getQuantity());
 
                 totalPriceIndividual.setText(String.format("$%.2f", individual * Integer.parseInt(cartQuantity.getNumber())));
                 FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("totalPrice").setValue(individual * Integer.parseInt(cartQuantity.getNumber()));
-//                carts.get(position).setTotalPrice(individual * Integer.parseInt(cartQuantity.getNumber()));
 
-                if (cart.getQuantity()==5){
-                    Intent intent = new Intent(context, CartDisplay.class);
-                    context.startActivity(intent);
-
-                }
-
-                Log.d("Wjat is this 787",")))))))))))))))))))))): "+carts.get(position).getQuantity());
-//                Log.d("Wjat is this 787","))))))))))))))++++++++: "+cart.getQuantity());
-
+                CartDisplay.calculateOverallTotalPrice(); //called from the CartDisplay to call the calculateOverallTotalPrice() method
             }
         });
 

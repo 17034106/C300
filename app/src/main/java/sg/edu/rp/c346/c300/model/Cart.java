@@ -16,9 +16,10 @@ public class Cart {
     private String additionalNote;
     private String startTime;
     private String endTime;
+    private String lastChanges;
 
 
-    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime) {
+    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -29,6 +30,7 @@ public class Cart {
         this.additionalNote = additionalNote;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.lastChanges = lastChanges;
     }
 
     public String getName() {
@@ -109,5 +111,13 @@ public class Cart {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getLastChanges() {
+        return lastChanges;
+    }
+
+    public void setLastChanges(String lastChanges) {
+        this.lastChanges = lastChanges;
     }
 }

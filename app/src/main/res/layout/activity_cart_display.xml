@@ -7,15 +7,20 @@
     tools:context=".CartDisplay">
 
 
-    <ListView
+    <!--<ListView-->
+        <!--android:id="@+id/recycle_cart"-->
+        <!--android:layout_marginTop="50dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+    <!--</ListView>-->
+
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/recycle_cart"
-        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </ListView>
-
-
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"></com.baoyz.swipemenulistview.SwipeMenuListView>
 
 
     <RelativeLayout
@@ -49,6 +54,49 @@
 
     </RelativeLayout>
 
+
+
+    <RelativeLayout
+        android:id="@+id/relativeCheckOut"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#0334E9"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_alignParentBottom="true"
+        >
+
+        <TextView
+            android:id="@+id/tvCheckOut"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Check out"
+            android:textSize="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="8dp"
+            />
+
+
+
+
+        <TextView
+            android:id="@+id/tvOverallTotalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Overall Price"
+            android:textSize="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            />
+
+
+    </RelativeLayout>
 
 
 

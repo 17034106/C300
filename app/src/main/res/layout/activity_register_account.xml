@@ -212,10 +212,10 @@
                             android:background="@color/everythingColorSame"
                             android:src="@drawable/ic_action_phone" />
 
-                        <EditText
+                        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                             android:id="@+id/etSchool"
                             android:layout_width="match_parent"
-                            android:layout_height="40dp"
+                            android:layout_height="46dp"
                             android:layout_toRightOf="@id/ImageView_school"
                             android:background="@color/editTextColor"
                             android:hint="School"

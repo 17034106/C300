@@ -50,7 +50,13 @@ dependencies {
     //ElegantNumberButton (Plus minus)
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
 
-    //for Custom DateTimePickerDialog
+    //for Custom DateTimePickerDialog (not Using for now)
     implementation 'com.wdullaer:materialdatetimepicker:3.6.3'
 
+    //for swipe cart delete
+    implementation 'com.baoyz.swipemenulistview:library:1.3.0'
+
+
+    //For custom spinner
+    implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
 }
