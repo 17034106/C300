@@ -575,4 +575,9 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
     }
 
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

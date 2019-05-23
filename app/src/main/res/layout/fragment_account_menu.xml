@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,29 +7,385 @@
     tools:context=".app.AccountMenu">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/tvAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Account menu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.047"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.007" />
-
-    <Button
-        android:id="@+id/btnSignOut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Out"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.433"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.36" />
 
 
-</android.support.constraint.ConstraintLayout>
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="52dp">
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/top_half_background"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/custom_background_half"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/accountFloatingButtonMenu"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/oval"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/accountFloatingButtonCart"
+                android:src="@drawable/ic_menu"
+                />
+
+
+            <ImageButton
+                android:id="@+id/accountFloatingButtonCart"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/oval"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_shopping_cart"
+                />
+
+
+            <RelativeLayout
+                android:id="@+id/relativeAccountDisplay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="20dp">
+
+
+                <TextView
+                    android:id="@+id/accountName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="Name"
+                    android:textSize="22dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_toRightOf="@+id/accountStudentImage"/>
+
+                <TextView
+                    android:id="@+id/accountBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Balance"
+                    android:textSize="16dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_below="@+id/accountName"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@+id/accountStudentImage"/>
+
+                <ImageView
+                    android:id="@+id/accountStudentImage"
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ic_action_person"/>
+
+
+
+            </RelativeLayout>
+
+
+
+
+            <GridLayout
+                android:id="@+id/grid1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alignmentMode="alignMargins"
+                android:columnCount="2"
+                android:rowCount="3"
+                android:columnOrderPreserved="false"
+                android:layout_marginTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_below="@+id/relativeAccountDisplay">
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountPreOrderMade"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_purchase_order"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Pre-Order"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountHistoryOrder"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_history_record"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="History Order"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountStatistic"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_line_chart"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Statistic"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountDenyList"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_block"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Deny List"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountParent"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Parent Account"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountSetting"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_setting"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Account Setting"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+            </GridLayout>
+
+            <Button
+                android:id="@+id/btnSignOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/grid1"
+                android:text="Log Out"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="12dp"/>
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+    </ScrollView>
+
+
+
+
+</RelativeLayout>

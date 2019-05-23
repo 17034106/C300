@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -143,6 +144,10 @@ public class CartAdapter extends BaseAdapter {
                 FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid()).child(Integer.toString(position)).child("totalPrice").setValue(individual * Integer.parseInt(cartQuantity.getNumber()));
 
                 CartDisplay.calculateOverallTotalPrice(); //called from the CartDisplay to call the calculateOverallTotalPrice() method
+
+                if (Integer.parseInt(cartQuantity.getNumber())==1){
+                    Toast.makeText(context, "Swipe left to delete cart food", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

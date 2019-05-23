@@ -40,6 +40,7 @@ public class MainpageActivity extends AppCompatActivity {
 
     String school; // example
     String name;
+    double balance;
 
     //Showing the loading
     ProgressDialog dialog;
@@ -60,7 +61,6 @@ public class MainpageActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Customer").child(mUser.getUid());
 
-        DatabaseReference databaseReferenceFood = FirebaseDatabase.getInstance().getReference().child("preorder");
 
 
         //retrieve data from firebase
@@ -68,12 +68,12 @@ public class MainpageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                Customer customer = dataSnapshot.getValue(Customer.class);
+                Customer customer = dataSnapshot.getValue(Customer.class); // using class to get data from firebase
 
                 //Two ways to get the data -First is using child.getvalue -Second is using class.
                 name = dataSnapshot.child("customername").getValue().toString();
                 school = customer.getCustomerschool();
-                Log.d("Name JSON", dataSnapshot.getValue().toString());
+                balance = customer.getBalance();
 
 
             }
@@ -113,13 +113,14 @@ public class MainpageActivity extends AppCompatActivity {
         Bundle bundle = new Bundle(); // passing data from activity to fragment
         bundle.putString("school", school);  // passing data from activity to fragment
         bundle.putString("name", name);
+        bundle.putDouble("balance", balance);
 
         if (view == findViewById(R.id.btnFoodMenu)){
             fragment = new FoodMenu();
             fragment.setArguments(bundle);  // passing data from activity to fragment
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragmentMainPage, fragment);
+            ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
             ft.commit();
         }
         else if (view == findViewById(R.id.btnFeed)){
@@ -127,7 +128,7 @@ public class MainpageActivity extends AppCompatActivity {
             fragment.setArguments(bundle);  // passing data from activity to fragment
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragmentMainPage, fragment);
+            ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
             ft.commit();
         }
         else if ( view == findViewById(R.id.btnNotification)){
@@ -135,7 +136,7 @@ public class MainpageActivity extends AppCompatActivity {
             fragment.setArguments(bundle);  // passing data from activity to fragment
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragmentMainPage, fragment);
+            ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
             ft.commit();
         }
         else if (view == findViewById(R.id.btnAccount)){
@@ -143,7 +144,7 @@ public class MainpageActivity extends AppCompatActivity {
             fragment.setArguments(bundle);  // passing data from activity to fragment
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragmentMainPage, fragment);
+            ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
             ft.commit();
         }
 
@@ -154,7 +155,21 @@ public class MainpageActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+    }
 
+    @Override
+    public void onBackPressed() {
+        android.app.Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentMainPage);
+        if (fragment instanceof FoodMenu){
+            finish();
 
+        }
+        // go back to the previous fragment if it is not FoodMenu fragment
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+            finish();
+        }
     }
 }

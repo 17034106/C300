@@ -11,11 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".dateTimeSelection"
+        <activity android:name=".SettingPage"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/AppTheme.PopUpDateTimeSelection"></activity>
+            android:windowSoftInputMode="adjustPan" ></activity>
+        <activity
+            android:name=".SettingEditablePage"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".dateTimeSelection"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpDateTimeSelection"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".CartDisplay"
             android:configChanges="orientation"

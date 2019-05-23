@@ -221,7 +221,7 @@ public class CartDisplay extends AppCompatActivity {
                     public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                         switch (index) {
                             case 0:
-                                Toast.makeText(CartDisplay.this, "hi " +position, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(CartDisplay.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
                                 deleteCart(position);
                                 final Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
@@ -507,24 +507,7 @@ public class CartDisplay extends AppCompatActivity {
     public static void calculateOverallTotalPrice(){
         DatabaseReference drOverallTotalPrice = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-//        drOverallTotalPrice.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
-//                overallTotalPrice=0;
-//
-//
-//                for (int i =0; i<numOfCartFood;i++){
-//                    overallTotalPrice += Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
-//                }
-//                tvOveralLTotalPrice.setText(String.format("$%.2f", overallTotalPrice));
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+
 
         drOverallTotalPrice.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -549,5 +532,6 @@ public class CartDisplay extends AppCompatActivity {
 
 
     }
+
 
 }

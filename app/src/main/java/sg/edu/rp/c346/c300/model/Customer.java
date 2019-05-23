@@ -12,6 +12,7 @@ public class Customer {
     private String customerschool;
     private String email;
     private String password;
+    private double balance;
 
 
 
@@ -23,6 +24,7 @@ public class Customer {
         this.customerschool = customerschool;
         this.email = email;
         this.password = password;
+        this.balance = 0;
     }
 
 
@@ -85,5 +87,13 @@ public class Customer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 }

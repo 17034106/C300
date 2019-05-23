@@ -46,21 +46,13 @@ public class FoodMenu extends Fragment {
 
         username = v.findViewById(R.id.etSearchbar);
 
-        //region get data from activity to Fragment
-        Bundle bundle = this.getArguments();
-        if (bundle!=null){
-            String name = bundle.getString("name", "fail");
-            username.setText(name);
 
 
-        }
-        //endregion
 
-
-        //for new layout
+        //for displaying out the menu
         listView = v.findViewById(R.id.list_view);
         foods = ListDetails.getFoodList();
-        Log.d("What is the Stall","Tell me all the store now: "+foods);
+
 
         foodAdapter = new FoodAdapter(getActivity(), foods);
         listView.setAdapter(foodAdapter);
@@ -86,6 +78,7 @@ public class FoodMenu extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CartDisplay.class);
                 startActivity(intent);
+
             }
         });
 
