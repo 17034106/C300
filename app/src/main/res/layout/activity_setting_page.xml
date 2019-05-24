@@ -267,7 +267,7 @@
                     android:background="@drawable/custom_background_loading_button_login"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="Edit Profile"
+                    android:text="Update Profile"
                     android:textSize="22dp"
                     app:spinning_bar_color="#535050"
                     app:spinning_bar_padding="6dp"

@@ -132,7 +132,7 @@
                     android:layout_below="@+id/tvStudentDOB"/>
 
                 <ImageView
-                    android:id="@+id/ivDobArrow"
+                    android:id="@+id/settingEditableDobArrow"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="#9B9292"
@@ -168,6 +168,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:hint="Phone Number"
+                    android:inputType="phone"
                     android:layout_below="@+id/tvStudentPhone"/>
 
                 <ImageView
