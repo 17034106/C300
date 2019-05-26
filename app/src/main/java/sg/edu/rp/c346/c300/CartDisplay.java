@@ -57,15 +57,23 @@ public class CartDisplay extends AppCompatActivity {
     SwipeMenuListView listView;
     CartAdapter cartAdapter;
 
+    TextView displayNoMenu;
+
 
     public static ArrayList<Cart> cartList = new ArrayList<>();
 
     public static String school ="";
     public static ArrayList<Cart> transactionList = new ArrayList<>();
+
+    ArrayList<String> tIdList = new ArrayList<>(); // use for storing all unique Transaction ID
     DatabaseReference drTO;
+    DatabaseReference drTC;
+    DatabaseReference drRemoveALLCartFood;
     int numOfOwnerOrder;
     int numOfCustomerOrder;
-    int total;
+
+    int numOfCartFood;
+
 
     static double overallTotalPrice=0;
 
@@ -105,6 +113,8 @@ public class CartDisplay extends AppCompatActivity {
 
         //endregion
 
+        displayNoMenu = findViewById(R.id.DisplayNoMenu);
+
         cartList.clear();
 
         //Showing the loading
@@ -119,6 +129,7 @@ public class CartDisplay extends AppCompatActivity {
 
 
         //region retrieving cart objects from firebase
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
         if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
 
 
@@ -129,6 +140,13 @@ public class CartDisplay extends AppCompatActivity {
 
                     cartList.clear();
                     int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
+
+                    if(numOfCartFood==0){
+                        displayNoMenu.setVisibility(TextView.VISIBLE);
+                    }
+                    else{
+                        displayNoMenu.setVisibility(TextView.INVISIBLE);
+                    }
 
                     for (int i =0; i<numOfCartFood;i++){
 
@@ -181,11 +199,14 @@ public class CartDisplay extends AppCompatActivity {
             });
 
         }
-
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
         //endregion
 
 
+
+
         //region Delay the displaying cart code
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -285,13 +306,13 @@ public class CartDisplay extends AppCompatActivity {
 
             }
         }, 1000);
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
         //endregion
 
 
-
+        //region  get the customer's school
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
         final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-
         databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -304,7 +325,9 @@ public class CartDisplay extends AppCompatActivity {
 
             }
         });
-        total =0;
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //endregion
+
 
         //Press the check out button
         findViewById(R.id.tvCheckOut).setOnClickListener(new View.OnClickListener() {
@@ -317,10 +340,14 @@ public class CartDisplay extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         transactionList.clear();
-                        int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
+                        tIdList.clear();// use for storing all unique Transaction ID
+                        numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
 
+                        //region all the cartfood in the firebase so that i can store in both owner("TO")
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                         for (int i =0; i<numOfCartFood;i++){
 
+                            Log.d("what is I", "Print i now: "+i);
 
                             final String name = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
                             final double price = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString());
@@ -334,7 +361,7 @@ public class CartDisplay extends AppCompatActivity {
                             final String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
                             final int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
 
-                            final ArrayList<AddOn> addOnList = new ArrayList<>();
+                            final ArrayList<AddOn> addOnList= new ArrayList<>();
                             addOnList.clear();
                             final int numOfAddOn = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("addOn").child("numOfAddOn").getValue().toString());
                             for (int h =0; h<numOfAddOn;h++){
@@ -352,6 +379,8 @@ public class CartDisplay extends AppCompatActivity {
 
 
 
+                            //region all all the cart food to the "TO" for owner
+                            //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                             drTO = FirebaseDatabase.getInstance().getReference().child("to").child("school").child(school).child("stall");
                             drTO.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -370,8 +399,7 @@ public class CartDisplay extends AppCompatActivity {
                                     }
 
 
-                                    total++;
-                                    Log.d("What is the total ", "=-=-=-=-=-=-=-==: What is the total; "+total);
+
                                     Log.d("What is the stallID ", "=-=-=-=-=-=-=-==: What is the stallID; "+stallId);
                                     Log.d("What is the order ", "=-=-=-=-=-=-=-==: What is the numOfOwnerOrder; "+numOfOwnerOrder);
 
@@ -387,7 +415,10 @@ public class CartDisplay extends AppCompatActivity {
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("additionalNote").setValue(additionalNote+"");
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("lastChanges").setValue(lastChanges);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("stallId").setValue(stallId);
-                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("tId").setValue(""+FirebaseAuth.getInstance().getCurrentUser().getUid()+stallId+numOfOwnerOrder);
+                                    String tId; // use for setting a unique Transaction ID
+                                    tId = ""+FirebaseAuth.getInstance().getCurrentUser().getUid()+stallId+checkingNumOfOrderRepeat.get(stallId);
+                                    tIdList.add(tId);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("tId").setValue(tId);
 
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h =0; h<numOfAddOn;h++) {
@@ -408,18 +439,73 @@ public class CartDisplay extends AppCompatActivity {
 
                                 }
                             });
-
-
-
-
-
+                            //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                            //endregion
 
                         }
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        //endregion
 
+
+                        //region remove all the cart foods when the user want to checkout
+                        // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        drRemoveALLCartFood = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        for (int i =0; i<numOfCartFood;i++){
+                            drRemoveALLCartFood.child(Integer.toString(i)).removeValue();
+                        }
+                        drRemoveALLCartFood.child("numOfCartFood").setValue(0);
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        //endregion
+
+
+                        //region all all the cart food to the "TC" for customer
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        drTC = FirebaseDatabase.getInstance().getReference().child("tc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order");
+                        drTC.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                numOfCustomerOrder = Integer.parseInt(dataSnapshot.child("numOfOrder").getValue().toString());
+
+                                for (int i =0; i<numOfCartFood;i++) {
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("dateTimeOrder").setValue(transactionList.get(i).getDateTimeOrder());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("name").setValue(transactionList.get(i).getName());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("price").setValue(transactionList.get(i).getPrice());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("quantity").setValue(transactionList.get(i).getQuantity());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("stallName").setValue(transactionList.get(i).getStallName());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("totalPrice").setValue(transactionList.get(i).getTotalPrice());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("additionalNote").setValue(transactionList.get(i).getAdditionalNote() + "");
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("lastChanges").setValue(transactionList.get(i).getLastChanges());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("stallId").setValue(transactionList.get(i).getStallId());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("tId").setValue(tIdList.get(i));
+
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
+                                    for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {
+                                        drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child(Integer.toString(h)).child("name").setValue(transactionList.get(i).getAddOnList().get(h).getName());
+                                        drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child(Integer.toString(h)).child("price").setValue(transactionList.get(i).getAddOnList().get(h).getPrice());
+                                        drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child("numOfAddOn").setValue(h + 1);
+
+                                    }
+
+                                    drTC.child("numOfOrder").setValue(numOfCustomerOrder + i+1);
+
+                                    Log.d("what is I", "Print i + numOfCustomerOrder now: " + (numOfCustomerOrder + i));
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        //endregion
 
 
 
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -427,7 +513,21 @@ public class CartDisplay extends AppCompatActivity {
                     }
                 });
 
+                //reload the activity
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        Intent intent = new Intent(CartDisplay.this, CartDisplay.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }, 1000);
+
             }
+
+
         });
 
 
@@ -623,7 +723,7 @@ public class CartDisplay extends AppCompatActivity {
 
 
 
-    //region Deleting the cart food
+    //region Deleting the cart food based on the user's choice
     public void deleteCart(int position){
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
