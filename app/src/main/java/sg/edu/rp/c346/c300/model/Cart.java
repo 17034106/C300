@@ -11,6 +11,7 @@ public class Cart {
     private String dateTimeOrder;
     private int quantity;
     private String stallName;
+    private int stallId;
     private double totalPrice;
     private ArrayList<AddOn> addOnList;
     private String additionalNote;
@@ -19,12 +20,13 @@ public class Cart {
     private String lastChanges;
 
 
-    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges) {
+    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
         this.quantity = quantity;
         this.stallName = stallName;
+        this.stallId = stallId;
         this.totalPrice = totalPrice;
         this.addOnList = addOnList;
         this.additionalNote = additionalNote;
@@ -71,6 +73,14 @@ public class Cart {
 
     public void setStallName(String stallName) {
         this.stallName = stallName;
+    }
+
+    public int getStallId() {
+        return stallId;
+    }
+
+    public void setStallId(int stallId) {
+        this.stallId = stallId;
     }
 
     public double getTotalPrice() {

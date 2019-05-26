@@ -48,7 +48,7 @@ public class Food_display extends AppCompatActivity {
     TextView checkOutPrice;
     TextView tvFoodStallDuration;
 
-
+    static Food_display food_display; // get this class so that i can finish this class at another activity
 
     TextView quantityDisplay;
     int quantityValue;
@@ -77,6 +77,8 @@ public class Food_display extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_display);
+
+        food_display = this; // get this class so that i can finish this class at another activity
 
 
         final Intent intent = getIntent();
@@ -314,6 +316,7 @@ public class Food_display extends AppCompatActivity {
                 intentCheckOut.putExtra("totalPrice", totalPrice);
                 intentCheckOut.putExtra("startTime", intent.getStringExtra("startTime"));
                 intentCheckOut.putExtra("endTime", intent.getStringExtra("endTime"));
+                intentCheckOut.putExtra("stallId", intent.getIntExtra("stallId",-1));
 
 
 
@@ -334,6 +337,10 @@ public class Food_display extends AppCompatActivity {
 
     }
 
+    // get this class so that i can finish this class at another activity
+    public static Food_display finishActivity(){
+        return  food_display;
+    }
 
 
 }

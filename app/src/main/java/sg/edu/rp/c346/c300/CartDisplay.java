@@ -1,6 +1,8 @@
 package sg.edu.rp.c346.c300;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -41,6 +43,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 import sg.edu.rp.c346.c300.adapter.CartAdapter;
 import sg.edu.rp.c346.c300.model.AddOn;
@@ -55,6 +60,13 @@ public class CartDisplay extends AppCompatActivity {
 
     public static ArrayList<Cart> cartList = new ArrayList<>();
 
+    public static String school ="";
+    public static ArrayList<Cart> transactionList = new ArrayList<>();
+    DatabaseReference drTO;
+    int numOfOwnerOrder;
+    int numOfCustomerOrder;
+    int total;
+
     static double overallTotalPrice=0;
 
 
@@ -64,6 +76,9 @@ public class CartDisplay extends AppCompatActivity {
 
     static TextView tvOveralLTotalPrice;
 
+    DatabaseReference drCart = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+    Map<Integer, Integer> checkingNumOfOrderRepeat = new Hashtable<Integer, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,20 +116,18 @@ public class CartDisplay extends AppCompatActivity {
         calculateOverallTotalPrice();
 
 
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        final FirebaseUser mUser = mAuth.getCurrentUser();
 
 
         //region retrieving cart objects from firebase
-        if (mUser!=null) {
-            final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("cart").child(mUser.getUid());
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
 
 
-            databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            drCart.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     //Customer customer = dataSnapshot.getValue(Customer.class);
 
+                    cartList.clear();
                     int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
 
                     for (int i =0; i<numOfCartFood;i++){
@@ -130,6 +143,7 @@ public class CartDisplay extends AppCompatActivity {
                         String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
                         String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
                         String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
+                        int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -144,7 +158,7 @@ public class CartDisplay extends AppCompatActivity {
                         }
 
 
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
                         cartList.add(cart);
 
 //                        Log.d("------------","--------------------------------------------------------------------");
@@ -155,6 +169,8 @@ public class CartDisplay extends AppCompatActivity {
 
 
                     }
+
+
 
                 }
 
@@ -218,19 +234,43 @@ public class CartDisplay extends AppCompatActivity {
 
                 listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
                     @Override
-                    public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                    public boolean onMenuItemClick(final int position, SwipeMenu menu, int index) {
                         switch (index) {
                             case 0:
-                                Toast.makeText(CartDisplay.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
-                                deleteCart(position);
-                                final Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
+                                //region call the dialog to ask question
+                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void run() {
-                                        // Do something after 5s = 5000ms
-                                        calculateOverallTotalPrice();
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which){
+                                            case DialogInterface.BUTTON_POSITIVE:
+
+                                                //region do not remove this------------------------------------------------------------------------------------
+                                                Toast.makeText(CartDisplay.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                                                deleteCart(position); // call the deleteCart function
+                                                final Handler handler = new Handler(); // delay the code to calculate the total price again
+                                                handler.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        // Do something after 5s = 5000ms
+                                                        calculateOverallTotalPrice();
+                                                    }
+                                                }, 1000);
+                                                break;
+                                                //endregion
+
+
+                                            case DialogInterface.BUTTON_NEGATIVE:
+                                                //No button clicked
+                                                break;
+                                        }
                                     }
-                                }, 1000);
+                                };
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(CartDisplay.this);
+                                builder.setMessage("Do you want to delete?").setPositiveButton("Yes", dialogClickListener)
+                                        .setNegativeButton("No", dialogClickListener).show();
+                                //endregion
+
 
                                 break;
 
@@ -249,18 +289,165 @@ public class CartDisplay extends AppCompatActivity {
 
 
 
+        final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
+        databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Customer customer = dataSnapshot.getValue(Customer.class);
+                school = customer.getCustomerschool();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        total =0;
+
+        //Press the check out button
+        findViewById(R.id.tvCheckOut).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                checkingNumOfOrderRepeat.clear(); // clearing the hashMap
+
+                drCart.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        transactionList.clear();
+                        int numOfCartFood = Integer.parseInt(dataSnapshot.child("numOfCartFood").getValue().toString());
+
+                        for (int i =0; i<numOfCartFood;i++){
+
+
+                            final String name = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
+                            final double price = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString());
+                            final int quantity = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("quantity").getValue().toString());
+                            final String stallName = dataSnapshot.child(Integer.toString(i)).child("stallName").getValue().toString();
+                            final String dateTimeOrder = dataSnapshot.child(Integer.toString(i)).child("dateTimeOrder").getValue().toString();
+                            final double totalPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
+                            final String additionalNote = dataSnapshot.child(Integer.toString(i)).child("additionalNote").getValue().toString();
+                            final String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
+                            final String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
+                            final String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
+                            final int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
+
+                            final ArrayList<AddOn> addOnList = new ArrayList<>();
+                            addOnList.clear();
+                            final int numOfAddOn = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("addOn").child("numOfAddOn").getValue().toString());
+                            for (int h =0; h<numOfAddOn;h++){
+                                String addOnName = dataSnapshot.child(Integer.toString(i)).child("addOn").child(Integer.toString(h)).child("name").getValue().toString();
+                                double addOnPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("addOn").child(Integer.toString(h)).child("price").getValue().toString());
+                                AddOn addOn = new AddOn(addOnName, addOnPrice);
+                                addOnList.add(addOn);
+//                            Log.d("What is h", "123456 What is h now: "+h);
+
+                            }
+
+
+                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
+                            transactionList.add(cart);
+
+
+
+                            drTO = FirebaseDatabase.getInstance().getReference().child("to").child("school").child(school).child("stall");
+                            drTO.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+
+
+                                    numOfOwnerOrder = Integer.parseInt(dataSnapshot.child(Integer.toString(stallId)).child("order").child("numOfOrder").getValue().toString());
+                                    Log.d("What is the order ", "=-=-=-=-=-=-=-==: What is the numOfOwnerOrder Before; "+numOfOwnerOrder);
+
+                                    if (checkingNumOfOrderRepeat.containsKey(stallId)){
+                                        numOfOwnerOrder = checkingNumOfOrderRepeat.get(stallId)+1;
+                                        checkingNumOfOrderRepeat.put(stallId, checkingNumOfOrderRepeat.get(stallId)+1);
+                                    }
+                                    else {
+                                        checkingNumOfOrderRepeat.put(stallId, numOfOwnerOrder);
+                                    }
+
+
+                                    total++;
+                                    Log.d("What is the total ", "=-=-=-=-=-=-=-==: What is the total; "+total);
+                                    Log.d("What is the stallID ", "=-=-=-=-=-=-=-==: What is the stallID; "+stallId);
+                                    Log.d("What is the order ", "=-=-=-=-=-=-=-==: What is the numOfOwnerOrder; "+numOfOwnerOrder);
+
+                                    Log.d("what numOfOrderRepeat", "What is the numOfOrderRepeat: "+checkingNumOfOrderRepeat);
+                                    Log.d("++++++++++","++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("dateTimeOrder").setValue(dateTimeOrder);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("name").setValue(name);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("price").setValue(price);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("quantity").setValue(quantity);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("stallName").setValue(stallName);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("totalPrice").setValue(totalPrice);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("additionalNote").setValue(additionalNote+"");
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("lastChanges").setValue(lastChanges);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("stallId").setValue(stallId);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("tId").setValue(""+FirebaseAuth.getInstance().getCurrentUser().getUid()+stallId+numOfOwnerOrder);
+
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child("numOfAddOn").setValue(0);
+                                    for (int h =0; h<numOfAddOn;h++) {
+                                        drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child(Integer.toString(h)).child("name").setValue(addOnList.get(h).getName());
+                                        drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child(Integer.toString(h)).child("price").setValue(addOnList.get(h).getPrice());
+                                        drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child("numOfAddOn").setValue(h+1);
+
+                                    }
+
+                                    drTO.child(Integer.toString(stallId)).child("order").child("numOfOrder").setValue(numOfOwnerOrder+1);
+
+
+                                    Log.d("Print this", "I want to see this statement");
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+
+
+
+
+                        }
+
+
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        });
+
+
+
+
+
+
+
+        //region exit the cart display
         findViewById(R.id.btnCartBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+        //endregion
 
 
 
-        //region useless code (do not remove it)
+        //region useless code (BUT do not remove it)
 //        final LinearLayout cartRelativeBiggest= findViewById(R.id.CartRelativeBiggest);
 
 
@@ -436,7 +623,7 @@ public class CartDisplay extends AppCompatActivity {
 
 
 
-    //Deleting the cart food
+    //region Deleting the cart food
     public void deleteCart(int position){
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -478,6 +665,7 @@ public class CartDisplay extends AppCompatActivity {
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("startTime").setValue(readdedCartList.get(t).getStartTime());
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("endTime").setValue(readdedCartList.get(t).getEndTime());
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("lastChanges").setValue(readdedCartList.get(t).getLastChanges());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("stallId").setValue(readdedCartList.get(t).getStallId());
 
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child("numOfAddOn").setValue(0);
 
@@ -501,9 +689,10 @@ public class CartDisplay extends AppCompatActivity {
         finish();
 
     }
+    //endregion
 
 
-    //Calculate the overall total price in the cart
+    //region Calculate the overall total price in the cart
     public static void calculateOverallTotalPrice(){
         DatabaseReference drOverallTotalPrice = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -528,10 +717,8 @@ public class CartDisplay extends AppCompatActivity {
             }
         });
 
-
-
-
     }
+    //endregion
 
 
 }
