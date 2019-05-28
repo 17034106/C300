@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/draw_line">
                 <TextView
-                    android:id="@+id/CartStallName"
+                    android:id="@+id/CollectionStallName"
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
                     android:text="Stall Name"
@@ -130,40 +130,14 @@
                     />
 
             <TextView
-                android:id="@+id/tvStartTime"
+                android:id="@+id/tvCollectionTID"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
-                android:text="Start"
+                android:text="Transaction ID"
                 android:paddingRight="10dp"
                 android:textSize="18dp"
                 android:textStyle="italic"
-                android:layout_marginRight="2dp"
-                android:layout_toLeftOf="@+id/tvBetween"
-                />
-
-
-            <TextView
-                android:id="@+id/tvBetween"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:text="-"
-                android:paddingRight="10dp"
-                android:textSize="18dp"
-                android:textStyle="italic"
-                android:layout_marginRight="2dp"
-                android:layout_toLeftOf="@+id/tvEndTime"
-                />
-
-
-            <TextView
-                android:id="@+id/tvEndTime"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:text="End"
-                android:paddingRight="10dp"
-                android:textSize="18dp"
-                android:textStyle="italic"
-                android:layout_marginRight="2dp"
+                android:layout_marginRight="20dp"
                 android:layout_alignParentRight="true"
                 />
 
@@ -181,7 +155,7 @@
             >
 
             <ImageView
-                android:id="@+id/CartfoodStallImage"
+                android:id="@+id/CollectionfoodStallImage"
                 android:layout_width="117dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="18dp"
@@ -191,58 +165,58 @@
 
 
             <TextView
-                android:id="@+id/foodName"
+                android:id="@+id/CollectionfoodName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
                 android:textStyle="bold"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@id/CartfoodStallImage"
-                android:layout_toEndOf="@id/CartfoodStallImage"
+                android:layout_toRightOf="@id/CollectionfoodStallImage"
+                android:layout_toEndOf="@id/CollectionfoodStallImage"
                 android:text="Name:"
                 />
 
 
 
             <TextView
-                android:id="@+id/foodPrice"
+                android:id="@+id/CollectionfoodPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_below="@id/foodName"
+                android:layout_below="@id/CollectionfoodName"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/CartfoodStallImage"
-                android:layout_toEndOf="@id/CartfoodStallImage"
+                android:layout_toRightOf="@+id/CollectionfoodStallImage"
+                android:layout_toEndOf="@id/CollectionfoodStallImage"
                 android:text="Price:"
                 />
 
 
             <TextView
-                android:id="@+id/orderTiming"
+                android:id="@+id/CollectionOrderTiming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_below="@id/foodPrice"
+                android:layout_below="@id/CollectionfoodPrice"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/CartfoodStallImage"
-                android:layout_toEndOf="@id/CartfoodStallImage"
+                android:layout_toRightOf="@+id/CollectionfoodStallImage"
+                android:layout_toEndOf="@id/CollectionfoodStallImage"
                 android:text="Order Timing"
                 />
 
 
             <TextView
-                android:id="@+id/lastChanges"
+                android:id="@+id/CollectionlastChanges"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_below="@id/orderTiming"
+                android:layout_below="@id/CollectionOrderTiming"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/CartfoodStallImage"
-                android:layout_toEndOf="@id/CartfoodStallImage"
+                android:layout_toRightOf="@+id/CollectionfoodStallImage"
+                android:layout_toEndOf="@id/CollectionfoodStallImage"
                 android:text="Last Changes:"
                 />
 
@@ -288,7 +262,7 @@
 
 
             <TextView
-                android:id="@+id/tvAddOn"
+                android:id="@+id/tvCollectionAddOn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add On item here"
@@ -329,7 +303,7 @@
 
 
             <TextView
-                android:id="@+id/tvAdditionalNote"
+                android:id="@+id/tvCollectionAdditionalNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Additional Notes"
@@ -352,26 +326,29 @@
 
 
             <TextView
-                android:id="@+id/totalPriceIndividual"
+                android:id="@+id/CollectionTotalPriceIndividual"
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="40dp"
                 android:text="Price"
                 android:textColor="#BE5252"
                 android:textSize="23dp"
-                android:layout_marginLeft="40dp"/>
+                android:layout_marginLeft="40dp"
+                android:gravity="center_vertical"/>
 
 
-            <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
-                android:id="@+id/cartQuantity"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                app:initialNumber="1"
-                app:finalNumber="10"
-                app:backGroundColor="#5A6DE9"
-                app:textSize="8dp"
-                app:textColor="#000000"
+            <TextView
+                android:id="@+id/CollectionQuantity"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="x0"
+                android:textSize="23dp"
+                android:textColor="#000000"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"></com.cepheuen.elegantnumberbutton.view.ElegantNumberButton>
+                android:layout_marginRight="45dp"
+                android:gravity="center"/>
+
+
+
 
         </RelativeLayout>
 

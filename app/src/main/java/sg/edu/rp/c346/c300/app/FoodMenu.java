@@ -58,6 +58,7 @@ public class FoodMenu extends Fragment {
         listView.setAdapter(foodAdapter);
 
 
+        //region Does not work
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -66,7 +67,7 @@ public class FoodMenu extends Fragment {
                 Toast.makeText(getActivity(), "Click Item Name: "+food.getName(), Toast.LENGTH_SHORT).show();
             }
         });
-
+        //endregion
 
 
         setListViewHeightBasedOnChildren(listView); //use for listview in scrollview

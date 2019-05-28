@@ -118,7 +118,6 @@ public class CartAdapter extends BaseAdapter {
         tvLastChanges.setText("Last Editable: "+cart.getLastChanges());
         cartQuantity.setNumber(Integer.toString(cart.getQuantity()));
         totalPriceIndividual.setText(String.format("$%.2f", cart.getTotalPrice()));
-        additionalNote.setText(cart.getAdditionalNote());
 
 
         if (addOnValue.isEmpty()){
@@ -127,6 +126,15 @@ public class CartAdapter extends BaseAdapter {
         else{
             addon.setText(addOnValue.trim());
         }
+
+        if (cart.getAdditionalNote().isEmpty()){
+            additionalNote.setText("No Additional Notes");
+        }
+        else{
+            additionalNote.setText(cart.getAdditionalNote());
+
+        }
+
 
         cartQuantity.setOnClickListener(new ElegantNumberButton.OnClickListener() {
             @Override

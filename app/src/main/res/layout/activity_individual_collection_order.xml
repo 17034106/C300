@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IndividualCollectionOrder">
+
+
+
+
+
+
+
+    <ScrollView
+        android:id="@+id/foodDisplayScrolLView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="-162dp">
+
+
+
+        <RelativeLayout
+            android:id="@+id/foodDisplayBiggestRelative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp">
+
+
+            <RelativeLayout
+                android:id="@+id/foodDisplayRelative1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/IndividualFoodImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="310dp"
+                    android:src="@drawable/fishball"
+                    android:layout_alignParentTop="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/foodDisplayRelative2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/foodDisplayRelative1">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@drawable/straight_line"/>
+
+
+
+                    <TextView
+                        android:id="@+id/tvIndividualTID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Transaction ID"
+                        android:textSize="20dp"
+                        android:textStyle="italic"
+                        android:gravity="center_horizontal"
+                        />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@drawable/straight_line"/>
+
+                    <TextView
+                        android:id="@+id/tvIndividualFoodName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="27dp"
+                        android:textStyle="bold|italic"
+                        android:textColor="#000000"
+                        android:gravity="center_horizontal"
+                        android:background="@drawable/border_box"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginLeft="2dp"/>
+
+                    <TextView
+                        android:id="@+id/tvIndividualFoodPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Price"
+                        android:textSize="23dp"
+                        android:textStyle="bold"
+                        android:textColor="#CE1313"
+                        android:gravity="center_horizontal"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/tvIndividualFoodStallName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Stall Name"
+                        android:textSize="17dp"
+                        android:textColor="#0A0A0A"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvIndividualFoodStallDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Start - End"
+                        android:textSize="15dp"
+                        android:textColor="#0A0A0A"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvIndividualLastChanges"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Last Changes"
+                        android:textSize="12dp"
+                        android:textColor="#E93D3D"
+                        android:textStyle="italic"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Quantity"
+                        android:background="#DDC4BEBE"
+                        android:paddingLeft="10dp"
+                        android:textStyle="bold"
+                        android:textSize="17dp"
+                        android:textColor="#1D1C1C"
+                        />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:id="@+id/IndividualQuantityDisplay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="x0"
+                            android:textSize="25dp"
+                            android:layout_centerHorizontal="true"
+                            android:textStyle="bold"
+                            android:textColor="#0A0A0A"/>
+
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Add On"
+                        android:background="#DDC4BEBE"
+                        android:paddingLeft="10dp"
+                        android:textStyle="bold"
+                        android:textSize="17dp"
+                        android:textColor="#1D1C1C"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvIndividualAddOn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="start|top"
+                        android:textSize="15dp"
+                        android:hint="E.g. 'No Chili \nNotes: Those that require additional cost will not be included"
+                        />
+
+
+                    <!--//Store all the ADD ON-->
+                    <!--<LinearLayout-->
+                        <!--android:id="@+id/linearIndividualAddOn"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:orientation="vertical"-->
+                        <!--&gt;-->
+
+                        <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/relativeAddOn"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content">&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Add More Fishball"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textSize="16dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textColor="#0A0A0A"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_alignParentLeft="true"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginTop="4dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginLeft="10dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:gravity="center"/>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="$0.50"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textSize="16dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toLeftOf="@+id/checkboxAddOnFishball"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginTop="4dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginRight="8dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;<CheckBox&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/checkboxAddOnFishball"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginRight="13dp"/>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+
+
+                    <!--</LinearLayout>-->
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Additional Notes"
+                        android:background="#DDC4BEBE"
+                        android:paddingLeft="10dp"
+                        android:textStyle="bold"
+                        android:textSize="17dp"
+                        android:textColor="#1D1C1C"
+                        android:layout_marginTop="6dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvIndividualAddtionalNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="start|top"
+                        android:textSize="15dp"
+                        android:hint="E.g. 'No Chili \nNotes: Those that require additional cost will not be included"
+                        android:inputType="textMultiLine" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@drawable/straight_line"
+                        android:layout_below="@+id/tvIndividualAddtionalNotes"/>
+
+
+                    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                        android:id="@+id/IndividualEditOrderBtn"
+                        android:layout_width="300dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/custom_background_loading_button_login"
+                        android:text="Edit Order"
+                        android:textSize="22dp"
+                        android:textColor="#000000"
+                        app:spinning_bar_color="#fff"
+                        app:spinning_bar_padding="6dp"
+                        app:spinning_bar_width="4dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_horizontal"/>
+
+
+                    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                        android:id="@+id/IndividualDeleteOrderBtn"
+                        android:layout_width="300dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/custom_background_loading_button_login"
+                        android:text="Delete Order"
+                        android:textSize="22dp"
+                        android:textColor="#000000"
+                        app:spinning_bar_color="#fff"
+                        app:spinning_bar_padding="6dp"
+                        app:spinning_bar_width="4dp"
+                        android:layout_marginTop="13dp"
+                        android:layout_marginBottom="15dp"
+                        android:layout_gravity="center_horizontal"/>
+
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+
+
+
+
+
+
+
+    </ScrollView>
+
+    <!--<ImageButton-->
+        <!--android:id="@+id/floatingButtonCart"-->
+        <!--android:layout_width="35dp"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:background="@drawable/oval"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:src="@drawable/ic_shopping_cart"-->
+        <!--/>-->
+
+
+    <ImageButton
+        android:id="@+id/floatingButtonBack"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/oval"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_back_arrow"
+        />
+
+
+
+
+
+
+
+
+</RelativeLayout>

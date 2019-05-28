@@ -416,9 +416,11 @@ public class CartDisplay extends AppCompatActivity {
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("lastChanges").setValue(lastChanges);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("stallId").setValue(stallId);
                                     String tId; // use for setting a unique Transaction ID
-                                    tId = ""+FirebaseAuth.getInstance().getCurrentUser().getUid()+stallId+checkingNumOfOrderRepeat.get(stallId);
+                                    tId = ""+randomStringValue(16)+stallId+checkingNumOfOrderRepeat.get(stallId);
                                     tIdList.add(tId);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("tId").setValue(tId);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("startTime").setValue(startTime);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("endTime").setValue(endTime);
 
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h =0; h<numOfAddOn;h++) {
@@ -477,6 +479,8 @@ public class CartDisplay extends AppCompatActivity {
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("lastChanges").setValue(transactionList.get(i).getLastChanges());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("stallId").setValue(transactionList.get(i).getStallId());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("tId").setValue(tIdList.get(i));
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("startTime").setValue(transactionList.get(i).getStartTime());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("endTime").setValue(transactionList.get(i).getEndTime());
 
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {
@@ -820,5 +824,17 @@ public class CartDisplay extends AppCompatActivity {
     }
     //endregion
 
+
+    //region generate random string value
+    private static final String STRING_VALUE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789";
+    public static String randomStringValue(int count) {
+        StringBuilder stringBuilder = new StringBuilder();
+        while (count-- != 0) {
+            int num = (int)(Math.random()*STRING_VALUE.length());  // Math.floor(Math.random() * 10);    returns a random integer from 0 to 9
+            stringBuilder.append(STRING_VALUE.charAt(num));
+        }
+        return stringBuilder.toString();
+    }
+    //endregion
 
 }

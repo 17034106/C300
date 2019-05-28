@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import sg.edu.rp.c346.c300.CartDisplay;
+import sg.edu.rp.c346.c300.CollectionOrderPage;
 import sg.edu.rp.c346.c300.MainActivity;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.SettingEditablePage;
@@ -85,7 +86,7 @@ public class AccountMenu extends Fragment {
         //endregion
 
 
-
+        //Intent to show the information of the customer
         view.findViewById(R.id.accountSetting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +94,19 @@ public class AccountMenu extends Fragment {
                 startActivity(intent);
             }
         });
+
+
+        //intent to show the collection order
+        view.findViewById(R.id.accountPreOrderMade).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CollectionOrderPage.class);
+                startActivity(intent);
+            }
+        });
+
+
+
 
 
 
