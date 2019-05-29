@@ -21,6 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import sg.edu.rp.c346.c300.model.Customer;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.model.School;
@@ -38,7 +42,7 @@ public class MainpageActivity extends AppCompatActivity {
 
     DatabaseReference databaseReference;
 
-    String school; // example
+    public static String school; // use for getting the school to IndividualEditFoodDisplay
     String name;
     double balance;
 
@@ -150,6 +154,34 @@ public class MainpageActivity extends AppCompatActivity {
 
 
     }
+
+
+    public static Date convertStringToDate(String dateString, String pattern){
+        SimpleDateFormat inputFormat = new SimpleDateFormat(pattern);
+
+        Date dateDate = null;
+
+        try{
+            dateDate= inputFormat.parse(dateString);
+        }
+        catch (ParseException e){
+
+        }
+
+        return dateDate;
+    }
+
+
+    public static String convertDateToString(Date dateDate, String pattern){
+        SimpleDateFormat inputFormat = new SimpleDateFormat(pattern);
+
+        String dateString =inputFormat.format(dateDate);
+
+        return dateString;
+    }
+
+
+
 
     @Override
     protected void onStart() {

@@ -162,6 +162,7 @@ public class CartDisplay extends AppCompatActivity {
                         String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
                         String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
                         int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
+                        int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -176,7 +177,7 @@ public class CartDisplay extends AppCompatActivity {
                         }
 
 
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
                         cartList.add(cart);
 
 //                        Log.d("------------","--------------------------------------------------------------------");
@@ -360,6 +361,7 @@ public class CartDisplay extends AppCompatActivity {
                             final String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
                             final String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
                             final int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
+                            final int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
 
                             final ArrayList<AddOn> addOnList= new ArrayList<>();
                             addOnList.clear();
@@ -374,7 +376,7 @@ public class CartDisplay extends AppCompatActivity {
                             }
 
 
-                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
+                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
                             transactionList.add(cart);
 
 
@@ -415,8 +417,9 @@ public class CartDisplay extends AppCompatActivity {
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("additionalNote").setValue(additionalNote+"");
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("lastChanges").setValue(lastChanges);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("stallId").setValue(stallId);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("foodId").setValue(foodId);
                                     String tId; // use for setting a unique Transaction ID
-                                    tId = ""+randomStringValue(16)+stallId+checkingNumOfOrderRepeat.get(stallId);
+                                    tId = ""+randomStringValue(17)+stallId+foodId+checkingNumOfOrderRepeat.get(stallId);
                                     tIdList.add(tId);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("tId").setValue(tId);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("startTime").setValue(startTime);
@@ -478,6 +481,7 @@ public class CartDisplay extends AppCompatActivity {
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("additionalNote").setValue(transactionList.get(i).getAdditionalNote() + "");
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("lastChanges").setValue(transactionList.get(i).getLastChanges());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("stallId").setValue(transactionList.get(i).getStallId());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("foodId").setValue(transactionList.get(i).getFoodId());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("tId").setValue(tIdList.get(i));
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("startTime").setValue(transactionList.get(i).getStartTime());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("endTime").setValue(transactionList.get(i).getEndTime());

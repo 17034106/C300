@@ -98,6 +98,12 @@ public class Food_display extends AppCompatActivity {
         additionalNote = findViewById(R.id.etAddtionalNotes);
         tvFoodStallDuration = findViewById(R.id.tvFoodStallDuration);
 
+
+
+
+
+
+
         eachPrice = intent.getDoubleExtra("foodPrice",0);
         totalPrice =  eachPrice * quantityValue;
 
@@ -128,12 +134,12 @@ public class Food_display extends AppCompatActivity {
         int stallId = intent.getIntExtra("stallId",1);
         int foodId = intent.getIntExtra("foodId",1);
 
+
+        //region display all AddOn
+        //---------------------------------------------------------------------------------------------------------------
         final DatabaseReference databaseReferenceAddOn = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(school).child("stall").child(Integer.toString(stallId)).child("food").child(Integer.toString(foodId)).child("AddOn");
-        Log.d("fasjbfldablfbdsl","blsdfns:  "+databaseReferenceAddOn);
 
         final LinearLayout linearLayout = findViewById(R.id.linearAddOn);
-
-
 
         databaseReferenceAddOn.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -147,6 +153,8 @@ public class Food_display extends AppCompatActivity {
                     final String name = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
                     final String price = dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString();
                     final double doublePrice = Double.parseDouble(price);
+
+
 
                     RelativeLayout relativeAddOn = new RelativeLayout(getApplication());
 
@@ -218,6 +226,8 @@ public class Food_display extends AppCompatActivity {
 
                         }
                     });
+                    //---------------------------------------------------------------------------------------------------------------
+                    //endregion
 
 
 
@@ -317,6 +327,7 @@ public class Food_display extends AppCompatActivity {
                 intentCheckOut.putExtra("startTime", intent.getStringExtra("startTime"));
                 intentCheckOut.putExtra("endTime", intent.getStringExtra("endTime"));
                 intentCheckOut.putExtra("stallId", intent.getIntExtra("stallId",-1));
+                intentCheckOut.putExtra("foodId", intent.getIntExtra("foodId", -1));
 
 
 

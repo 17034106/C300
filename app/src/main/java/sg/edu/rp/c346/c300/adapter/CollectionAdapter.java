@@ -91,7 +91,6 @@ public class CollectionAdapter extends BaseAdapter {
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
 
-        Log.d("jjgjhjhjhjhj", "kjkjbkjdabfkda What is TID: "+collection.gettId());
 
         tvTID.setText(collection.gettId());
         cartStallName.setText(collection.getStallName());
@@ -131,6 +130,7 @@ public class CollectionAdapter extends BaseAdapter {
                 intent.putExtra("quantity", collection.getQuantity());
                 intent.putExtra("stallName", collection.getStallName());
                 intent.putExtra("stallId", collection.getStallId());
+                intent.putExtra("foodId", collection.getFoodId());
                 intent.putExtra("totalPrice", collection.getTotalPrice());
                 intent.putExtra("additionalNote", collection.getAdditionalNote());
                 intent.putExtra("lastChanges", collection.getLastChanges());

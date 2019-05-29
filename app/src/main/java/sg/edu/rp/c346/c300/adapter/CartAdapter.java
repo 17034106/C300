@@ -32,6 +32,7 @@ public class CartAdapter extends BaseAdapter {
     final FirebaseUser mUser = mAuth.getCurrentUser();
 
 
+
     public CartAdapter(Context context, ArrayList<Cart> carts) {
         this.context = context;
         this.carts = carts;
@@ -79,6 +80,7 @@ public class CartAdapter extends BaseAdapter {
 
         final Cart cart = carts.get(position);
        ArrayList<AddOn> addOnThing = carts.get(position).getAddOnList();
+
 
         String addOnValue="";
         ArrayList<AddOn> addOnList = cart.getAddOnList();

@@ -137,7 +137,7 @@
                 android:paddingRight="10dp"
                 android:textSize="18dp"
                 android:textStyle="italic"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="5dp"
                 android:layout_alignParentRight="true"
                 />
 

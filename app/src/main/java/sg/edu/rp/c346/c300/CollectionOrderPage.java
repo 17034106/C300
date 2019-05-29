@@ -23,6 +23,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 import sg.edu.rp.c346.c300.adapter.CollectionAdapter;
+import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Cart;
 import sg.edu.rp.c346.c300.model.Collection;
@@ -37,6 +38,7 @@ public class CollectionOrderPage extends AppCompatActivity {
     ListView collectionListView;
     CollectionAdapter collectionAdapter;
     ArrayList<Collection> collectionList = new ArrayList<>();
+    ArrayList<Collection> arrangeCollectionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class CollectionOrderPage extends AppCompatActivity {
                     int quantity = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("quantity").getValue().toString());
                     String stallName = dataSnapshot.child(Integer.toString(i)).child("stallName").getValue().toString();
                     int  stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
+                    int  foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
                     double  totalPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
                     String  additionalNote = dataSnapshot.child(Integer.toString(i)).child("additionalNote").getValue().toString();
                     String  lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
@@ -77,19 +80,55 @@ public class CollectionOrderPage extends AppCompatActivity {
                         addOnList.add(addOn);
                     }
 
-                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, totalPrice, addOnList,additionalNote,lastChanges,tId, startTime, endTime);
+                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,tId, startTime, endTime);
                     collectionList.add(collection);
                     Log.d("jjgjhjhjhjhj", "kjkjbkjdabfkda What is TID: "+tId);
                 }
 
+                //region re-arrange the order based on the datetimeOrder (oldest should be at the top)
+                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                while (collectionList.size()!=0){
+                    int oldestIndex =0;
+                    for (int h =0; h<collectionList.size();h++){
+                        if (MainpageActivity.convertStringToDate(collectionList.get(oldestIndex).getDateTimeOrder(),"dd/MM/yyyy hh:mm a").compareTo(MainpageActivity.convertStringToDate(collectionList.get(h).getDateTimeOrder(),"dd/MM/yyyy hh:mm a"))>0){
+                            oldestIndex = h;
+                            Log.d("what is h", "What is h: "+h);
+                        }
+                    }
+
+                    ArrayList<Integer> repeatedList = new ArrayList<>();
+                    repeatedList.clear();
+                    for (int i =0; i<collectionList.size();i++){
+                        Log.d("What is oldest", "What is the oldest: "+oldestIndex);
+                        if (collectionList.get(oldestIndex).getDateTimeOrder().compareTo(collectionList.get(i).getDateTimeOrder())==0){
+                            Log.d("What is oldestIndex: ","What is the oldestIndex: "+collectionList.get(oldestIndex).getDateTimeOrder());
+                            Log.d("What is newIndex: ","What is the newIndex: "+collectionList.get(i).getDateTimeOrder());
+                            arrangeCollectionList.add(collectionList.get(i));
+                            repeatedList.add(i);
+                        }
+                    }
+
+                    Log.d("What is the size", "What is the size of the collectionList Before: "+collectionList.size());
+                    Log.d("What is repeatedList", "What is repeatedList: "+repeatedList);
+                    for (int i = repeatedList.size()-1; i>-1; i--){
+                        Log.d("Remove which one:", "Your remove which one: "+repeatedList.get(i));
+                        collectionList.remove(collectionList.get(repeatedList.get(i)));
+                        Log.d("What is the size", "What is the size of the collectionList After: "+collectionList.size());
+                    }
+
+
+                }
+                //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                //endregion
+
                 collectionListView = findViewById(R.id.collectionOrderListView);
-                collectionAdapter = new CollectionAdapter(CollectionOrderPage.this, collectionList);
+                collectionAdapter = new CollectionAdapter(CollectionOrderPage.this, arrangeCollectionList);
                 collectionListView.setAdapter(collectionAdapter);
 
 
 
 
-                if (collectionList.size()==0){
+                if (arrangeCollectionList.size()==0){
                     displayNoCollection.setVisibility(TextView.VISIBLE);
                 }
                 else{

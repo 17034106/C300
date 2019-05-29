@@ -11,6 +11,7 @@ public class Collection {
     private int quantity;
     private String stallName;
     private int stallId;
+    private int foodId;
     private double totalPrice;
     private ArrayList<AddOn> addOnList;
     private String additionalNote;
@@ -20,13 +21,14 @@ public class Collection {
     private String endTime;
 
 
-    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String lastChanges, String tId, String startTime, String endTime) {
+    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String lastChanges, String tId, String startTime, String endTime) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
         this.quantity = quantity;
         this.stallName = stallName;
         this.stallId = stallId;
+        this.foodId = foodId;
         this.totalPrice = totalPrice;
         this.addOnList = addOnList;
         this.additionalNote = additionalNote;
@@ -82,6 +84,14 @@ public class Collection {
 
     public void setStallId(int stallId) {
         this.stallId = stallId;
+    }
+
+    public int getFoodId() {
+        return foodId;
+    }
+
+    public void setFoodId(int foodId) {
+        this.foodId = foodId;
     }
 
     public double getTotalPrice() {

@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import sg.edu.rp.c346.c300.adapter.CollectionAdapter;
+import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
 
 public class IndividualCollectionOrder extends AppCompatActivity {
@@ -37,13 +40,17 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
 
 
-        Intent intentReceive = getIntent();
+        final Intent intentReceive = getIntent();
 
         tvTID.setText(intentReceive.getStringExtra("tId"));
         tvFoodName.setText(intentReceive.getStringExtra("foodName"));
         tvFoodPrice.setText(String.format("$%.2f", intentReceive.getDoubleExtra("foodPrice",0)));
         tvStallName.setText(String.format("Stall: %s",intentReceive.getStringExtra("stallName")));
-        tvFoodStallOperation.setText(String.format("Working from %s to %s", intentReceive.getStringExtra("startTime"), intentReceive.getStringExtra("endTime")));
+
+        Date stallStartOperationDate = MainpageActivity.convertStringToDate(intentReceive.getStringExtra("startTime"), "HHmm");
+        Date stallEndOperationDate = MainpageActivity.convertStringToDate(intentReceive.getStringExtra("endTime"), "HHmm");
+
+        tvFoodStallOperation.setText(String.format("Working from %s to %s", MainpageActivity.convertDateToString(stallStartOperationDate, "hh:mm a"),MainpageActivity.convertDateToString(stallEndOperationDate, "hh:mm a") ));
         String lastChangeDisplay = "Changes can only be made before <b>"+intentReceive.getStringExtra("lastChanges")+"</b>";
         tvLastChange.setText(Html.fromHtml(lastChangeDisplay));
         tvQuantity.setText(String.format("x%d", intentReceive.getIntExtra("quantity", 0)));
@@ -67,6 +74,24 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         else {
             tvAddOn.setText(addOnString.trim());
         }
+
+
+        findViewById(R.id.IndividualEditOrderBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(IndividualCollectionOrder.this, IndividualEditFoodDisplay.class);
+                intent.putExtra("tId",intentReceive.getStringExtra("tId") );
+                intent.putExtra("foodName", intentReceive.getStringExtra("foodName"));
+                intent.putExtra("foodPrice", intentReceive.getDoubleExtra("foodPrice",0));
+                intent.putExtra("stallName", intentReceive.getStringExtra("stallName"));
+                intent.putExtra("stallId", intentReceive.getIntExtra("stallId", 0));
+                intent.putExtra("startTime", intentReceive.getStringExtra("startTime"));
+                intent.putExtra("endTime", intentReceive.getStringExtra("endTime"));
+                intent.putExtra("quantity",intentReceive.getIntExtra("quantity", 0));
+                intent.putExtra("additionalNote",intentReceive.getStringExtra("additionalNote"));
+                startActivity(intent);
+            }
+        });
 
     }
 }

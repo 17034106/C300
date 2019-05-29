@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
 
 public class dateTimeSelection extends Activity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -125,6 +126,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         final String startTime = intentReceive.getStringExtra("startTime");
         final String endTime = intentReceive.getStringExtra("endTime");
         final int stallId = intentReceive.getIntExtra("stallId",-1);
+        final int foodId = intentReceive.getIntExtra("foodId", -1);
 
         final ArrayList<AddOn> addOnArrayList =Food_display.addOnArray;
 
@@ -176,9 +178,10 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
             public void onClick(View v) {
 
 
+                Date dateTimeOrderDate = MainpageActivity.convertStringToDate(String.format("%02d/%02d/%02d %02d:%02d",dayFinal,monthFinal,yearFinal,hourFinal,minuteFinal), "dd/MM/yyyy HH:mm");
+                String dateTimeOrderString = MainpageActivity.convertDateToString(dateTimeOrderDate, "dd/MM/yyyy h:mm a");
 
-
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("dateTimeOrder").setValue(String.format("%02d/%02d/%02d %02d:%02d",dayFinal,monthFinal,yearFinal,hourFinal,minuteFinal));
+                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("dateTimeOrder").setValue(dateTimeOrderString);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("name").setValue(foodName);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("price").setValue(foodPrice);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("quantity").setValue(quantityValue);
@@ -189,6 +192,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("endTime").setValue(endTime);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("lastChanges").setValue(lastChangesToEdit);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("stallId").setValue(stallId);
+                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("foodId").setValue(foodId);
 
 
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child("numOfAddOn").setValue(0);
@@ -562,7 +566,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
             Log.d("timeSelectedLastChanges", "TimeSelctedLastChanges is "+timeSelectedLastChanges);
 
-            lastChangesToEdit = String.format("%02d/%02d/%02d %s", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth(), dateFormatSelectedByUser.getYear()+1900, timeSelectedLastChanges);
+            lastChangesToEdit = String.format("%02d/%02d/%02d %s", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth()+1, dateFormatSelectedByUser.getYear()+1900, timeSelectedLastChanges);
             tvLastChanges.setText(Html.fromHtml(String.format("<b>Latest</b> Editable: %s",lastChangesToEdit)));
             tvLastChanges.setTextColor(Color.rgb(16,124,16));
 
