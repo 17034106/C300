@@ -1,27 +1,27 @@
 package sg.edu.rp.c346.c300;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.icu.text.TimeZoneFormat;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -29,8 +29,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,12 +38,13 @@ import java.util.Date;
 
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
+import sg.edu.rp.c346.c300.model.Customer;
 
-public class dateTimeSelection extends Activity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+public class IndividualEditFoodDateTimeSelection extends Activity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     TextView btnSelectDate, btnSelectTime, tvCurrentDateTime, tvEarliestCollection, tvLastChanges;
 
-    RelativeLayout foodDisplyCheckOut;
+    RelativeLayout foodDisplyConfirmEdit;
 
     int day, month, year, hour, minute;
     int dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal;
@@ -69,8 +68,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
     int lastChangesHour;
     String lastChangesToEdit;
 
-    DatabaseReference databaseReferenceGettingNumOfCartFood;
-    int numOfCartFood=-0;
+
 
     Date currentTime = Calendar.getInstance().getTime();
     Date stringCurrentDateConverted;
@@ -82,13 +80,14 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
     String datePattern = "dd/MM/yyyy (EEEE)";
     SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
 
+    String customerSchool; //get the user's school
+    DatabaseReference drEditConfirmFoodTO;
 
+    int positionInOrder_Firebase; //check the position in the order(firebase)
 
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_date_time_selection);
+        setContentView(R.layout.activity_individual_edit_food_date_time_selection);
 
 
         //region  pop up window for select date and time
@@ -115,11 +114,11 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
 
         //region Get the value from the previous activity (intent)
-        Intent intentReceive = getIntent();
+        final Intent intentReceive = getIntent();
         final String foodName = intentReceive.getStringExtra("foodName");
         final double foodPrice = intentReceive.getDoubleExtra("foodPrice",0);
         final String stallname = intentReceive.getStringExtra("stallName");
-        lastChanges = intentReceive.getIntExtra("lastChanges", 0);
+        lastChanges = intentReceive.getIntExtra("lastChangesInMin", 0);
         final int quantityValue = intentReceive.getIntExtra("quantity", 0);
         final String additionalNote = intentReceive.getStringExtra("additionalNote");
         final double totalPrice = intentReceive.getDoubleExtra("totalPrice",0);
@@ -127,8 +126,9 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         final String endTime = intentReceive.getStringExtra("endTime");
         final int stallId = intentReceive.getIntExtra("stallId",-1);
         final int foodId = intentReceive.getIntExtra("foodId", -1);
+        final String tId = intentReceive.getStringExtra("tId");
 
-        final ArrayList<AddOn> addOnArrayList =Food_display.addOnArray;
+
 
         //endregion
 
@@ -144,15 +144,60 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
         timer(startTime, endTime); // called the method to keep updating the date and time
 
-        //region get the number of cart food so that i can know the index of the new added cart food
-        databaseReferenceGettingNumOfCartFood = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("numOfCartFood");
-        databaseReferenceGettingNumOfCartFood.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        //region  get the customer's school
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+        final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                numOfCartFood = Integer.parseInt(dataSnapshot.getValue().toString());
-                Log.d("----------------","======================="+numOfCartFood);
-                Log.d("----------------","======================="+dataSnapshot);
+                Customer customer = dataSnapshot.getValue(Customer.class);
+                customerSchool = customer.getCustomerschool();
 
+                drEditConfirmFoodTO = FirebaseDatabase.getInstance().getReference().child("to").child("school").child(customerSchool).child("stall").child(stallId+"").child("order");
+                drEditConfirmFoodTO.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int numOfOrderInOwner =Integer.parseInt(dataSnapshot.child("numOfOrder").getValue().toString());
+
+                        for (int i =0; i<numOfOrderInOwner;i++){
+                            if (dataSnapshot.child(i+"").child("tId").getValue().toString().equals(tId)){
+                                drEditConfirmFoodTO = drEditConfirmFoodTO.child(i+"");
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //endregion
+
+
+        final DatabaseReference drEditConfirmFoodTC = FirebaseDatabase.getInstance().getReference().child("tc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order");
+
+
+        //region check the position in the order(firebase) - Customer firebase
+        drEditConfirmFoodTC.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int totalNumOfOrder = Integer.parseInt(dataSnapshot.child("numOfOrder").getValue().toString().trim());
+                for (int i =0; i<totalNumOfOrder;i++){
+                    if (dataSnapshot.child(i+"").child("tId").getValue().toString().equals(intentReceive.getStringExtra("tId"))){
+                        positionInOrder_Firebase = i;
+                    }
+                }
             }
 
             @Override
@@ -163,55 +208,98 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         //endregion
 
 
-        final DatabaseReference databaseReferenceAddFoodCart = FirebaseDatabase.getInstance().getReference().child("cart").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-
-        //region Press addToCartButton
-        foodDisplyCheckOut = findViewById(R.id.FoodDisplyCheckOut);
-
-        foodDisplyCheckOut.setEnabled(false);
 
 
 
-        foodDisplyCheckOut.setOnClickListener(new View.OnClickListener() {
+
+
+        //region Press Finish edit the confirmed order
+        foodDisplyConfirmEdit = findViewById(R.id.FoodDisplyCheckOut);
+
+        foodDisplyConfirmEdit.setEnabled(false);
+
+
+
+        foodDisplyConfirmEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
-                Date dateTimeOrderDate = MainpageActivity.convertStringToDate(String.format("%02d/%02d/%02d %02d:%02d",dayFinal,monthFinal,yearFinal,hourFinal,minuteFinal), "dd/MM/yyyy HH:mm");
-                String dateTimeOrderString = MainpageActivity.convertDateToString(dateTimeOrderDate, "dd/MM/yyyy h:mm a");
-
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("dateTimeOrder").setValue(dateTimeOrderString);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("name").setValue(foodName);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("price").setValue(foodPrice);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("quantity").setValue(quantityValue);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("stallName").setValue(stallname);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("totalPrice").setValue(totalPrice);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("additionalNote").setValue(additionalNote+"");
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("startTime").setValue(startTime);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("endTime").setValue(endTime);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("lastChanges").setValue(lastChangesToEdit);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("stallId").setValue(stallId);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("foodId").setValue(foodId);
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("lastChangesInMin").setValue(lastChanges);
+                //region display popup question dialog
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //region Commit the changes for the confirmed order in customer firebase (TC)
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("additionalNote").setValue(additionalNote);
+                                Date dateTimeOrderDate = MainpageActivity.convertStringToDate(String.format("%02d/%02d/%02d %02d:%02d",dayFinal,monthFinal,yearFinal,hourFinal,minuteFinal), "dd/MM/yyyy HH:mm");
+                                String dateTimeOrderString = MainpageActivity.convertDateToString(dateTimeOrderDate, "dd/MM/yyyy h:mm a");
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("dateTimeOrder").setValue(dateTimeOrderString);
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("lastChanges").setValue(lastChangesToEdit);
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("price").setValue(foodPrice);
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("quantity").setValue(quantityValue);
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("totalPrice").setValue(totalPrice);
 
 
-                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child("numOfAddOn").setValue(0);
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("addOn").removeValue();
+
+                                drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("addOn").child("numOfAddOn").setValue(0);
 
 
-                for (int i =0; i<addOnArrayList.size();i++) {
-                    databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child(Integer.toString(i)).child("name").setValue(addOnArrayList.get(i).getName());
-                    databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child(Integer.toString(i)).child("price").setValue(addOnArrayList.get(i).getPrice());
-                    databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child("numOfAddOn").setValue(i+1);
+                                for (int i =0; i<IndividualEditFoodDisplay.addOnArray.size();i++) {
+                                    drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("addOn").child(Integer.toString(i)).child("name").setValue(IndividualEditFoodDisplay.addOnArray.get(i).getName());
+                                    drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("addOn").child(Integer.toString(i)).child("price").setValue(IndividualEditFoodDisplay.addOnArray.get(i).getPrice());
+                                    drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("addOn").child("numOfAddOn").setValue(i+1);
 
-                }
+                                }
+                                //endregion
 
-                databaseReferenceGettingNumOfCartFood.setValue(++numOfCartFood);
 
-                Intent intent = new Intent(dateTimeSelection.this, CartDisplay.class);
-                startActivity(intent);
-                Food_display.finishActivity().finish(); // finish Food_display class when the user confirm the food
-                finish();
+                                //region commit the changes for the confirmed order in owner firebase (TO)
+
+                                drEditConfirmFoodTO.child("dateTimeOrder").setValue(dateTimeOrderString);
+                                drEditConfirmFoodTO.child("price").setValue(foodPrice);
+                                drEditConfirmFoodTO.child("quantity").setValue(quantityValue);
+                                drEditConfirmFoodTO.child("totalPrice").setValue(totalPrice);
+                                drEditConfirmFoodTO.child("additionalNote").setValue(additionalNote+"");
+                                drEditConfirmFoodTO.child("lastChanges").setValue(lastChangesToEdit);
+
+                                drEditConfirmFoodTO.child("addOn").removeValue();
+                                drEditConfirmFoodTO.child("addOn").child("numOfAddOn").setValue(0);
+                                for (int i =0; i<IndividualEditFoodDisplay.addOnArray.size();i++) {
+                                    drEditConfirmFoodTO.child("addOn").child(Integer.toString(i)).child("name").setValue(IndividualEditFoodDisplay.addOnArray.get(i).getName());
+                                    drEditConfirmFoodTO.child("addOn").child(Integer.toString(i)).child("price").setValue(IndividualEditFoodDisplay.addOnArray.get(i).getPrice());
+                                    drEditConfirmFoodTO.child("addOn").child("numOfAddOn").setValue(i+1);
+
+                                }
+
+                                Toast.makeText(IndividualEditFoodDateTimeSelection.this, "Edited Successfully", Toast.LENGTH_SHORT).show();
+
+                                IndividualEditFoodDisplay.getInstance().finish(); // finish IndividualEditFoodDisplay activity from here
+                                IndividualCollectionOrder.getInstance().finish();
+                                CollectionOrderPage.getInstance().finish();
+                                Intent intent = new Intent(IndividualEditFoodDateTimeSelection.this, CollectionOrderPage.class);
+                                startActivity(intent);
+                                finish();
+
+                                //endregion
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(IndividualEditFoodDateTimeSelection.this);
+                builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+                //endregion
+
+
+
 
             }
         });
@@ -233,7 +321,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 month = c.get(Calendar.MONTH);
                 day = c.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(dateTimeSelection.this, dateTimeSelection.this, year, month, day);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(IndividualEditFoodDateTimeSelection.this, IndividualEditFoodDateTimeSelection.this, year, month, day);
                 datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)5.184e+8);
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
@@ -249,9 +337,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 month = c.get(Calendar.MONTH);
                 day = c.get(Calendar.DAY_OF_MONTH);
 
-                Log.d("-----====", "What is c.getTimeInMillis: "+c.getTimeInMillis());
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(dateTimeSelection.this, dateTimeSelection.this, year, month, day);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(IndividualEditFoodDateTimeSelection.this, IndividualEditFoodDateTimeSelection.this, year, month, day);
                 datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)5.184e+8);
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
@@ -279,7 +366,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(dateTimeSelection.this, dateTimeSelection.this, hour, minute, false);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(IndividualEditFoodDateTimeSelection.this, IndividualEditFoodDateTimeSelection.this, hour, minute, false);
         timePickerDialog.show();
     }
 
@@ -378,9 +465,9 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                                         }
                                     }
                                     else if (earlierHour>endTimeDate.getHours()){ //hour
-                                            earliestDate.add(Calendar.DATE,1);
-                                            earlierHour = startTimeDate.getHours();
-                                            earliestMinute =startTimeDate.getMinutes();
+                                        earliestDate.add(Calendar.DATE,1);
+                                        earlierHour = startTimeDate.getHours();
+                                        earliestMinute =startTimeDate.getMinutes();
 
                                     }
 
@@ -412,19 +499,25 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                                 String dateSelectedByUser = String.format("%02d/%02d/%02d %d:%02d", dayFinal, monthFinal, yearFinal, hourFinal, minuteFinal);
 
                                 dateFormatSelectedByUser =null; // store the selected date by user in date format
-                                SimpleDateFormat dateComparePattern = new SimpleDateFormat("ddMMyyyy");
+                                SimpleDateFormat dateComparePattern = new SimpleDateFormat("yyyy/MM/dd");
+
+                                stringCurrentDateConverted = MainpageActivity.convertStringToDate((currentTime.getYear()+1900)+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getDate(),"yyyy/MM/dd" );
 
                                 try {
                                     dateFormatSelectedByUser = datePattern.parse(dateSelectedByUser);
-                                    stringCurrentDateConverted = dateComparePattern.parse(currentTime.getDate()+""+(currentTime.getMonth()+1)+(currentTime.getYear()+1900));
-                                    stringSelectedUserDateConverted = dateComparePattern.parse(dateFormatSelectedByUser.getDate()+""+(dateFormatSelectedByUser.getMonth()+1)+(dateFormatSelectedByUser.getYear()+1900));
-                                    Log.d("0","qwertyuio--++++++++: "+dateFormatSelectedByUser);
+
+//                                    stringCurrentDateConverted = dateComparePattern.parse(currentTime.getDate()+""+(currentTime.getMonth()+1)+(currentTime.getYear()+1900));
+//                                    stringSelectedUserDateConverted = dateComparePattern.parse(dateFormatSelectedByUser.getDate()+""+(dateFormatSelectedByUser.getMonth()+1)+(dateFormatSelectedByUser.getYear()+1900));
+
+//                                    stringCurrentDateConverted = dateComparePattern.parse((currentTime.getYear()+1900)+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getDate());
+                                    stringSelectedUserDateConverted = dateComparePattern.parse((dateFormatSelectedByUser.getYear()+1900)+"/"+(dateFormatSelectedByUser.getMonth()+1)+"/"+dateFormatSelectedByUser.getDate());
+
+
 
 
                                 }catch (ParseException e){
 
                                 }
-
 
 
                                 //region Check condition to enable or disable the foodDisplayCheckOut
@@ -494,7 +587,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                                 }
 
 
-                                    //endregion
+                                //endregion
 
 
 
@@ -506,7 +599,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
             }
         }).start();}
 
-        //endregion
+    //endregion
 
 
     // make the textview blink
@@ -522,13 +615,14 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
     // if true, then it will allow the user to press the foodDisplayCheckOut
     public void correctTimeSelected(boolean b, String d){
         if (b== true){
-            foodDisplyCheckOut.setEnabled(true);
+            foodDisplyConfirmEdit.setEnabled(true);
             tvEarliestCollection.setVisibility(View.VISIBLE);
             tvEarliestCollection.setTextColor(Color.BLACK);
             lastChangesHour = dateFormatSelectedByUser.getHours();
             lastChangesMinute = dateFormatSelectedByUser.getMinutes();
 
-            Log.d("hhhhhhhhh", "What is the lastChangeHour: "+lastChangesHour+" What is the start time hour: "+startTimeDate.getHours());
+            Log.d("What is the first", "What is lastChangeHour 1: "+lastChangesHour);
+            Log.d("What is the first", "What is lastChangeMinue 1: "+lastChangesMinute);
 
             if (lastChangesHour<startTimeDate.getHours()){
                 lastChangesHour = startTimeDate.getHours();
@@ -540,6 +634,9 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 }
             }
 
+            Log.d("What is the first", "What is lastChangeHour 2: "+lastChangesHour);
+            Log.d("What is the first", "What is lastChangeMinue 2: "+lastChangesMinute);
+
 
             lastChangesMinute = lastChangesMinute - lastChanges;
             if (lastChangesMinute<0){
@@ -547,7 +644,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 lastChangesMinute+=60;
             }
 
-            Log.d("--------------", "What is the lastChangeHour: "+lastChangesHour+" What is the start time hour: "+startTimeDate.getHours());
+            Log.d("What is the first", "What is lastChangeHour 3: "+lastChangesHour);
+            Log.d("What is the first", "What is lastChangeMinue 3: "+lastChangesMinute);
 
 
             SimpleDateFormat timeSelectedToDatePattern = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -556,8 +654,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
             try{
                 Date change = timeSelectedToDatePattern.parse(dateFormatSelectedByUser.getDate()+"/"+dateFormatSelectedByUser.getMonth()+1+"/"+ dateFormatSelectedByUser.getYear()+1900+" "+lastChangesHour+":"+lastChangesMinute);
-                Log.d("change", "what is change: "+change);
-                Log.d("123445665454", "What is the lastChangeHour: "+lastChangesHour+" What is the lastChangesMinute: "+lastChangesMinute);
+
 
                 timeSelectedLastChanges = timeSelectedToStringPattern.format(change);
             }
@@ -565,7 +662,6 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
             }
 
-            Log.d("timeSelectedLastChanges", "TimeSelctedLastChanges is "+timeSelectedLastChanges);
 
             lastChangesToEdit = String.format("%02d/%02d/%02d %s", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth()+1, dateFormatSelectedByUser.getYear()+1900, timeSelectedLastChanges);
             tvLastChanges.setText(Html.fromHtml(String.format("<b>Latest</b> Editable: %s",lastChangesToEdit)));
@@ -575,7 +671,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         }
         else{
             blink(tvEarliestCollection);
-            foodDisplyCheckOut.setEnabled(false);
+            foodDisplyConfirmEdit.setEnabled(false);
             tvEarliestCollection.setTextColor(Color.RED);
             tvLastChanges.setText(d);
             tvLastChanges.setTextColor(Color.RED);

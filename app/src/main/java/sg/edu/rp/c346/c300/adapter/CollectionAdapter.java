@@ -134,6 +134,8 @@ public class CollectionAdapter extends BaseAdapter {
                 intent.putExtra("totalPrice", collection.getTotalPrice());
                 intent.putExtra("additionalNote", collection.getAdditionalNote());
                 intent.putExtra("lastChanges", collection.getLastChanges());
+                intent.putExtra("lastChangesInMin", collection.getLastChangesInMin());
+                Log.d("CollectionAdapter", "What is the lastChangesInMin: "+collection.getLastChangesInMin());
                 intent.putExtra("tId", collection.gettId());
                 intent.putExtra("startTime", collection.getStartTime());
                 intent.putExtra("endTime", collection.getEndTime());

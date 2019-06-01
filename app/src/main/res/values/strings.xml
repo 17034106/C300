@@ -9,5 +9,6 @@
     <string name="feed">Feed</string>
     <string name="notification">Notification</string>
     <string name="account">Account</string>
+    <string name="choose_date_time"><![CDATA[Choose Date & Time]]></string>
 
 </resources>

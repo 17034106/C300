@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IndividualEditFoodDisplay">
+
+
+    <ScrollView
+        android:id="@+id/foodDisplayScrolLView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="-162dp"
+        android:layout_marginBottom="53dp">
+
+
+
+        <RelativeLayout
+            android:id="@+id/foodDisplayBiggestRelative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp">
+
+
+            <RelativeLayout
+                android:id="@+id/foodDisplayRelative1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/foodImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="310dp"
+                    android:src="@drawable/fishball"
+                    android:layout_alignParentTop="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/foodDisplayRelative2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/foodDisplayRelative1">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/IndividualEditTID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TID"
+                        android:textSize="20dp"
+                        android:textStyle="italic"
+                        android:gravity="center_horizontal"
+                        />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@drawable/straight_line"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tvFoodName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="27dp"
+                        android:textStyle="bold|italic"
+                        android:textColor="#000000"
+                        android:gravity="center_horizontal"
+                        android:background="@drawable/border_box"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginLeft="2dp"/>
+
+                    <TextView
+                        android:id="@+id/tvFoodPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Price"
+                        android:textSize="23dp"
+                        android:textStyle="bold"
+                        android:textColor="#CE1313"
+                        android:gravity="center_horizontal"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/tvFoodStallName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Stall Name"
+                        android:textSize="17dp"
+                        android:textColor="#0A0A0A"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvFoodStallDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Start - End"
+                        android:textSize="15dp"
+                        android:textColor="#0A0A0A"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvIndividualLastChanges"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Last Changes"
+                        android:textSize="12dp"
+                        android:textColor="#E93D3D"
+                        android:textStyle="italic"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Quantity"
+                        android:background="#DDC4BEBE"
+                        android:paddingLeft="10dp"
+                        android:textStyle="bold"
+                        android:textSize="17dp"
+                        android:textColor="#1D1C1C"
+                        android:layout_marginBottom="6dp"
+                        />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp">
+
+
+                        <ImageButton
+                            android:id="@+id/QuantityDecrease"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/oval_increase_or_decrease"
+                            android:layout_marginLeft="10dp"
+                            android:layout_alignParentLeft="true"
+                            android:src="@drawable/ic_minus"
+                            />
+
+                        <TextView
+                            android:id="@+id/QuantityDisplay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="25dp"
+                            android:layout_centerHorizontal="true"
+                            android:textStyle="bold"
+                            android:textColor="#0A0A0A"/>
+
+
+
+                        <ImageButton
+                            android:id="@+id/QuantityIncrease"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/oval_increase_or_decrease"
+                            android:layout_marginRight="10dp"
+                            android:layout_alignParentRight="true"
+                            android:src="@drawable/ic_plus"
+                            />
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Add On"
+                        android:background="#DDC4BEBE"
+                        android:paddingLeft="10dp"
+                        android:textStyle="bold"
+                        android:textSize="17dp"
+                        android:textColor="#1D1C1C"
+                        android:layout_marginTop="6dp"
+                        />
+
+                    //Store all the ADD ON
+                    <LinearLayout
+                        android:id="@+id/linearAddOn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+
+                        <!--<RelativeLayout-->
+                        <!--android:id="@+id/relativeAddOn"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content">-->
+
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:text="Add More Fishball"-->
+                        <!--android:textSize="16dp"-->
+                        <!--android:textColor="#0A0A0A"-->
+                        <!--android:layout_alignParentLeft="true"-->
+                        <!--android:layout_marginTop="4dp"-->
+                        <!--android:layout_marginLeft="10dp"-->
+                        <!--android:gravity="center"/>-->
+
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:text="$0.50"-->
+                        <!--android:textSize="16dp"-->
+                        <!--android:layout_toLeftOf="@+id/checkboxAddOnFishball"-->
+                        <!--android:layout_marginTop="4dp"-->
+                        <!--android:layout_marginRight="8dp"-->
+                        <!--/>-->
+
+
+                        <!--<CheckBox-->
+                        <!--android:id="@+id/checkboxAddOnFishball"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_alignParentRight="true"-->
+                        <!--android:layout_marginRight="13dp"/>-->
+
+                        <!--</RelativeLayout>-->
+
+
+
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Additional Notes"
+                        android:background="#DDC4BEBE"
+                        android:paddingLeft="10dp"
+                        android:textStyle="bold"
+                        android:textSize="17dp"
+                        android:textColor="#1D1C1C"
+                        android:layout_marginTop="6dp"
+                        />
+
+                    <EditText
+                        android:id="@+id/etAddtionalNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="start|top"
+                        android:textSize="15dp"
+                        android:hint="E.g. 'No Chili \nNotes: Those that require additional cost will not be included"
+                        android:inputType="textMultiLine" />
+
+
+
+
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <ImageButton
+        android:id="@+id/floatingButtonCart"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/oval"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_shopping_cart"
+        />
+
+
+    <ImageButton
+        android:id="@+id/floatingButtonBack"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/oval"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_back_arrow"
+        />
+
+    <RelativeLayout
+        android:id="@+id/IndividualEditDatTime"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#0334E9"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_alignParentBottom="true"
+        >
+
+        <TextView
+            android:id="@+id/tvIndividualDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Date and Time"
+            android:textSize="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="8dp"
+            />
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_shopping_cart"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="8dp"/>
+
+
+
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Price"
+            android:textSize="25dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="8dp"
+            />
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

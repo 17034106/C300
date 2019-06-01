@@ -16,12 +16,13 @@ public class Collection {
     private ArrayList<AddOn> addOnList;
     private String additionalNote;
     private String lastChanges;
+    private int lastChangesInMin;
     private String tId;
     private String startTime;
     private String endTime;
 
 
-    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String lastChanges, String tId, String startTime, String endTime) {
+    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String lastChanges, int lastChangesInMin, String tId, String startTime, String endTime) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -33,6 +34,7 @@ public class Collection {
         this.addOnList = addOnList;
         this.additionalNote = additionalNote;
         this.lastChanges = lastChanges;
+        this.lastChangesInMin =lastChangesInMin;
         this.tId = tId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -125,6 +127,14 @@ public class Collection {
 
     public void setLastChanges(String lastChanges) {
         this.lastChanges = lastChanges;
+    }
+
+    public int getLastChangesInMin() {
+        return lastChangesInMin;
+    }
+
+    public void setLastChangesInMin(int lastChangesInMin) {
+        this.lastChangesInMin = lastChangesInMin;
     }
 
     public String gettId() {

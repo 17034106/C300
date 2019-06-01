@@ -19,9 +19,10 @@ public class Cart {
     private String startTime;
     private String endTime;
     private String lastChanges;
+    private int lastChangesInMin;
 
 
-    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges) {
+    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges, int lastChangesInMin) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -35,6 +36,7 @@ public class Cart {
         this.startTime = startTime;
         this.endTime = endTime;
         this.lastChanges = lastChanges;
+        this.lastChangesInMin = lastChangesInMin;
     }
 
     public String getName() {
@@ -139,5 +141,13 @@ public class Cart {
 
     public void setLastChanges(String lastChanges) {
         this.lastChanges = lastChanges;
+    }
+
+    public int getLastChangesInMin() {
+        return lastChangesInMin;
+    }
+
+    public void setLastChangesInMin(int lastChangesInMin) {
+        this.lastChangesInMin = lastChangesInMin;
     }
 }

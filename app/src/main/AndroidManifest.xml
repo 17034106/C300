@@ -11,9 +11,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".IndividualEditFoodDisplay"></activity>
-        <activity android:name=".IndividualCollectionOrder" />
-        <activity android:name=".CollectionOrderPage" />
+        <activity android:name=".IndividualEditFoodDateTimeSelection"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpDateTimeSelection"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+
+        <activity android:name=".IndividualEditFoodDisplay"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".IndividualCollectionOrder"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".CollectionOrderPage"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".SettingPage"
             android:configChanges="orientation"

@@ -163,6 +163,7 @@ public class CartDisplay extends AppCompatActivity {
                         String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
                         int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
                         int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
+                        int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -177,7 +178,7 @@ public class CartDisplay extends AppCompatActivity {
                         }
 
 
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges, lastChangesInMin);
                         cartList.add(cart);
 
 //                        Log.d("------------","--------------------------------------------------------------------");
@@ -348,8 +349,7 @@ public class CartDisplay extends AppCompatActivity {
                         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                         for (int i =0; i<numOfCartFood;i++){
 
-                            Log.d("what is I", "Print i now: "+i);
-
+                            //region repeated code from the top
                             final String name = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
                             final double price = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString());
                             final int quantity = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("quantity").getValue().toString());
@@ -362,6 +362,7 @@ public class CartDisplay extends AppCompatActivity {
                             final String lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
                             final int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
                             final int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
+                            final int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
 
                             final ArrayList<AddOn> addOnList= new ArrayList<>();
                             addOnList.clear();
@@ -376,8 +377,9 @@ public class CartDisplay extends AppCompatActivity {
                             }
 
 
-                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges);
+                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges,lastChangesInMin);
                             transactionList.add(cart);
+                            //endregion
 
 
 
@@ -463,7 +465,7 @@ public class CartDisplay extends AppCompatActivity {
                         //endregion
 
 
-                        //region all all the cart food to the "TC" for customer
+                        //region add all the cart food to the "TC" for customer
                         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                         drTC = FirebaseDatabase.getInstance().getReference().child("tc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order");
                         drTC.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -485,6 +487,7 @@ public class CartDisplay extends AppCompatActivity {
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("tId").setValue(tIdList.get(i));
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("startTime").setValue(transactionList.get(i).getStartTime());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("endTime").setValue(transactionList.get(i).getEndTime());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("lastChangesInMin").setValue(transactionList.get(i).getLastChangesInMin());
 
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {

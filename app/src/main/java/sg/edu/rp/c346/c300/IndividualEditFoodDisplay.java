@@ -35,7 +35,7 @@ import sg.edu.rp.c346.c300.model.AddOn;
 
 public class IndividualEditFoodDisplay extends AppCompatActivity {
 
-
+    TextView tvTid;
     TextView foodName;
     TextView foodPrice;
     TextView stallName;
@@ -67,29 +67,33 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
     public static ArrayList<AddOn> addOnArray= new ArrayList<>();
 
+    int lastChangeInMin;
+
+    static IndividualEditFoodDisplay thisActivy; // finish this activity from another activity
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_individual_edit_food_display);
+        setContentView(R.layout.activity_individual_edit_food_display_1);
 
-
+            thisActivy = this;
 
 
             final Intent intent = getIntent();
 
             quantityValue = 1;
 
-
+            tvTid = findViewById(R.id.IndividualEditTID);
             foodName = findViewById(R.id.tvFoodName);
             foodPrice = findViewById(R.id.tvFoodPrice);
             stallName = findViewById(R.id.tvFoodStallName);
-            lastChanges = findViewById(R.id.tvLastChanges);
+            lastChanges = findViewById(R.id.tvIndividualLastChanges);
             quantityDisplay = findViewById(R.id.QuantityDisplay);
             quantityIncrease = findViewById(R.id.QuantityIncrease);
             quantityDecrease = findViewById(R.id.QuantityDecrease);
             additionalNote = findViewById(R.id.etAddtionalNotes);
             tvFoodStallDuration = findViewById(R.id.tvFoodStallDuration);
-
+            checkOutPrice = findViewById(R.id.tvTotalPrice);
 
 
 
@@ -101,13 +105,17 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
             quantityDisplay.setText(Integer.toString(quantityValue));
 
+            tvTid.setText(intent.getStringExtra("tId"));
             foodName.setText(intent.getStringExtra("foodName"));
-           foodPrice.setText(String.format("$%.2f",intent.getDoubleExtra("foodPrice",0)));
+            foodPrice.setText(String.format("$%.2f",intent.getDoubleExtra("foodPrice",0)));
             stallName.setText("Stall: "+intent.getStringExtra("stallName"));
-            String lastChangeDisplay = "Changes can only be made before <b>"+intent.getIntExtra("lastChanges",0)+"min</b> of the collection time";
+            int lastChangesInMin = intent.getIntExtra("lastChangesInMin",-1);
+            String lastChangeDisplay = "Changes can only be made before <b>"+lastChangesInMin+"min</b> of the collection time";
             lastChanges.setText(Html.fromHtml(lastChangeDisplay));
+            checkOutPrice.setText(String.format("$%.2f", totalPrice));
 
-            //region displaying the stall's operation hour
+
+        //region displaying the stall's operation hour
             Date startTimeDate = MainpageActivity.convertStringToDate(intent.getStringExtra("startTime"), "HHmm");
             Date endTimeDate = MainpageActivity.convertStringToDate(intent.getStringExtra("endTime"), "HHmm");
             String startTime = MainpageActivity.convertDateToString(startTimeDate, "h:mm a");
@@ -119,12 +127,12 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
             int stallId = intent.getIntExtra("stallId",1);
 //            int foodId = Integer.parseInt(intent.getStringExtra("tId").charAt(18)+"");
-        int foodId = intent.getIntExtra("foodId", 1);
+            int foodId = intent.getIntExtra("foodId", 1);
             Log.d("What is the TID", "What is the TID: "+intent.getStringExtra("tId"));
 
-            //region display all AddOn
+            //region display all AddOn && getting the lastChanges
             //---------------------------------------------------------------------------------------------------------------
-            final DatabaseReference databaseReferenceAddOn = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(school).child("stall").child(Integer.toString(stallId)).child("food").child(Integer.toString(foodId)).child("AddOn");
+            final DatabaseReference databaseReferenceAddOn = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(school).child("stall").child(Integer.toString(stallId)).child("food").child(Integer.toString(foodId));
 
             final LinearLayout linearLayout = findViewById(R.id.linearAddOn);
 
@@ -132,13 +140,14 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    String numOfAddOn = dataSnapshot.child("numOfAddOn").getValue().toString();
+
+                    String numOfAddOn = dataSnapshot.child("AddOn").child("numOfAddOn").getValue().toString();
                     int intNumOfAddOn = Integer.parseInt(numOfAddOn);
 
                     for (i =0; i<intNumOfAddOn;i++){
 
-                        final String name = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
-                        final String price = dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString();
+                        final String name = dataSnapshot.child("AddOn").child(Integer.toString(i)).child("name").getValue().toString();
+                        final String price = dataSnapshot.child("AddOn").child(Integer.toString(i)).child("price").getValue().toString();
                         final double doublePrice = Double.parseDouble(price);
 
 
@@ -200,11 +209,11 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
 
                                     totalAddOn-=doublePrice;
-//                                checkOutPrice.setText(String.format("$%.2f", totalPrice));
+                                checkOutPrice.setText(String.format("$%.2f", totalPrice));
 //                                isClicked=false;
                                 }
 
-//                                calculateTotal();
+                                calculateTotal();
                                 checkOutPrice.setText(String.format("$%.2f", totalPrice));
                                 Log.d("--------","----------------------------------------");
                                 Log.d("What is addOnArray", "Tell me what is addOnArray: "+addOnArray);
@@ -267,9 +276,9 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
                         quantityValue--;
                         quantityDisplay.setText(Integer.toString(quantityValue));
 
-//                        calculateTotal();
+                        calculateTotal();
 
-//                        checkOutPrice.setText(String.format("$%.2f", totalPrice));
+                        checkOutPrice.setText(String.format("$%.2f", totalPrice));
 
                     }
 
@@ -282,18 +291,57 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
                     quantityValue++;
                     quantityDisplay.setText(Integer.toString(quantityValue));
-//                    calculateTotal();
-//                    checkOutPrice.setText(String.format("$%.2f", totalPrice));
+                    calculateTotal();
+                    checkOutPrice.setText(String.format("$%.2f", totalPrice));
 
 
                 }
             });
 
+        RelativeLayout btnChoosingDateTime = findViewById(R.id.IndividualEditDatTime);
 
+        btnChoosingDateTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentDateTime = new Intent(getApplicationContext(), IndividualEditFoodDateTimeSelection.class);
+
+                intentDateTime.putExtra("foodName", intent.getStringExtra("foodName"));
+                intentDateTime.putExtra("foodPrice", intent.getDoubleExtra("foodPrice",0));
+                intentDateTime.putExtra("stallName", intent.getStringExtra("stallName"));
+                intentDateTime.putExtra("lastChanges",intent.getIntExtra("lastChanges",0) );
+                intentDateTime.putExtra("lastChangesInMin", intent.getIntExtra("lastChangesInMin",0));
+                Log.d("FoodDisplay", "What is the lastChangesInMin: "+intent.getIntExtra("lastChangesInMin",-1));
+                intentDateTime.putExtra("quantity", quantityValue);
+                intentDateTime.putExtra("additionalNote", additionalNote.getText().toString().trim());
+                intentDateTime.putExtra("totalPrice", totalPrice);
+                intentDateTime.putExtra("startTime", intent.getStringExtra("startTime"));
+                intentDateTime.putExtra("endTime", intent.getStringExtra("endTime"));
+                intentDateTime.putExtra("stallId", intent.getIntExtra("stallId",-1));
+                intentDateTime.putExtra("foodId", intent.getIntExtra("foodId", -1));
+                intentDateTime.putExtra("tId", intent.getStringExtra("tId"));
+
+                startActivity(intentDateTime);
+            }
+        });
 
 
 
 
 
     }
+
+    public void calculateTotal(){
+
+        totalPrice = (quantityValue*eachPrice) + (totalAddOn * quantityValue);
+
+
+    }
+
+
+    //finish this activity from another activity
+    public static IndividualEditFoodDisplay getInstance(){
+        return thisActivy;
+    }
+
+
 }

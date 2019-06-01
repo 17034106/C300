@@ -190,21 +190,16 @@ public class Food_display extends AppCompatActivity {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             Log.d("What is addOnArray", "Tell me what is addOnArray: "+addOnArray);
-//                            addOnArray.clear();
-//                            Log.d("addOnArray is remove", "AddOn Array is remove ");
+//
 
                             if (isChecked){
 
                                 addOnArray.add(new AddOn(name, Double.parseDouble(price)));
-                                Log.d("tyuiotyuioyui", "What is i: "+i);
 
-//                                totalPrice+=(doublePrice*quantityValue);
                                 totalAddOn += doublePrice;
-//                                checkOutPrice.setText(String.format("$%.2f", totalPrice));
-//                                isClicked = true;
+//
                             }
                             else{
-//                                totalPrice-=(doublePrice*quantityValue);
                                 for (int c=0; c<addOnArray.size();c++){
                                     if (addOnArray.get(c).getName().equals(name)){
                                         addOnArray.remove(c);
@@ -213,8 +208,7 @@ public class Food_display extends AppCompatActivity {
 
 
                                 totalAddOn-=doublePrice;
-//                                checkOutPrice.setText(String.format("$%.2f", totalPrice));
-//                                isClicked=false;
+//
                             }
 
                             calculateTotal();

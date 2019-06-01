@@ -40,10 +40,14 @@ public class CollectionOrderPage extends AppCompatActivity {
     ArrayList<Collection> collectionList = new ArrayList<>();
     ArrayList<Collection> arrangeCollectionList = new ArrayList<>();
 
+    static CollectionOrderPage thisActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection_order_page);
+
+        thisActivity = this;
 
         displayNoCollection = findViewById(R.id.displayNoCollection);
 
@@ -65,10 +69,10 @@ public class CollectionOrderPage extends AppCompatActivity {
                     double  totalPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
                     String  additionalNote = dataSnapshot.child(Integer.toString(i)).child("additionalNote").getValue().toString();
                     String  lastChanges = dataSnapshot.child(Integer.toString(i)).child("lastChanges").getValue().toString();
+                    int  lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
                     String tId = dataSnapshot.child(Integer.toString(i)).child("tId").getValue().toString();
                     String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
                     String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
-                    Log.d("-=-=-=-=-=-=-=-=", "4554-=-=-=-=-=-=-=-=-=-: "+lastChanges);
 
                     ArrayList<AddOn> addOnList = new ArrayList<>();
                     addOnList.clear();
@@ -80,9 +84,8 @@ public class CollectionOrderPage extends AppCompatActivity {
                         addOnList.add(addOn);
                     }
 
-                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,tId, startTime, endTime);
+                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime);
                     collectionList.add(collection);
-                    Log.d("jjgjhjhjhjhj", "kjkjbkjdabfkda What is TID: "+tId);
                 }
 
                 //region re-arrange the order based on the datetimeOrder (oldest should be at the top)
@@ -92,28 +95,22 @@ public class CollectionOrderPage extends AppCompatActivity {
                     for (int h =0; h<collectionList.size();h++){
                         if (MainpageActivity.convertStringToDate(collectionList.get(oldestIndex).getDateTimeOrder(),"dd/MM/yyyy hh:mm a").compareTo(MainpageActivity.convertStringToDate(collectionList.get(h).getDateTimeOrder(),"dd/MM/yyyy hh:mm a"))>0){
                             oldestIndex = h;
-                            Log.d("what is h", "What is h: "+h);
                         }
                     }
 
                     ArrayList<Integer> repeatedList = new ArrayList<>();
                     repeatedList.clear();
                     for (int i =0; i<collectionList.size();i++){
-                        Log.d("What is oldest", "What is the oldest: "+oldestIndex);
                         if (collectionList.get(oldestIndex).getDateTimeOrder().compareTo(collectionList.get(i).getDateTimeOrder())==0){
-                            Log.d("What is oldestIndex: ","What is the oldestIndex: "+collectionList.get(oldestIndex).getDateTimeOrder());
-                            Log.d("What is newIndex: ","What is the newIndex: "+collectionList.get(i).getDateTimeOrder());
+
                             arrangeCollectionList.add(collectionList.get(i));
                             repeatedList.add(i);
                         }
                     }
 
-                    Log.d("What is the size", "What is the size of the collectionList Before: "+collectionList.size());
-                    Log.d("What is repeatedList", "What is repeatedList: "+repeatedList);
+
                     for (int i = repeatedList.size()-1; i>-1; i--){
-                        Log.d("Remove which one:", "Your remove which one: "+repeatedList.get(i));
                         collectionList.remove(collectionList.get(repeatedList.get(i)));
-                        Log.d("What is the size", "What is the size of the collectionList After: "+collectionList.size());
                     }
 
 
@@ -147,19 +144,9 @@ public class CollectionOrderPage extends AppCompatActivity {
 
 
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public static CollectionOrderPage getInstance(){
+        return thisActivity;
     }
 }
