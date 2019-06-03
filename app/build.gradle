@@ -59,4 +59,14 @@ dependencies {
 
     //For custom spinner
     implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
+
+
+    //For QR code Scanner
+    implementation 'com.google.android.gms:play-services-vision:17.0.2'
+
+
+    //For QrCode Generator
+    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+
 }

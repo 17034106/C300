@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".QrCodePay">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/qrScanner_top_half_background"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/custom_background_half"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="QR Pay Scanner"
+            android:textColor="#FFF"
+            android:textSize="40dp"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="25dp"/>
+
+    </RelativeLayout>
+
+    <SurfaceView
+        android:id="@+id/qrCodeScanner"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_centerInParent="true"
+        />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/qrCodeScanner"
+        android:layout_marginTop="20dp"
+        android:text="Please focus on QR code"
+        android:textSize="18sp"
+        android:gravity="center"/>
+
+</RelativeLayout>
