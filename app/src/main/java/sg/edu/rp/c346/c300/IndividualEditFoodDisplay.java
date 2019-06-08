@@ -12,10 +12,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +44,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
     TextView lastChanges;
     TextView checkOutPrice;
     TextView tvFoodStallDuration;
+    ImageView image;
 
 
     TextView quantityDisplay;
@@ -94,6 +97,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
             additionalNote = findViewById(R.id.etAddtionalNotes);
             tvFoodStallDuration = findViewById(R.id.tvFoodStallDuration);
             checkOutPrice = findViewById(R.id.tvTotalPrice);
+            image = findViewById(R.id.foodImage);
 
 
 
@@ -113,6 +117,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
             String lastChangeDisplay = "Changes can only be made before <b>"+lastChangesInMin+"min</b> of the collection time";
             lastChanges.setText(Html.fromHtml(lastChangeDisplay));
             checkOutPrice.setText(String.format("$%.2f", totalPrice));
+            Glide.with(IndividualEditFoodDisplay.this).load(intent.getStringExtra("image")).centerCrop().into(image);
 
 
         //region displaying the stall's operation hour
@@ -128,7 +133,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
             int stallId = intent.getIntExtra("stallId",1);
 //            int foodId = Integer.parseInt(intent.getStringExtra("tId").charAt(18)+"");
             int foodId = intent.getIntExtra("foodId", 1);
-            Log.d("What is the TID", "What is the TID: "+intent.getStringExtra("tId"));
+
 
             //region display all AddOn && getting the lastChanges
             //---------------------------------------------------------------------------------------------------------------
@@ -319,6 +324,8 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
                 intentDateTime.putExtra("stallId", intent.getIntExtra("stallId",-1));
                 intentDateTime.putExtra("foodId", intent.getIntExtra("foodId", -1));
                 intentDateTime.putExtra("tId", intent.getStringExtra("tId"));
+                intentDateTime.putExtra("status", intent.getStringExtra("status"));
+                intentDateTime.putExtra("image", intent.getStringExtra("image"));
 
                 startActivity(intentDateTime);
             }

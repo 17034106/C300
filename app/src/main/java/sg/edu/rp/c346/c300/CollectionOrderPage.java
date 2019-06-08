@@ -73,6 +73,10 @@ public class CollectionOrderPage extends AppCompatActivity {
                     String tId = dataSnapshot.child(Integer.toString(i)).child("tId").getValue().toString();
                     String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
                     String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
+                    String customerUID= dataSnapshot.child(Integer.toString(i)).child("customerUID").getValue().toString();
+                    String status= dataSnapshot.child(Integer.toString(i)).child("status").getValue().toString();
+                    String image= dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+
 
                     ArrayList<AddOn> addOnList = new ArrayList<>();
                     addOnList.clear();
@@ -84,7 +88,7 @@ public class CollectionOrderPage extends AppCompatActivity {
                         addOnList.add(addOn);
                     }
 
-                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime);
+                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime, customerUID, status, image);
                     collectionList.add(collection);
                 }
 

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:text="TID: "/>
+
+
+        <ImageView
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/tID"/>
+
+        <TextView
+            android:id="@+id/quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:text="Quantity: "
+            android:layout_below="@+id/tID"/>
+
+        <ImageView
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/quantity"/>
+
+
+        <TextView
+            android:id="@+id/addOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:text="Add On: "
+            android:layout_below="@id/quantity"/>
+
+        <ImageView
+            android:id="@+id/line3"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/addOn"/>
+
+        <TextView
+            android:id="@+id/additionalNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:text="Additional Notes:"
+            android:layout_below="@id/addOn"/>
+
+        <ImageView
+            android:id="@+id/line4"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/additionalNotes"/>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:text="Price:"
+            android:layout_below="@id/additionalNotes"/>
+
+        <ImageView
+            android:id="@+id/line5"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/price"/>
+
+        <TextView
+            android:id="@+id/orderTiming"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="8dp"
+            android:text="Order Timing: "
+            android:layout_below="@id/price"/>
+
+        <ImageView
+            android:id="@+id/line6"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/orderTiming"/>
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

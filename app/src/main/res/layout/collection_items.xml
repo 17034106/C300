@@ -135,9 +135,11 @@
                 android:layout_height="25dp"
                 android:text="Transaction ID"
                 android:paddingRight="10dp"
-                android:textSize="18dp"
+                android:textSize="15dp"
                 android:textStyle="italic"
                 android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 />
 
@@ -155,7 +157,7 @@
             >
 
             <ImageView
-                android:id="@+id/CollectionfoodStallImage"
+                android:id="@+id/CollectionfoodImage"
                 android:layout_width="117dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="18dp"
@@ -172,8 +174,8 @@
                 android:textStyle="bold"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@id/CollectionfoodStallImage"
-                android:layout_toEndOf="@id/CollectionfoodStallImage"
+                android:layout_toRightOf="@id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
                 android:text="Name:"
                 />
 
@@ -187,8 +189,8 @@
                 android:layout_below="@id/CollectionfoodName"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/CollectionfoodStallImage"
-                android:layout_toEndOf="@id/CollectionfoodStallImage"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
                 android:text="Price:"
                 />
 
@@ -201,8 +203,8 @@
                 android:layout_below="@id/CollectionfoodPrice"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/CollectionfoodStallImage"
-                android:layout_toEndOf="@id/CollectionfoodStallImage"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
                 android:text="Order Timing"
                 />
 
@@ -215,8 +217,8 @@
                 android:layout_below="@id/CollectionOrderTiming"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/CollectionfoodStallImage"
-                android:layout_toEndOf="@id/CollectionfoodStallImage"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
                 android:text="Last Changes:"
                 />
 

@@ -20,9 +20,12 @@ public class Collection {
     private String tId;
     private String startTime;
     private String endTime;
+    private String customerUID;
+    private String status;
+    private String image;
 
 
-    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String lastChanges, int lastChangesInMin, String tId, String startTime, String endTime) {
+    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String lastChanges, int lastChangesInMin, String tId, String startTime, String endTime, String customerUID, String status, String image) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -38,6 +41,9 @@ public class Collection {
         this.tId = tId;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.customerUID = customerUID;
+        this.status = status;
+        this.image = image;
     }
 
     public String getName() {
@@ -159,5 +165,29 @@ public class Collection {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getCustomerUID() {
+        return customerUID;
+    }
+
+    public void setCustomerUID(String customerUID) {
+        this.customerUID = customerUID;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

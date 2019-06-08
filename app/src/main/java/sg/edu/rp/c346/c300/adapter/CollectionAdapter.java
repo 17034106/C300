@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 
 import java.text.ParseException;
@@ -60,11 +61,11 @@ public class CollectionAdapter extends BaseAdapter {
 
 
         TextView tvTID = convertView.findViewById(R.id.tvCollectionTID);
-        TextView cartStallName = convertView.findViewById(R.id.CollectionStallName);
-        ImageView cartFoodImage = convertView.findViewById(R.id.CollectionfoodStallImage);
-        TextView tvCartFoodName = convertView.findViewById(R.id.CollectionfoodName);
-        TextView tvCartFoodPrice = convertView.findViewById(R.id.CollectionfoodPrice);
-        TextView tvCartOrderTime = convertView.findViewById(R.id.CollectionOrderTiming);
+        TextView collectionStallName = convertView.findViewById(R.id.CollectionStallName);
+        ImageView collectionFoodImage = convertView.findViewById(R.id.CollectionfoodImage);
+        TextView tvCollectionFoodName = convertView.findViewById(R.id.CollectionfoodName);
+        TextView tvCollectionFoodPrice = convertView.findViewById(R.id.CollectionfoodPrice);
+        TextView tvCollectionOrderTime = convertView.findViewById(R.id.CollectionOrderTiming);
         final TextView cartQuantity = convertView.findViewById(R.id.CollectionQuantity);
         TextView addon = convertView.findViewById(R.id.tvCollectionAddOn);
         TextView additionalNote = convertView.findViewById(R.id.tvCollectionAdditionalNote);
@@ -93,15 +94,15 @@ public class CollectionAdapter extends BaseAdapter {
 
 
         tvTID.setText(collection.gettId());
-        cartStallName.setText(collection.getStallName());
-        cartFoodImage.setImageResource(R.drawable.fishball);
-        tvCartFoodName.setText(collection.getName());
-        tvCartFoodPrice.setText(String.format("$%.2f", collection.getPrice()));
-        tvCartOrderTime.setText("Collection Time: "+collection.getDateTimeOrder());
+        collectionStallName.setText(collection.getStallName());
+        collectionFoodImage.setImageResource(R.drawable.fishball);
+        tvCollectionFoodName.setText(collection.getName());
+        tvCollectionFoodPrice.setText(String.format("$%.2f", collection.getPrice()));
+        tvCollectionOrderTime.setText("Collection Time: "+collection.getDateTimeOrder());
         tvLastChanges.setText("Last Editable: "+collection.getLastChanges());
         cartQuantity.setText(String.format("x%d",collection.getQuantity()));
         totalPriceIndividual.setText(String.format("$%.2f", collection.getTotalPrice()));
-
+        Glide.with(context).load(collection.getImage()).centerCrop().into(collectionFoodImage);
 
 
         if (addOnValue.isEmpty()){
@@ -139,6 +140,8 @@ public class CollectionAdapter extends BaseAdapter {
                 intent.putExtra("tId", collection.gettId());
                 intent.putExtra("startTime", collection.getStartTime());
                 intent.putExtra("endTime", collection.getEndTime());
+                intent.putExtra("status", collection.getStatus());
+                intent.putExtra("image", collection.getImage());
                 addOnListIndividual = collection.getAddOnList();
                 context.startActivity(intent);
             }

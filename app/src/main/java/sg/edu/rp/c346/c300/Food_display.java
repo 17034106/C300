@@ -2,24 +2,22 @@ package sg.edu.rp.c346.c300;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,19 +26,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import sg.edu.rp.c346.c300.model.AddOn;
-import sg.edu.rp.c346.c300.model.Customer;
-import sg.edu.rp.c346.c300.model.School;
 
 public class Food_display extends AppCompatActivity {
 
-
+    ImageView foodImage;
     TextView foodName;
     TextView foodPrice;
     TextView stallName;
@@ -86,7 +81,7 @@ public class Food_display extends AppCompatActivity {
         quantityValue = 1;
 
 
-
+        foodImage = findViewById(R.id.foodImage);
         foodName = findViewById(R.id.tvFoodName);
         foodPrice = findViewById(R.id.tvFoodPrice);
         stallName = findViewById(R.id.tvFoodStallName);
@@ -271,6 +266,7 @@ public class Food_display extends AppCompatActivity {
         String lastChangeDisplay = "Changes can only be made before <b>"+intent.getIntExtra("lastChanges",0)+"min</b> of the collection time";
         lastChanges.setText(Html.fromHtml(lastChangeDisplay));
         checkOutPrice.setText(String.format("$%.2f", totalPrice));
+        Glide.with(Food_display.this).load(intent.getStringExtra("image")).centerCrop().into(foodImage);
 
 
 
@@ -322,6 +318,7 @@ public class Food_display extends AppCompatActivity {
                 intentCheckOut.putExtra("endTime", intent.getStringExtra("endTime"));
                 intentCheckOut.putExtra("stallId", intent.getIntExtra("stallId",-1));
                 intentCheckOut.putExtra("foodId", intent.getIntExtra("foodId", -1));
+                intentCheckOut.putExtra("image", intent.getStringExtra("image"));
 
 
 

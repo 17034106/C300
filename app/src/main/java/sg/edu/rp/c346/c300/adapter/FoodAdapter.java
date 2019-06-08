@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import sg.edu.rp.c346.c300.Food_display;
@@ -54,6 +56,7 @@ public class FoodAdapter extends BaseAdapter {
         TextView name = convertView.findViewById(R.id.foodName);
         TextView price = convertView.findViewById(R.id.foodPrice);
         TextView stallName = convertView.findViewById(R.id.foodStallName);
+        ImageView image = convertView.findViewById(R.id.foodStallImage);
 
         final Food food = foods.get(position);
 
@@ -61,6 +64,8 @@ public class FoodAdapter extends BaseAdapter {
         name.setText("Name: "+food.getName());
         price.setText(String.format("Price: $%.2f",food.getPrice()));
         stallName.setText("Stall: "+food.getStallName());
+        Glide.with(context).load(food.getImage()).centerCrop().into(image);
+
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +81,7 @@ public class FoodAdapter extends BaseAdapter {
                 intent.putExtra("startTime",food.getStartTime());
                 intent.putExtra("endTime", food.getEndTime());
                 intent.putExtra("stallId", food.getStallId());
+                intent.putExtra("image", food.getImage());
                 context.startActivity(intent);
 
             }

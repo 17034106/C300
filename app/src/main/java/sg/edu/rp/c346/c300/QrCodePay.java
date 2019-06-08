@@ -79,7 +79,7 @@ public class QrCodePay extends AppCompatActivity {
 
         barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
 
-        cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(1024, 768).build();
+        cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(1024, 768).setFacing(CameraSource.CAMERA_FACING_BACK).setRequestedFps(30.0f).build();
 
         //Start the scanner
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -166,7 +166,7 @@ public class QrCodePay extends AppCompatActivity {
                                     //endregion
 
                                 }
-                            }, 300);
+                            }, 320);
                             //endregion
 
 
@@ -349,7 +349,7 @@ public class QrCodePay extends AppCompatActivity {
 
             }
         });
-        //endregion send data to history owner (HO)
+        //region send data to history owner (HO)
         final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(customerSchool).child("stall").child(stallId).child("do");
         drHO.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -382,15 +382,10 @@ public class QrCodePay extends AppCompatActivity {
             }
         });
 
-
-        //region
-
+        //endregion
 
 
-
-
-
-
+        finish();
 
 
 

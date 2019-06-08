@@ -1,6 +1,5 @@
 package sg.edu.rp.c346.c300.app;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -9,7 +8,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,7 +25,6 @@ import java.util.Date;
 
 import sg.edu.rp.c346.c300.model.Customer;
 import sg.edu.rp.c346.c300.R;
-import sg.edu.rp.c346.c300.model.School;
 
 public class MainpageActivity extends AppCompatActivity {
 

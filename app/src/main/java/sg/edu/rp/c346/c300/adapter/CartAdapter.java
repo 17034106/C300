@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -76,6 +77,7 @@ public class CartAdapter extends BaseAdapter {
         TextView tvStartTime = convertView.findViewById(R.id.tvStartTime);
         TextView tvEndTime = convertView.findViewById(R.id.tvEndTime);
         TextView tvLastChanges = convertView.findViewById(R.id.lastChanges);
+        ImageView image = convertView.findViewById(R.id.CartfoodStallImage);
 
 
         final Cart cart = carts.get(position);
@@ -120,6 +122,7 @@ public class CartAdapter extends BaseAdapter {
         tvLastChanges.setText("Last Editable: "+cart.getLastChanges());
         cartQuantity.setNumber(Integer.toString(cart.getQuantity()));
         totalPriceIndividual.setText(String.format("$%.2f", cart.getTotalPrice()));
+        Glide.with(context).load(cart.getImage()).centerCrop().into(image);
 
 
         if (addOnValue.isEmpty()){

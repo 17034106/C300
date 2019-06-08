@@ -43,11 +43,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import sg.edu.rp.c346.c300.adapter.CartAdapter;
+import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Cart;
 import sg.edu.rp.c346.c300.model.Customer;
@@ -68,6 +70,7 @@ public class CartDisplay extends AppCompatActivity {
     ArrayList<String> tIdList = new ArrayList<>(); // use for storing all unique Transaction ID
     DatabaseReference drTO;
     DatabaseReference drTC;
+    DatabaseReference drNotificationPreOrder;
     DatabaseReference drRemoveALLCartFood;
     int numOfOwnerOrder;
     int numOfCustomerOrder;
@@ -164,6 +167,7 @@ public class CartDisplay extends AppCompatActivity {
                         int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
                         int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
                         int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
+                        String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -178,7 +182,7 @@ public class CartDisplay extends AppCompatActivity {
                         }
 
 
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges, lastChangesInMin);
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges, lastChangesInMin, image);
                         cartList.add(cart);
 
 //                        Log.d("------------","--------------------------------------------------------------------");
@@ -363,6 +367,7 @@ public class CartDisplay extends AppCompatActivity {
                             final int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
                             final int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
                             final int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
+                            final String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
 
                             final ArrayList<AddOn> addOnList= new ArrayList<>();
                             addOnList.clear();
@@ -377,13 +382,13 @@ public class CartDisplay extends AppCompatActivity {
                             }
 
 
-                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges,lastChangesInMin);
+                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges,lastChangesInMin, image);
                             transactionList.add(cart);
                             //endregion
 
 
 
-                            //region all all the cart food to the "TO" for owner
+                            //region add all the cart food to the "TO" for owner
                             //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                             drTO = FirebaseDatabase.getInstance().getReference().child("to").child("school").child(school).child("stall");
                             drTO.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -426,6 +431,10 @@ public class CartDisplay extends AppCompatActivity {
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("tId").setValue(tId);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("startTime").setValue(startTime);
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("endTime").setValue(endTime);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("customerUID").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("status").setValue("purchased");
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("imageurl").setValue(image);
+
 
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h =0; h<numOfAddOn;h++) {
@@ -488,6 +497,9 @@ public class CartDisplay extends AppCompatActivity {
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("startTime").setValue(transactionList.get(i).getStartTime());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("endTime").setValue(transactionList.get(i).getEndTime());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("lastChangesInMin").setValue(transactionList.get(i).getLastChangesInMin());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("customerUID").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("status").setValue("purchased");
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("imageurl").setValue(transactionList.get(i).getImage());
 
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {
@@ -510,6 +522,68 @@ public class CartDisplay extends AppCompatActivity {
 
                             }
                         });
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        //endregion
+
+
+
+
+                        //region send notification to the firebase
+                        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                        drNotificationPreOrder = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("preOrder");
+                        drNotificationPreOrder.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString().trim());
+
+
+                                for (int i =0; i<numOfCartFood;i++) {
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("dateTimeOrder").setValue(transactionList.get(i).getDateTimeOrder());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("name").setValue(transactionList.get(i).getName());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("price").setValue(transactionList.get(i).getPrice());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("quantity").setValue(transactionList.get(i).getQuantity());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("stallName").setValue(transactionList.get(i).getStallName());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("totalPrice").setValue(transactionList.get(i).getTotalPrice());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("additionalNote").setValue(transactionList.get(i).getAdditionalNote() + "");
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("lastChanges").setValue(transactionList.get(i).getLastChanges());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("stallId").setValue(transactionList.get(i).getStallId());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("foodId").setValue(transactionList.get(i).getFoodId());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("tId").setValue(tIdList.get(i));
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("startTime").setValue(transactionList.get(i).getStartTime());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("endTime").setValue(transactionList.get(i).getEndTime());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("lastChangesInMin").setValue(transactionList.get(i).getLastChangesInMin());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("customerUID").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("status").setValue("purchased");
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("imageurl").setValue(transactionList.get(i).getImage());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("notificationTiming").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a") );
+
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
+                                    for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {
+                                        drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("addOn").child(Integer.toString(h)).child("name").setValue(transactionList.get(i).getAddOnList().get(h).getName());
+                                        drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("addOn").child(Integer.toString(h)).child("price").setValue(transactionList.get(i).getAddOnList().get(h).getPrice());
+                                        drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("addOn").child("numOfAddOn").setValue(h + 1);
+
+                                    }
+
+                                    drNotificationPreOrder.child("numOfPreOrder").setValue(numOfPreOrder + i+1);
+
+
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+
+
                         //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                         //endregion
 
@@ -555,6 +629,8 @@ public class CartDisplay extends AppCompatActivity {
             }
         });
         //endregion
+
+
 
 
 
@@ -777,6 +853,9 @@ public class CartDisplay extends AppCompatActivity {
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("endTime").setValue(readdedCartList.get(t).getEndTime());
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("lastChanges").setValue(readdedCartList.get(t).getLastChanges());
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("stallId").setValue(readdedCartList.get(t).getStallId());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("foodId").setValue(readdedCartList.get(t).getFoodId());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("lastChangesInMin").setValue(readdedCartList.get(t).getLastChangesInMin());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("imageurl").setValue(readdedCartList.get(t).getImage());
 
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child("numOfAddOn").setValue(0);
 

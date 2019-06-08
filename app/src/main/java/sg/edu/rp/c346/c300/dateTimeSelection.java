@@ -127,6 +127,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         final String endTime = intentReceive.getStringExtra("endTime");
         final int stallId = intentReceive.getIntExtra("stallId",-1);
         final int foodId = intentReceive.getIntExtra("foodId", -1);
+        final String image = intentReceive.getStringExtra("image");
 
         final ArrayList<AddOn> addOnArrayList =Food_display.addOnArray;
 
@@ -194,6 +195,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("stallId").setValue(stallId);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("foodId").setValue(foodId);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("lastChangesInMin").setValue(lastChanges);
+                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("imageurl").setValue(image);
 
 
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child("numOfAddOn").setValue(0);

@@ -2,7 +2,6 @@ package sg.edu.rp.c346.c300.model;
 
 public class Food {
 
-//    private int imageId;
     private String name;
     private double price;
     private int lastChanges;
@@ -12,6 +11,7 @@ public class Food {
     private String school;
     private String startTime;
     private String endTime;
+    private String image;
 
 
 
@@ -22,7 +22,7 @@ public class Food {
 //    }
 
 
-    public Food(String name, double price, int lastChanges, String stallName,String school, int stallId, int foodId, String startTime, String endTime) {
+    public Food(String name, double price, int lastChanges, String stallName,String school, int stallId, int foodId, String startTime, String endTime, String image) {
         this.name = name;
         this.price = price;
         this.lastChanges = lastChanges;
@@ -32,6 +32,7 @@ public class Food {
         this.foodId = foodId;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.image = image;
     }
 
 //    public int getImageId() {
@@ -113,5 +114,13 @@ public class Food {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

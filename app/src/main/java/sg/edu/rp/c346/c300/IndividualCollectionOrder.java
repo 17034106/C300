@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +35,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
     TextView tvTID, tvFoodName, tvFoodPrice, tvStallName, tvFoodStallOperation, tvLastChange, tvQuantity, tvAddOn, tvAdditionalNotes;
     ArrayList<AddOn> addOnListIndividual;
+    ImageView ivimage;
 
     static IndividualCollectionOrder thisAcitivy;
 
@@ -60,6 +63,8 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         tvQuantity = findViewById(R.id.IndividualQuantityDisplay);
         tvAddOn = findViewById(R.id.tvIndividualAddOn);
         tvAdditionalNotes = findViewById(R.id.tvIndividualAddtionalNotes);
+        tvAdditionalNotes = findViewById(R.id.tvIndividualAddtionalNotes);
+        ivimage = findViewById(R.id.IndividualFoodImage);
 
 
 
@@ -70,6 +75,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         tvFoodName.setText(intentReceive.getStringExtra("foodName"));
         tvFoodPrice.setText(String.format("$%.2f", intentReceive.getDoubleExtra("foodPrice",0)));
         tvStallName.setText(String.format("Stall: %s",intentReceive.getStringExtra("stallName")));
+        Glide.with(IndividualCollectionOrder.this).load(intentReceive.getStringExtra("image")).centerCrop().into(ivimage);
 
         Date stallStartOperationDate = MainpageActivity.convertStringToDate(intentReceive.getStringExtra("startTime"), "HHmm");
         Date stallEndOperationDate = MainpageActivity.convertStringToDate(intentReceive.getStringExtra("endTime"), "HHmm");
@@ -113,6 +119,8 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                 intent.putExtra("endTime", intentReceive.getStringExtra("endTime"));
                 intent.putExtra("quantity",intentReceive.getIntExtra("quantity", 0));
                 intent.putExtra("additionalNote",intentReceive.getStringExtra("additionalNote"));
+                intent.putExtra("status",intentReceive.getStringExtra("status"));
+                intent.putExtra("image",intentReceive.getStringExtra("image"));
                 intent.putExtra("lastChangesInMin", intentReceive.getIntExtra("lastChangesInMin",-1));
                 startActivity(intent);
             }
@@ -198,6 +206,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     String tId = dataSnapshot.child(i+"").child("tId").getValue().toString();
                     String startTime = dataSnapshot.child(i+"").child("startTime").getValue().toString();
                     String endTime = dataSnapshot.child(i+"").child("endTime").getValue().toString();
+                    String customerUID = dataSnapshot.child(i+"").child("customerUID").getValue().toString();
+                    String status = dataSnapshot.child(i+"").child("status").getValue().toString();
+                    String image = dataSnapshot.child(i+"").child("imageurl").getValue().toString();
 
                     int numOfAddOn = Integer.parseInt(dataSnapshot.child(i+"").child("addOn").child("numOfAddOn").getValue().toString());
 
@@ -208,7 +219,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                         addOnList.add(new AddOn(addOnName, addOnPrice));
                     }
 
-                    collectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime));
+                    collectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, status,image));
 
                     //endregion
                 }
@@ -241,6 +252,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     drTC.child(Integer.toString(positionInCustomer + i)).child("startTime").setValue(readdedCollectionList.get(i).getStartTime());
                     drTC.child(Integer.toString(positionInCustomer + i)).child("endTime").setValue(readdedCollectionList.get(i).getEndTime());
                     drTC.child(Integer.toString(positionInCustomer + i)).child("lastChangesInMin").setValue(readdedCollectionList.get(i).getLastChangesInMin());
+                    drTC.child(Integer.toString(positionInCustomer + i)).child("customerUID").setValue(readdedCollectionList.get(i).getCustomerUID());
+                    drTC.child(Integer.toString(positionInCustomer + i)).child("status").setValue(readdedCollectionList.get(i).getStatus());
+                    drTC.child(Integer.toString(positionInCustomer + i)).child("imageurl").setValue(readdedCollectionList.get(i).getImage());
 
                     drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child("numOfAddOn").setValue(0);
                     for (int h = 0; h < readdedCollectionList.get(i).getAddOnList().size(); h++) {
@@ -304,6 +318,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                             String tId = dataSnapshot.child(i+"").child("tId").getValue().toString();
                             String startTime = dataSnapshot.child(i+"").child("startTime").getValue().toString();
                             String endTime = dataSnapshot.child(i+"").child("endTime").getValue().toString();
+                            String customerUID = dataSnapshot.child(i+"").child("customerUID").getValue().toString();
+                            String status = dataSnapshot.child(i+"").child("status").getValue().toString();
+                            String image = dataSnapshot.child(i+"").child("imageurl").getValue().toString();
 
                             int numOfAddOn = Integer.parseInt(dataSnapshot.child(i+"").child("addOn").child("numOfAddOn").getValue().toString());
 
@@ -314,7 +331,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                 addOnList.add(new AddOn(addOnName, addOnPrice));
                             }
 
-                            readdedOwnerCollectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime));
+                            readdedOwnerCollectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, status, image));
                             drTO.child(i+"").removeValue();
                         }
 
@@ -335,6 +352,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                             drTO.child(Integer.toString(positionInOwner + r)).child("startTime").setValue(readdedOwnerCollectionList.get(r).getStartTime());
                             drTO.child(Integer.toString(positionInOwner + r)).child("endTime").setValue(readdedOwnerCollectionList.get(r).getEndTime());
                             drTO.child(Integer.toString(positionInOwner + r)).child("lastChangesInMin").setValue(readdedOwnerCollectionList.get(r).getLastChangesInMin());
+                            drTO.child(Integer.toString(positionInOwner + r)).child("customerUID").setValue(readdedOwnerCollectionList.get(r).getCustomerUID());
+                            drTO.child(Integer.toString(positionInOwner + r)).child("status").setValue(readdedOwnerCollectionList.get(r).getStatus());
+                            drTO.child(Integer.toString(positionInOwner + r)).child("imageurl").setValue(readdedOwnerCollectionList.get(r).getImage());
 
                             drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child("numOfAddOn").setValue(0);
                             for (int h = 0; h < readdedOwnerCollectionList.get(r).getAddOnList().size(); h++) {
