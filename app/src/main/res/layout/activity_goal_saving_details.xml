@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GoalSavingDetails">
+
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1A53E6">
+
+        <ImageButton
+            android:id="@+id/btnCartBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_left_arrow"
+            />
+
+        <TextView
+            android:id="@+id/goalSavingNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="Goal Saving Name"
+            android:textSize="28dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+
+
+    </RelativeLayout>
+
+
+    <me.itangqi.waveloadingview.WaveLoadingView
+        android:id="@+id/GoalSavingWaveLoadingView"
+        android:layout_width="250sp"
+        android:layout_height="wrap_content"
+        app:wlv_borderColor="#1823DF"
+        app:wlv_wave_background_Color="#699BEB"
+        app:wlv_borderWidth="3dp"
+        app:wlv_shapeType="circle"
+        app:wlv_round_rectangle="true"
+        app:wlv_triangle_direction="north"
+
+        app:wlv_titleCenterStrokeColor="#3FC219"
+        app:wlv_titleCenterStrokeWidth="3dp"
+        app:wlv_titleCenterColor="#A817CA"
+        app:wlv_titleCenterSize="24sp"
+
+        app:wlv_titleTopStrokeColor="#3FC219"
+        app:wlv_titleTopStrokeWidth="3dp"
+        app:wlv_titleTopColor="#A817CA"
+        app:wlv_titleTopSize="24sp"
+
+        app:wlv_titleBottomStrokeColor="#3FC219"
+        app:wlv_titleBottomStrokeWidth="3dp"
+        app:wlv_titleBottomColor="#A817CA"
+        app:wlv_titleBottomSize="24sp"
+
+        app:wlv_waveAmplitude="70"
+        app:wlv_waveColor="#00E3FF"
+
+        android:layout_below="@id/title"
+        android:layout_marginTop="2dp"
+        android:layout_centerHorizontal="true"
+        />
+
+
+    <ScrollView
+        android:id="@+id/foodDisplayScrolLView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="-162dp"
+        android:layout_below="@id/GoalSavingWaveLoadingView">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name: "
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"/>
+
+
+        <TextView
+            android:id="@+id/GoalSavingName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price : "
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"/>
+
+        <TextView
+            android:id="@+id/GoalSavingPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current Saving : "
+            android:textSize="20dp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"/>
+
+        <EditText
+            android:id="@+id/currentSaving"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Current Saving Balance"
+            android:textSize="17sp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remaining Amount Required: "
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"/>
+
+        <TextView
+            android:id="@+id/GoalSavingRemainingAmountRequired"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#CC0C0C"/>
+
+
+        <Button
+            android:id="@+id/buttonCalculate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calculate" />
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_marginTop="2dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calculate average amount per day"
+            android:textSize="23sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"
+            android:layout_marginTop="10dp"/>
+1
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="When do you need it?"
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/GoalSavingNumberOfDay"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/editTextColor"
+            android:hint="Date (DD/MM/YYYY)"
+            android:inputType="date"
+            android:paddingLeft="20dp"
+            android:singleLine="true"
+            android:textSize="15dp"
+            android:gravity="center_vertical"
+            android:layout_marginTop="5dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/resultOfWhen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCalculateReultOfWhen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calculate"/>
+
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_marginTop="2dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Days Required Based on Daily Saving:"
+            android:textSize="23sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter daily saving:"
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold|italic"
+            android:layout_marginTop="10dp"/>
+
+        <EditText
+            android:id="@+id/dailySaving"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/editTextColor"
+            android:gravity="center_vertical"
+            android:hint="Saving"
+            android:inputType="numberDecimal"
+            android:paddingLeft="20dp"
+            android:singleLine="true"
+            android:textSize="15dp" />
+
+
+
+        <LinearLayout
+            android:id="@+id/resultOfNumberOfDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCalculateResultOfNumberOfDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calculate"/>
+
+
+    </LinearLayout>
+
+
+
+
+    </ScrollView>
+
+
+
+
+</RelativeLayout>

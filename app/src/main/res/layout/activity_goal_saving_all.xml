@@ -1,9 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GoalSavingAll">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/relativeGoalSavingBiggest"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1A53E6">
+
+        <ImageButton
+            android:id="@+id/btnGoalSavingAllBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_left_arrow"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="Goal Saving"
+            android:textSize="28dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/ralativeAddGoalSaving"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeGoalSavingBiggest"
+        android:paddingLeft="10dp"
+        android:paddingRight="15dp">
+
+        <TextView
+            android:id="@+id/tvTotalGoalSaving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No. of Goal: "
+            android:textSize="17dp"
+            android:layout_centerVertical="true"
+            android:paddingTop="4dp"/>
+
+
+        <RelativeLayout
+            android:id="@+id/btnGoalSavingAddBiggest"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+            <ImageView
+                android:id="@+id/btnGoalSavingAddIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_add"
+                android:layout_toLeftOf="@id/btnGoalSavingAdd"
+                android:layout_centerVertical="true"
+                android:paddingTop="5dp"/>
+
+            <TextView
+                android:id="@+id/btnGoalSavingAdd"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:text="Add new Goal"
+                android:textSize="17dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingTop="4dp"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeGoalSavingListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ralativeAddGoalSaving">
+
+        <ListView
+            android:id="@+id/goalSavingListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></ListView>
+
+
+
+    </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>
