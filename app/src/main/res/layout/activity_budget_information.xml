@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BudgetInformation">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/dateSelected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="06/06/2019 Tue"
+                android:textSize="28dp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="30dp"/>
+
+//-----------------------------------------------------------------------------------------
+
+            <ImageView
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/draw_line"
+                android:layout_below="@id/dateSelected"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/tvFood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Food:"
+                android:textSize="25dp"
+                android:textColor="#000000"
+                android:layout_below="@id/line1"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <SeekBar
+                android:id="@+id/seekBarFood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFood"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/foodMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarFood"
+                android:layout_marginLeft="10dp"/>
+
+
+            <TextView
+                android:id="@+id/foodMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarFood"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:id="@+id/foodValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/seekBarFood"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/border_box"
+                android:gravity="center_horizontal"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text="50"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <!--<Switch-->
+                <!--android:id="@+id/switchFood"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Set this as default"-->
+                <!--android:layout_below="@id/foodValue"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:checked="false"-->
+                <!--android:layout_marginTop="15dp"/>-->
+
+
+            //-----------------------------------------------------------------------------------------
+
+            <ImageView
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/draw_line"
+                android:layout_below="@id/foodValue"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/tvDrink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Drink:"
+                android:textSize="25dp"
+                android:textColor="#000000"
+                android:layout_below="@id/line2"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <SeekBar
+                android:id="@+id/seekBarDrink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvDrink"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/drinkMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarDrink"
+                android:layout_marginLeft="10dp"/>
+
+
+            <TextView
+                android:id="@+id/drinkMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarDrink"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:id="@+id/drinkValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/seekBarDrink"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/border_box"
+                android:gravity="center_horizontal"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text="50"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <!--<Switch-->
+                <!--android:id="@+id/switchDrink"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Set this as default"-->
+                <!--android:layout_below="@id/drinkValue"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:checked="false"-->
+                <!--android:layout_marginTop="15dp"/>-->
+
+
+            //-----------------------------------------------------------------------------------------
+
+
+            <ImageView
+                android:id="@+id/line3"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/draw_line"
+                android:layout_below="@id/drinkValue"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/tvStationery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stationery:"
+                android:textSize="25dp"
+                android:textColor="#000000"
+                android:layout_below="@id/line3"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <SeekBar
+                android:id="@+id/seekBarStationery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvStationery"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/stationeryMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarStationery"
+                android:layout_marginLeft="10dp"/>
+
+
+            <TextView
+                android:id="@+id/stationeryMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarStationery"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:id="@+id/stationeryValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/seekBarStationery"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/border_box"
+                android:gravity="center_horizontal"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text="50"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+
+            <!--<Switch-->
+                <!--android:id="@+id/switchStationery"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Set this as default"-->
+                <!--android:layout_below="@id/stationeryValue"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:checked="false"-->
+                <!--android:layout_marginTop="15dp"/>-->
+
+
+            //-----------------------------------------------------------------------------------------
+
+
+            <ImageView
+                android:id="@+id/line4"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/draw_line"
+                android:layout_below="@id/stationeryValue"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/tvCharity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Charity:"
+                android:textSize="25dp"
+                android:textColor="#000000"
+                android:layout_below="@id/line4"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <SeekBar
+                android:id="@+id/seekBarCharity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvCharity"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/charityMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarCharity"
+                android:layout_marginLeft="10dp"/>
+
+
+            <TextView
+                android:id="@+id/charityMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarCharity"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:id="@+id/charityValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/seekBarCharity"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/border_box"
+                android:gravity="center_horizontal"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text="50"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <!--<Switch-->
+                <!--android:id="@+id/switchCharity"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Set this as default"-->
+                <!--android:layout_below="@id/charityValue"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:checked="false"-->
+                <!--android:layout_marginTop="15dp"/>-->
+
+
+            //-----------------------------------------------------------------------------------------
+
+            <ImageView
+                android:id="@+id/line5"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/draw_line"
+                android:layout_below="@id/charityValue"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/tvOthers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Others:"
+                android:textSize="25dp"
+                android:textColor="#000000"
+                android:layout_below="@id/line5"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <SeekBar
+                android:id="@+id/seekBarOthers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvOthers"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/othersMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarOthers"
+                android:layout_marginLeft="10dp"/>
+
+
+            <TextView
+                android:id="@+id/othersMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/seekBarOthers"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:id="@+id/othersValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/seekBarOthers"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/border_box"
+                android:gravity="center_horizontal"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:text="50"
+                android:textColor="#000000"
+                android:textSize="20dp" />
+
+            <!--<Switch-->
+                <!--android:id="@+id/switchOthers"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Set this as default"-->
+                <!--android:layout_below="@id/othersValue"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:checked="false"-->
+                <!--android:layout_marginTop="15dp"/>-->
+
+
+            <ImageView
+                android:id="@+id/line6"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/draw_line"
+                android:layout_below="@id/othersValue"
+                android:layout_marginTop="8dp"/>
+
+
+
+
+            //-----------------------------------------------------------------------------------------
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="Total: $"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_marginTop="18dp"
+                android:layout_below="@id/line6"
+                android:layout_marginLeft="100dp"/>
+
+
+            <TextView
+                android:id="@+id/totalValue"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:gravity="center_horizontal"
+                android:background="@drawable/border_box"
+                android:layout_toRightOf="@id/total"
+                android:layout_marginTop="18dp"
+                android:layout_below="@id/line6" />
+
+
+
+
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                android:id="@+id/btnConfirm"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:background="@drawable/custom_background_loading_button_login"
+                android:text="Confirm"
+                android:textSize="22dp"
+                android:textColor="#000000"
+                app:spinning_bar_color="#fff"
+                app:spinning_bar_padding="6dp"
+                app:spinning_bar_width="4dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@id/total"/>
+
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+</RelativeLayout>

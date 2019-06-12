@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import sg.edu.rp.c346.c300.BudgetInformation;
 import sg.edu.rp.c346.c300.CartDisplay;
 import sg.edu.rp.c346.c300.CollectionOrderPage;
 import sg.edu.rp.c346.c300.GoalSavingAll;
@@ -127,6 +128,14 @@ public class AccountMenu extends Fragment {
             }
         });
 
+
+        view.findViewById(R.id.accountBudgetSetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), BudgetInformation.class);
+                startActivity(intent);
+            }
+        });
 
 
         return view;
