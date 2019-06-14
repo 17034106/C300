@@ -1,5 +1,7 @@
 package sg.edu.rp.c346.c300;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +39,7 @@ public class BudgetInformation extends AppCompatActivity {
     TextView foodValue, drinkValue, stationeryValue, charityValue, othersValue;
 //    Switch switchFood, switchDrink, switchStationery, switchCharity, switchOthers;
     SeekBar seekBarFood, seekBarDrink, seekBarStationery, seekBarCharity, seekBarOthers;
-    TextView totalValue;
+    TextView totalValueAvailable, totalValueSelected;
 
     CircularProgressButton btnConfirm;
 
@@ -52,6 +55,8 @@ public class BudgetInformation extends AppCompatActivity {
     Budget budget;
 
     int dayOfWeekInDB; // need to minus 2 from the actual result of dayOfWeek
+
+    boolean withinBudget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +93,8 @@ public class BudgetInformation extends AppCompatActivity {
         seekBarCharity = findViewById(R.id.seekBarCharity);
         seekBarOthers = findViewById(R.id.seekBarOthers);
 
-        totalValue = findViewById(R.id.totalValue);
+        totalValueAvailable = findViewById(R.id.totalValueAvailable);
+        totalValueSelected = findViewById(R.id.totalValueSelected);
 
         btnConfirm = findViewById(R.id.btnConfirm);
 
@@ -113,9 +119,10 @@ public class BudgetInformation extends AppCompatActivity {
         drBudget.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                budget = dataSnapshot.child("0").getValue(Budget.class);
+                budget = dataSnapshot.child(dayOfWeekInDB+"").getValue(Budget.class);
 
                 totalBudget = budget.getAllowance();
+                totalValueAvailable.setText(String.format("%.2f", totalBudget));
 
                 if (budget.getCategory().getFood().getChangedValueMax() !=-1 || budget.getCategory().getFood().getChangedValueMin() !=-1){
                     foodMin.setText(String.format("$%.2f",budget.getCategory().getFood().getChangedValueMin()));
@@ -211,8 +218,8 @@ public class BudgetInformation extends AppCompatActivity {
                 othersValue.setText(String.format("%.2f",progressSeekBarOthers/10.0));
 
                 cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValue.setText(String.format("%.2f", cumulativeBudget));
-                totalValue.setTextColor(Color.GREEN);
+                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
+                totalValueSelected.setTextColor(Color.GREEN);
 
 
                 seekBarFood.setProgress(progressSeekBarFood-minSeekBarFood);
@@ -247,7 +254,7 @@ public class BudgetInformation extends AppCompatActivity {
                 progressNow = progress + minSeekBarFood;
 
                 cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValue.setText(String.format("%.2f", cumulativeBudget));
+                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
                 checking();
             }
@@ -276,7 +283,7 @@ public class BudgetInformation extends AppCompatActivity {
                 progressNow = progress + minSeekBarDrink;
 
                 cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValue.setText(String.format("%.2f", cumulativeBudget));
+                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
                 checking();
             }
@@ -304,7 +311,7 @@ public class BudgetInformation extends AppCompatActivity {
                 progressNow = progress + minSeekBarStationery;
 
                 cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValue.setText(String.format("%.2f", cumulativeBudget));
+                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
                 checking();
             }
@@ -334,7 +341,7 @@ public class BudgetInformation extends AppCompatActivity {
                 progressNow = progress + minSeekBarCharity;
 
                 cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValue.setText(String.format("%.2f", cumulativeBudget));
+                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
 
                 checking();
@@ -363,7 +370,7 @@ public class BudgetInformation extends AppCompatActivity {
                 progressNow = progress + minSeekBarOthers;
 
                 cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValue.setText(String.format("%.2f", cumulativeBudget));
+                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
                 checking();
             }
@@ -389,14 +396,44 @@ public class BudgetInformation extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                budget.getCategory().getFood().setAmount(progressSeekBarFood / 10.0);
-                budget.getCategory().getDrink().setAmount(progressSeekBarDrink / 10.0);
-                budget.getCategory().getStationery().setAmount(progressSeekBarStationery / 10.0);
-                budget.getCategory().getCharity().setAmount(progressSeekBarCharity / 10.0);
-                budget.getCategory().getOthers().setAmount(progressSeekBarOthers / 10.0);
+                if (withinBudget) {
+
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
 
 
-                drBudget.child("0").setValue(budget);
+                                    budget.getCategory().getFood().setAmount(progressSeekBarFood / 10.0);
+                                    budget.getCategory().getDrink().setAmount(progressSeekBarDrink / 10.0);
+                                    budget.getCategory().getStationery().setAmount(progressSeekBarStationery / 10.0);
+                                    budget.getCategory().getCharity().setAmount(progressSeekBarCharity / 10.0);
+                                    budget.getCategory().getOthers().setAmount(progressSeekBarOthers / 10.0);
+
+
+                                    drBudget.child(dayOfWeekInDB + "").setValue(budget);
+
+                                    Toast.makeText(BudgetInformation.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(BudgetInformation.this);
+                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+
+                }
+                else{
+                    Toast.makeText(BudgetInformation.this, "Over Budget", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -410,14 +447,22 @@ public class BudgetInformation extends AppCompatActivity {
     // checking the consider - ensure that cumulative Budget is lower than the total budget
     private void checking(){
         if (cumulativeBudget>totalBudget){
-            totalValue.setTextColor(Color.RED);
-            btnConfirm.setEnabled(false);
+            totalValueSelected.setTextColor(Color.RED);
+            withinBudget = false;
+
         }
         else {
-            totalValue.setTextColor(Color.GREEN);
-            btnConfirm.setEnabled(true);
+            totalValueSelected.setTextColor(Color.GREEN);
+            withinBudget = true;
         }
     }
 
 
+    
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

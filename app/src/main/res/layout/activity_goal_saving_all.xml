@@ -87,11 +87,24 @@
 
     </RelativeLayout>
 
+
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/draw_line"
+        android:layout_marginTop="2dp"
+        android:layout_below="@+id/ralativeAddGoalSaving"/>
+
+
+
+
     <RelativeLayout
         android:id="@+id/relativeGoalSavingListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ralativeAddGoalSaving">
+        android:layout_below="@+id/line">
 
         <ListView
             android:id="@+id/goalSavingListView"

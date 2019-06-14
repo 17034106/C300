@@ -1,6 +1,8 @@
 package sg.edu.rp.c346.c300;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -18,6 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -41,6 +48,9 @@ public class GoalSavingDetails extends AppCompatActivity {
 
     double remainingAmountRequired;
 
+    ArrayList<GoalSaving> goalSavingList = new ArrayList<>();
+    int goalPosition; //identify the position of the goal selected in the arraylist - for deletion
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +71,9 @@ public class GoalSavingDetails extends AppCompatActivity {
         //Get the value from GoalSavingAll class
         Intent intentReceive = getIntent();
         goalSavingIntentReceive = (GoalSaving) intentReceive.getSerializableExtra("goalSaving");
+        goalPosition = intentReceive.getIntExtra("goalPosition",-1);
 
-
+        goalSavingList = GoalSavingAll.goalSavingList;
 
         goalName.setText(goalSavingIntentReceive.getName());
         goalSavingNameTitle.setText(goalSavingIntentReceive.getName());
@@ -389,6 +400,70 @@ public class GoalSavingDetails extends AppCompatActivity {
         });
 
 
+        findViewById(R.id.deleteGoal).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+
+                                deleteGoal();
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(GoalSavingDetails.this);
+                builder.setMessage("Do you want to delete this?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+
+            }
+        });
+
+
+    }
+
+    public void deleteGoal(){
+
+        DatabaseReference drGoalSaving = FirebaseDatabase.getInstance().getReference().child("goalSaving").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        int nextPosition = goalPosition+1;
+
+        drGoalSaving.child(goalPosition+"").removeValue();
+
+        for (int i =nextPosition; i<goalSavingList.size();i++){
+            drGoalSaving.child((i-1)+"").setValue(goalSavingList.get(i));
+
+        }
+        drGoalSaving.child((goalSavingList.size()-1)+"").removeValue();
+
+
+        drGoalSaving.child("numOfGoal").setValue((goalSavingList.size()-1));
+
+        Intent intent = new Intent(GoalSavingDetails.this, GoalSavingAll.class);
+        startActivity(intent);
+        finish();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent intent = new Intent(GoalSavingDetails.this, GoalSavingAll.class);
+        startActivity(intent);
+        finish();
 
     }
 }

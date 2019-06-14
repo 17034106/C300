@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +28,9 @@ public class GoalSavingAll extends AppCompatActivity {
 
     DatabaseReference drGoalSaving;
 
-    ArrayList<GoalSaving> goalSavingList = new ArrayList<>();
+    public static ArrayList<GoalSaving> goalSavingList = new ArrayList<>();
 
+    TextView tvNumOfGoal;
 
     ListView listView;
     GoalSavingAdapter  goalSavingAdapter;
@@ -41,6 +44,7 @@ public class GoalSavingAll extends AppCompatActivity {
 
         listView = findViewById(R.id.goalSavingListView);
 
+        tvNumOfGoal = findViewById(R.id.tvTotalGoalSaving);
 
         drGoalSaving = FirebaseDatabase.getInstance().getReference().child("goalSaving").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         drGoalSaving.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -48,6 +52,9 @@ public class GoalSavingAll extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int numOfGoal = Integer.parseInt(dataSnapshot.child("numOfGoal").getValue().toString());
 
+                tvNumOfGoal.setText("No. of Goal: "+numOfGoal);
+
+                goalSavingList.clear();
 
                 for (int i =0; i<numOfGoal;i++){
                     String name = dataSnapshot.child(i+"").child("name").getValue().toString();
@@ -69,7 +76,9 @@ public class GoalSavingAll extends AppCompatActivity {
 
                         Intent intent = new Intent(GoalSavingAll.this, GoalSavingDetails.class);
                         intent.putExtra("goalSaving", goalSaving);
+                        intent.putExtra("goalPosition", position);
                         startActivity(intent);
+                        finish();
 
                     }
                 });
@@ -106,4 +115,10 @@ public class GoalSavingAll extends AppCompatActivity {
         return thisActivity;
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
