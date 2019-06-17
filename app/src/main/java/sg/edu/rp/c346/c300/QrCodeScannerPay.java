@@ -47,6 +47,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     String foodName;
     double foodPrice;
     int quantity;
+    boolean schoolFood;
+    String school;
     String stallName;
     String stallId;
     String foodId;
@@ -191,6 +193,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     }
                 });
                 builder.setMessage(foodOrder);
+                builder.setCancelable(false);
                 AlertDialog alert1 = builder.create();
                 alert1.show();
 
@@ -227,79 +230,135 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     private String displayOrder(String element){
 
         final String[] elementList = element.split("\\|");
-        Log.d("what is elementList", "What is the elementList: "+elementList);
-        Log.d("what is elementList", "What is the elementList size : "+elementList.length);
-        for (int i =0; i<elementList.length;i++){
-            String title = "elementList["+i+"]";
-        }
-        stallId = elementList[0];
-        foodId = elementList[1];
-        quantity = Integer.parseInt(elementList[2]);
-        if(elementList.length==4){
-            addOnListString = elementList[3];
+
+
+
+        schoolFood = elementList[0].substring(0,1).equals("T") ? true : false; // if is T, means it is true which is school's food
+
+
+
+
+            school = elementList[0].substring(1);
+            stallId = elementList[1];
+            foodId = elementList[2];
+            quantity = Integer.parseInt(elementList[3]);
+
+        if (schoolFood){
+
+            if(elementList.length==5){
+                addOnListString = elementList[4];
+            }
+            else{
+                addOnListString="";
+            }
+            addOnListIndividual = addOnListString.split("\\*");
+
+
+
+            DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference("menu").child("school").child(school).child("stall").child(stallId);
+            drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
+                    foodName = dataSnapshot.child("food").child(foodId).child("name").getValue().toString();
+                    foodPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("price").getValue().toString());
+                    stallName = dataSnapshot.child("StallName").getValue().toString();
+
+                    totalPrice = foodPrice;
+
+                    addOnList.clear();
+                    if (elementList.length ==5) {
+                        for (int i = 0; i < addOnListIndividual.length; i++) {
+                            String addOnName = dataSnapshot.child("food").child(foodId).child("AddOn").child(addOnListIndividual[i]).child("name").getValue().toString();
+                            double addOnPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("AddOn").child(addOnListIndividual[i]).child("price").getValue().toString());
+                            addOnList.add(new AddOn(addOnName, addOnPrice));
+                            totalPrice += addOnList.get(i).getPrice();
+                        }
+                    }
+                    tId = ""+CartDisplay.randomStringValue(18)+stallId+foodId;
+
+                    totalPrice = totalPrice*quantity;
+
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            String addOnString ="";
+
+            for (int i =0; i<addOnList.size();i++){
+                addOnString += String.format("%-15s: +$%.2f\n", addOnList.get(i).getName(), addOnList.get(i).getPrice());
+            }
+
+            String orderDetail = "Name: "+foodName+"\n";
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail +=String.format("%-15s: $%.2f\n", "Price", foodPrice );
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail+=addOnString;
+            if(addOnList.size()!=0) {
+                orderDetail += "--------------------------------------------------\n";
+            }
+            orderDetail+=String.format("%-15s: %dSet(s)\n", "Quantity", quantity);
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail+=String.format("%-15s: $%.2f\n", "Total Price", totalPrice);
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail+="\nAre you sure?";
+
+            return orderDetail;
         }
         else{
-            addOnListString="";
-        }
-        addOnListIndividual = addOnListString.split("\\*");
+
+            DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference("menu").child("school").child(school).child("stall").child(stallId);
+            drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
 
-        DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference("menu").child("school").child(customerSchool).child("stall").child(stallId);
-        drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    foodName = dataSnapshot.child("item").child(foodId).child("name").getValue().toString();
+                    foodPrice = Double.parseDouble(dataSnapshot.child("item").child(foodId).child("price").getValue().toString());
+                    stallName = dataSnapshot.child("StallName").getValue().toString();
+
+                    totalPrice = foodPrice;
+
+
+                    tId = ""+CartDisplay.randomStringValue(18)+stallId+foodId;
+
+                    totalPrice = totalPrice*quantity;
 
 
 
-                foodName = dataSnapshot.child("food").child(foodId).child("name").getValue().toString();
-                foodPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("price").getValue().toString());
-                stallName = dataSnapshot.child("StallName").getValue().toString();
-
-                totalPrice = foodPrice;
-
-                addOnList.clear();
-                if (elementList.length ==4) {
-                    for (int i = 0; i < addOnListIndividual.length; i++) {
-                        String addOnName = dataSnapshot.child("food").child(foodId).child("AddOn").child(addOnListIndividual[i]).child("name").getValue().toString();
-                        double addOnPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("AddOn").child(addOnListIndividual[i]).child("price").getValue().toString());
-                        addOnList.add(new AddOn(addOnName, addOnPrice));
-                        totalPrice += addOnList.get(i).getPrice();
-                    }
                 }
-                tId = ""+CartDisplay.randomStringValue(18)+stallId+foodId;
 
-                totalPrice = totalPrice*quantity;
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
 
 
-            }
+            String orderDetail = "Name: "+foodName+"\n";
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail +=String.format("%-15s: $%.2f\n", "Price", foodPrice );
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail+=String.format("%-15s: %d\n", "Quantity", quantity);
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail+=String.format("%-15s: $%.2f\n", "Total Price", totalPrice);
+            orderDetail+="--------------------------------------------------\n";
+            orderDetail+="\nAre you sure?";
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        String addOnString ="";
-
-        for (int i =0; i<addOnList.size();i++){
-            addOnString += String.format("%-15s: +$%.2f\n", addOnList.get(i).getName(), addOnList.get(i).getPrice());
+            return orderDetail;
         }
 
-        String orderDetail = "Name: "+foodName+"\n";
-        orderDetail+="--------------------------------------------------\n";
-        orderDetail +=String.format("%-15s: $%.2f\n", "Price", foodPrice );
-        orderDetail+="--------------------------------------------------\n";
-        orderDetail+=addOnString;
-        if(addOnList.size()!=0) {
-            orderDetail += "--------------------------------------------------\n";
-        }
-        orderDetail+=String.format("%-15s: $%.2f\n", "Total Price", totalPrice);
-        orderDetail+="--------------------------------------------------\n";
-        orderDetail+="\nAre you sure?";
 
-        return orderDetail;
     }
     //----------------------------------------------------------------------------------------------------------------------------------
     //endregion
@@ -329,12 +388,15 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 drHC.child(numOfDO+"").child("stallId").setValue(stallId);
                 drHC.child(numOfDO+"").child("foodId").setValue(foodId);
                 drHC.child(numOfDO+"").child("dateTimeOrder").setValue(currentDateTimeString);
+                drHC.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
 
-                for (int i = 0; i < addOnList.size(); i++) {
-                    drHC.child(numOfDO + "").child("AddOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                    drHC.child(numOfDO + "").child("AddOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                if (schoolFood) {
+                    for (int i = 0; i < addOnList.size(); i++) {
+                        drHC.child(numOfDO + "").child("AddOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
+                        drHC.child(numOfDO + "").child("AddOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                    }
+                    drHC.child(numOfDO + "").child("AddOn").child("numOfAddOn").setValue(addOnList.size());
                 }
-                drHC.child(numOfDO + "").child("AddOn").child("numOfAddOn").setValue(addOnList.size());
 
                 drHC.child(numOfDO+"").child("totalPrice").setValue(totalPrice);
                 drHC.child(numOfDO+"").child("tId").setValue(tId);
@@ -348,7 +410,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
             }
         });
         //region send data to history owner (HO)
-        final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(customerSchool).child("stall").child(stallId).child("do");
+        final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(school).child("stall").child(stallId).child("do");
         drHO.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -361,12 +423,15 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 drHO.child(numOfDO+"").child("stallId").setValue(stallId);
                 drHO.child(numOfDO+"").child("foodId").setValue(foodId);
                 drHO.child(numOfDO+"").child("dateTimeOrder").setValue(currentDateTimeString);
+                drHO.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
 
-                for (int i = 0; i < addOnList.size(); i++) {
-                    drHO.child(numOfDO + "").child("AddOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                    drHO.child(numOfDO + "").child("AddOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                if (schoolFood) {
+                    for (int i = 0; i < addOnList.size(); i++) {
+                        drHO.child(numOfDO + "").child("AddOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
+                        drHO.child(numOfDO + "").child("AddOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                    }
+                    drHO.child(numOfDO + "").child("AddOn").child("numOfAddOn").setValue(addOnList.size());
                 }
-                drHO.child(numOfDO + "").child("AddOn").child("numOfAddOn").setValue(addOnList.size());
 
                 drHO.child(numOfDO+"").child("totalPrice").setValue(totalPrice);
                 drHO.child(numOfDO+"").child("tId").setValue(tId);
