@@ -19,13 +19,14 @@ import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.model.Collection;
 import sg.edu.rp.c346.c300.model.NotificationContentPreOrder;
 import sg.edu.rp.c346.c300.model.NotificationHeader;
+import sg.edu.rp.c346.c300.model.WalkIn;
 
-public class PreOrderNotificationAdapter extends BaseExpandableListAdapter {
+public class WalkInNotificationAdapter extends BaseExpandableListAdapter {
     private Context context;
     private ArrayList<NotificationHeader> listDataHeader;
-    private HashMap<NotificationHeader, ArrayList<Collection>> listHashMap;
+    private HashMap<NotificationHeader, ArrayList<WalkIn>> listHashMap;
 
-    public PreOrderNotificationAdapter(Context context, ArrayList<NotificationHeader> listDataHeader, HashMap<NotificationHeader, ArrayList<Collection>> listHashMap) {
+    public WalkInNotificationAdapter(Context context, ArrayList<NotificationHeader> listDataHeader, HashMap<NotificationHeader, ArrayList<WalkIn>> listHashMap) {
         this.context = context;
         this.listDataHeader = listDataHeader;
         this.listHashMap = listHashMap;
@@ -93,7 +94,7 @@ public class PreOrderNotificationAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final Collection childText = (Collection) getChild(groupPosition, childPosition);
+        final WalkIn childText = (WalkIn) getChild(groupPosition, childPosition);
         if(convertView==null){
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.pre_order_updates_list_items, null);
@@ -125,12 +126,9 @@ public class PreOrderNotificationAdapter extends BaseExpandableListAdapter {
             tvAddOn.setText(addOnString);
         }
 
-        if (childText.getAdditionalNote().isEmpty()){
-            tvAdditionalNotes.setText("Additional Notes:\n     No Additional Notes");
-        }
-        else{
-            tvAdditionalNotes.setText("Additional Notes:\n     "+childText.getAdditionalNote());
-        }
+        tvAdditionalNotes.setText("Additional Notes:\n     No Additional Notes");
+
+
 
 
 

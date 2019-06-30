@@ -58,6 +58,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     String[] addOnListIndividual; // split out all the value (individual)
     final ArrayList<AddOn> addOnList = new ArrayList<>(); // get the value from the firebase and store them here
     String tId;
+    String foodImage;
+    String customerUID;
 
     String customerSchool;
 
@@ -70,6 +72,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
 
 
         getCustomerSchool();
+        customerUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
         mScannerView = new ZXingScannerView(this);
@@ -265,6 +268,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     foodName = dataSnapshot.child("food").child(foodId).child("name").getValue().toString();
                     foodPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("price").getValue().toString());
                     stallName = dataSnapshot.child("StallName").getValue().toString();
+                    foodImage = dataSnapshot.child("food").child(foodId).child("imageurl").getValue().toString().trim();
 
                     totalPrice = foodPrice;
 
@@ -389,13 +393,15 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 drHC.child(numOfDO+"").child("foodId").setValue(foodId);
                 drHC.child(numOfDO+"").child("dateTimeOrder").setValue(currentDateTimeString);
                 drHC.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
+                drHC.child(numOfDO+"").child("imageurl").setValue(foodImage);
+                drHC.child(numOfDO+"").child("customerUID").setValue(customerUID);
 
                 if (schoolFood) {
                     for (int i = 0; i < addOnList.size(); i++) {
-                        drHC.child(numOfDO + "").child("AddOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                        drHC.child(numOfDO + "").child("AddOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                        drHC.child(numOfDO + "").child("addOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
+                        drHC.child(numOfDO + "").child("addOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
                     }
-                    drHC.child(numOfDO + "").child("AddOn").child("numOfAddOn").setValue(addOnList.size());
+                    drHC.child(numOfDO + "").child("addOn").child("numOfAddOn").setValue(addOnList.size());
                 }
 
                 drHC.child(numOfDO+"").child("totalPrice").setValue(totalPrice);
@@ -409,6 +415,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
 
             }
         });
+        //endregion
+
         //region send data to history owner (HO)
         final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(school).child("stall").child(stallId).child("do");
         drHO.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -424,13 +432,15 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 drHO.child(numOfDO+"").child("foodId").setValue(foodId);
                 drHO.child(numOfDO+"").child("dateTimeOrder").setValue(currentDateTimeString);
                 drHO.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
+                drHO.child(numOfDO+"").child("imageurl").setValue(foodImage);
+                drHO.child(numOfDO+"").child("customerUID").setValue(customerUID);
 
                 if (schoolFood) {
                     for (int i = 0; i < addOnList.size(); i++) {
-                        drHO.child(numOfDO + "").child("AddOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                        drHO.child(numOfDO + "").child("AddOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                        drHO.child(numOfDO + "").child("addOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
+                        drHO.child(numOfDO + "").child("addOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
                     }
-                    drHO.child(numOfDO + "").child("AddOn").child("numOfAddOn").setValue(addOnList.size());
+                    drHO.child(numOfDO + "").child("addOn").child("numOfAddOn").setValue(addOnList.size());
                 }
 
                 drHO.child(numOfDO+"").child("totalPrice").setValue(totalPrice);
@@ -448,9 +458,52 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
         //endregion
 
 
+        //region send data to customer notification (walk-in)
+        if (schoolFood) {
+            final DatabaseReference drNotificationCustomerWI = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("walkIn");
+            drNotificationCustomerWI.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int numOfWalkIn = Integer.parseInt(dataSnapshot.child("numOfWalkIn").getValue().toString().trim());
+
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("name").setValue(foodName);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("price").setValue(foodPrice);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("quantity").setValue(quantity);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("stallName").setValue(stallName);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("stallId").setValue(stallId);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("foodId").setValue(foodId);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("dateTimeOrder").setValue(currentDateTimeString);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("ISITFOOD").setValue(schoolFood);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("imageurl").setValue(foodImage);
+                    drNotificationCustomerWI.child(numOfWalkIn+"").child("customerUID").setValue(customerUID);
+
+
+
+                    for (int i = 0; i < addOnList.size(); i++) {
+                        drNotificationCustomerWI.child(numOfWalkIn + "").child("addOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
+                        drNotificationCustomerWI.child(numOfWalkIn + "").child("addOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                    }
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("addOn").child("numOfAddOn").setValue(addOnList.size());
+
+
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("totalPrice").setValue(totalPrice);
+                    drNotificationCustomerWI.child(numOfWalkIn + "").child("tId").setValue(tId);
+                    drNotificationCustomerWI.child("numOfWalkIn").setValue(numOfWalkIn + 1);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+        //endregion
+
+
+
         finish();
-
-
 
     }
     //----------------------------------------------------------------------------------------------------------------------------------

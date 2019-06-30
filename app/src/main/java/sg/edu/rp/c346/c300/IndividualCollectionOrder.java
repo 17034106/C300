@@ -257,9 +257,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     drTC.child(Integer.toString(positionInCustomer + i)).child("imageurl").setValue(readdedCollectionList.get(i).getImage());
 
                     drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child("numOfAddOn").setValue(0);
-                    for (int h = 0; h < readdedCollectionList.get(i).getAddOnList().size(); h++) {
-                        drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child(Integer.toString(h)).child("name").setValue(readdedCollectionList.get(i).getAddOnList().get(h).getName());
-                        drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child(Integer.toString(h)).child("price").setValue(readdedCollectionList.get(i).getAddOnList().get(h).getPrice());
+                    for (int h = 0; h < readdedCollectionList.get(i).getAddOn().size(); h++) {
+                        drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child(Integer.toString(h)).child("name").setValue(readdedCollectionList.get(i).getAddOn().get(h).getName());
+                        drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child(Integer.toString(h)).child("price").setValue(readdedCollectionList.get(i).getAddOn().get(h).getPrice());
                         drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child("numOfAddOn").setValue(h + 1);
                     }
                 }
@@ -357,9 +357,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                             drTO.child(Integer.toString(positionInOwner + r)).child("imageurl").setValue(readdedOwnerCollectionList.get(r).getImage());
 
                             drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child("numOfAddOn").setValue(0);
-                            for (int h = 0; h < readdedOwnerCollectionList.get(r).getAddOnList().size(); h++) {
-                                drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child(Integer.toString(h)).child("name").setValue(readdedOwnerCollectionList.get(r).getAddOnList().get(h).getName());
-                                drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child(Integer.toString(h)).child("price").setValue(readdedOwnerCollectionList.get(r).getAddOnList().get(h).getPrice());
+                            for (int h = 0; h < readdedOwnerCollectionList.get(r).getAddOn().size(); h++) {
+                                drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child(Integer.toString(h)).child("name").setValue(readdedOwnerCollectionList.get(r).getAddOn().get(h).getName());
+                                drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child(Integer.toString(h)).child("price").setValue(readdedOwnerCollectionList.get(r).getAddOn().get(h).getPrice());
                                 drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child("numOfAddOn").setValue(h + 1);
                             }
                         }

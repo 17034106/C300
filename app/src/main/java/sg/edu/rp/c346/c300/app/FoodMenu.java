@@ -3,6 +3,8 @@ package sg.edu.rp.c346.c300.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -26,7 +29,8 @@ import sg.edu.rp.c346.c300.model.Menu;
 
 public class FoodMenu extends Fragment {
 
-    EditText username;
+    EditText searchBar;
+    ImageView imageCancel;
 
     GridLayout gridLayout;
 
@@ -44,8 +48,31 @@ public class FoodMenu extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_food_menu, container, false); // this will be become the view due to fragment
 
-        username = v.findViewById(R.id.etSearchbar);
+        searchBar = v.findViewById(R.id.etSearchbar);
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+                setListViewHeightBasedOnChildren(listView); //use for listview in scrollview
+            }
+        });
+
+        v.findViewById(R.id.imageCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchBar.setText("");
+            }
+        });
 
 
 
@@ -89,6 +116,21 @@ public class FoodMenu extends Fragment {
         return v;
 
     }
+
+    public void filter(String text){
+        ArrayList<Food> filteredList = new ArrayList<>();
+
+        for (Food item : foods) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        foodAdapter.filterList(filteredList);
+    }
+
+
+
 
     //Use for listview in scrollview
     public static void setListViewHeightBasedOnChildren(ListView listView) {

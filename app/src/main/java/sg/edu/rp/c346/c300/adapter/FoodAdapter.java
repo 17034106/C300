@@ -93,4 +93,11 @@ public class FoodAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+
+    public void filterList(ArrayList<Food> filteredList) {
+        foods = filteredList;
+        notifyDataSetChanged();
+    }
+
 }

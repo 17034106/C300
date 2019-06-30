@@ -27,10 +27,20 @@ public class NotificationMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PreOrderUpdates.class);
+                intent.putExtra("page","PreOrder");
                 startActivity(intent);
             }
         });
 
+
+        view.findViewById(R.id.notificationWalkIn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PreOrderUpdates.class);
+                intent.putExtra("page","WalkIn");
+                startActivity(intent);
+            }
+        });
 
 
 

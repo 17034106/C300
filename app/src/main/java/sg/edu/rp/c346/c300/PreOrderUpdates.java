@@ -22,54 +22,88 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import sg.edu.rp.c346.c300.adapter.PreOrderNotificationAdapter;
+import sg.edu.rp.c346.c300.adapter.WalkInNotificationAdapter;
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Collection;
 import sg.edu.rp.c346.c300.model.NotificationHeader;
+import sg.edu.rp.c346.c300.model.WalkIn;
 
 public class PreOrderUpdates extends AppCompatActivity {
 
 
     private ExpandableListView listView;
-    private PreOrderNotificationAdapter listAdapter;
+    private PreOrderNotificationAdapter preOrderListAdapter;
+    private WalkInNotificationAdapter walkInListAdapter;
     private ArrayList<NotificationHeader> listDataHeader;
-    private HashMap<NotificationHeader, ArrayList<Collection>> listHash;
+    private HashMap<NotificationHeader, ArrayList<Collection>> preOrderListHash;
+    private HashMap<NotificationHeader, ArrayList<WalkIn>> walkInListHash;
 
-    ArrayList<NotificationHeader> headerList = new ArrayList<>();
-    ArrayList<Collection> contentList = new ArrayList<>();
+
+    ArrayList<NotificationHeader> preOrderHeaderList = new ArrayList<>();
+    ArrayList<Collection> preOrderContentList = new ArrayList<>();
+
+    ArrayList<NotificationHeader> walkInHeaderList = new ArrayList<>();
+    ArrayList<WalkIn> walkInContentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_order_updates);
 
-        listView = findViewById(R.id.preOrderNotificationExpandableListView);
-        initData();
+        //region check which type of notification to display
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 5s = 5000ms
+        String page = getIntent().getStringExtra("page");
 
-                listAdapter = new PreOrderNotificationAdapter(PreOrderUpdates.this, listDataHeader, listHash);
-                listView.setAdapter(listAdapter);
+        if (page.equals("PreOrder")) {
 
-                Log.d("What is listHash", "What is listHash99: "+listHash);
-            }
-        }, 1000);
+            listView = findViewById(R.id.preOrderNotificationExpandableListView);
+            initDataForPreOrder();
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+
+                    preOrderListAdapter = new PreOrderNotificationAdapter(PreOrderUpdates.this, listDataHeader, preOrderListHash);
+                    listView.setAdapter(preOrderListAdapter);
+
+
+                }
+            }, 1000);
+
+        }else{
+
+            listView = findViewById(R.id.preOrderNotificationExpandableListView);
+            initDataForWalkIn();
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+
+                    walkInListAdapter = new WalkInNotificationAdapter(PreOrderUpdates.this, listDataHeader, walkInListHash);
+                    listView.setAdapter(walkInListAdapter);
+
+
+                }
+            }, 1000);
+        }
+        //endregion
 
     }
 
-    private void initData(){
+    private void initDataForPreOrder(){
         listDataHeader = new ArrayList<>();
-        listHash = new HashMap<>();
+        preOrderListHash = new HashMap<>();
         DatabaseReference drPreOrderNotification = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("preOrder");
         drPreOrderNotification.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                headerList.clear();
-                contentList.clear();
+                preOrderHeaderList.clear();
+                preOrderContentList.clear();
 
                 Log.d("nlabnfngfd", "-----------------------------------------------------------------------------------------------fghhfng bvnhgghngngh---");
 
@@ -107,48 +141,21 @@ public class PreOrderUpdates extends AppCompatActivity {
                     }
 
                     NotificationHeader notificationHeader = new NotificationHeader(foodName, status, notificationTiming, image);
-                    headerList.add(notificationHeader);
+                    preOrderHeaderList.add(notificationHeader);
 
                     Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime, customerUID, status, image);
-                    contentList.add(collection);
+                    preOrderContentList.add(collection);
                 }
 
-                for (int i =0;i<headerList.size();i++){
+                for (int i =0;i<preOrderHeaderList.size();i++){
                    // listDataHeader.add(new NotificationHeader(headerList.get(i).getTitle(), headerList.get(i).getStatus(), headerList.get(i).getCurrentTime()));
-                    listDataHeader.add(headerList.get(i));
+                    listDataHeader.add(preOrderHeaderList.get(i));
 
                     ArrayList<Collection> stringList = new ArrayList<>();
-                    stringList.add(contentList.get(i));
+                    stringList.add(preOrderContentList.get(i));
 
-                    listHash.put(listDataHeader.get(i), stringList);
+                    preOrderListHash.put(listDataHeader.get(i), stringList);
                 }
-
-
-//                listDataHeader.add(new NotificationHeader("EDMTDev", "Purchased", Calendar.getInstance().getTime()+""));
-//                listDataHeader.add(new NotificationHeader("Android", "Preparing", Calendar.getInstance().getTime()+""));
-//                listDataHeader.add(new NotificationHeader("Xamarin", "Serving", Calendar.getInstance().getTime()+""));
-
-                ArrayList<String> edmtDev = new ArrayList<>();
-                edmtDev.add("This is Expandable ListView");
-
-                ArrayList<String> androidStudio = new ArrayList<>();
-                androidStudio.add("Expandable ListView");
-                androidStudio.add("Google Map");
-                androidStudio.add("Chat Application");
-                androidStudio.add("Firebase");
-
-
-                ArrayList<String> xamarin = new ArrayList<>();
-                xamarin.add("xamarin Expandable ListView");
-                xamarin.add("xamarin Google Map");
-                xamarin.add("xamarin Chat Application");
-                xamarin.add("xamarin Firebase");
-
-                ArrayList<String> uwp = new ArrayList<>();
-                uwp.add("uwp Expandable ListView");
-                uwp.add("uwp Google Map");
-                uwp.add("uwp Chat Application");
-                uwp.add("uwp Firebase");
 
 
 
@@ -165,5 +172,80 @@ public class PreOrderUpdates extends AppCompatActivity {
 
 
     }
+
+
+    private void initDataForWalkIn() {
+        listDataHeader = new ArrayList<>();
+        walkInListHash = new HashMap<>();
+        DatabaseReference drWalkInNotification = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("walkIn");
+        drWalkInNotification.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                walkInHeaderList.clear();
+                walkInContentList.clear();
+
+
+                int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfWalkIn").getValue().toString());
+
+                for (int i = 0; i < numOfPreOrder; i++) {
+                    String foodName = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
+                    double foodPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString());
+                    String dateTimeOrder = dataSnapshot.child(Integer.toString(i)).child("dateTimeOrder").getValue().toString();
+                    int quantity = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("quantity").getValue().toString());
+                    String stallName = dataSnapshot.child(Integer.toString(i)).child("stallName").getValue().toString();
+                    int stallId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("stallId").getValue().toString());
+                    int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
+                    double totalPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
+                    String tId = dataSnapshot.child(Integer.toString(i)).child("tId").getValue().toString();
+                    String customerUID = dataSnapshot.child(Integer.toString(i)).child("customerUID").getValue().toString();
+                    String status = "Completed";
+                    String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+
+
+                    ArrayList<AddOn> addOnList = new ArrayList<>();
+                    addOnList.clear();
+                    int numOfAddOn = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("addOn").child("numOfAddOn").getValue().toString());
+                    for (int h = 0; h < numOfAddOn; h++) {
+                        String addOnName = dataSnapshot.child(Integer.toString(i)).child("addOn").child(Integer.toString(h)).child("name").getValue().toString();
+                        double addOnPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("addOn").child(Integer.toString(h)).child("price").getValue().toString());
+                        AddOn addOn = new AddOn(addOnName, addOnPrice);
+                        addOnList.add(addOn);
+                    }
+
+                    NotificationHeader notificationHeader = new NotificationHeader(foodName, status, dateTimeOrder, image);
+                    walkInHeaderList.add(notificationHeader);
+
+                    WalkIn walkIn = new WalkIn(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, tId, customerUID, image);
+                    walkInContentList.add(walkIn);
+                }
+
+                for (int i = 0; i < walkInHeaderList.size(); i++) {
+                    listDataHeader.add(walkInHeaderList.get(i));
+
+                    ArrayList<WalkIn> stringList = new ArrayList<>();
+                    stringList.add(walkInContentList.get(i));
+
+                    walkInListHash.put(listDataHeader.get(i), stringList);
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+//
+//
+//
+//
+//    }
+
+    }
+
+
 
 }

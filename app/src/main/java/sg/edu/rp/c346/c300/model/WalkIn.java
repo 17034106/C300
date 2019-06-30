@@ -2,7 +2,7 @@ package sg.edu.rp.c346.c300.model;
 
 import java.util.ArrayList;
 
-public class Collection {
+public class WalkIn {
 
 
     private String name;
@@ -13,19 +13,13 @@ public class Collection {
     private int stallId;
     private int foodId;
     private double totalPrice;
-    private ArrayList<AddOn> AddOn;
-    private String additionalNote;
-    private String lastChanges;
-    private int lastChangesInMin;
+    private ArrayList<AddOn> addOn;
     private String tId;
-    private String startTime;
-    private String endTime;
     private String customerUID;
-    private String status;
     private String image;
 
 
-    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> AddOn, String additionalNote, String lastChanges, int lastChangesInMin, String tId, String startTime, String endTime, String customerUID, String status, String image) {
+    public WalkIn(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<sg.edu.rp.c346.c300.model.AddOn> addOn, String tId, String customerUID, String image) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -34,17 +28,12 @@ public class Collection {
         this.stallId = stallId;
         this.foodId = foodId;
         this.totalPrice = totalPrice;
-        this.AddOn = AddOn;
-        this.additionalNote = additionalNote;
-        this.lastChanges = lastChanges;
-        this.lastChangesInMin =lastChangesInMin;
+        this.addOn = addOn;
         this.tId = tId;
-        this.startTime = startTime;
-        this.endTime = endTime;
         this.customerUID = customerUID;
-        this.status = status;
         this.image = image;
     }
+
 
     public String getName() {
         return name;
@@ -74,8 +63,8 @@ public class Collection {
         return quantity;
     }
 
-    public void setQuantity(int foodQuantity) {
-        this.quantity = foodQuantity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getStallName() {
@@ -110,37 +99,12 @@ public class Collection {
         this.totalPrice = totalPrice;
     }
 
-    public ArrayList<AddOn> getAddOn() {
-        return AddOn;
+    public ArrayList<sg.edu.rp.c346.c300.model.AddOn> getAddOn() {
+        return addOn;
     }
 
-    public void setAddOnList(ArrayList<AddOn> addOn) {
-        this.AddOn = addOn;
-    }
-
-    public String getAdditionalNote() {
-        return additionalNote;
-    }
-
-    public void setAdditionalNote(String additionalNote) {
-        this.additionalNote = additionalNote;
-    }
-
-
-    public String getLastChanges() {
-        return lastChanges;
-    }
-
-    public void setLastChanges(String lastChanges) {
-        this.lastChanges = lastChanges;
-    }
-
-    public int getLastChangesInMin() {
-        return lastChangesInMin;
-    }
-
-    public void setLastChangesInMin(int lastChangesInMin) {
-        this.lastChangesInMin = lastChangesInMin;
+    public void setAddOn(ArrayList<sg.edu.rp.c346.c300.model.AddOn> addOn) {
+        this.addOn = addOn;
     }
 
     public String gettId() {
@@ -151,36 +115,12 @@ public class Collection {
         this.tId = tId;
     }
 
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
     public String getCustomerUID() {
         return customerUID;
     }
 
     public void setCustomerUID(String customerUID) {
         this.customerUID = customerUID;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getImage() {

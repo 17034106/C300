@@ -76,10 +76,10 @@ public class CollectionAdapter extends BaseAdapter {
 
 
         final Collection collection = collectionList.get(position);
-        ArrayList<AddOn> addOnThing = collectionList.get(position).getAddOnList();
+        ArrayList<AddOn> addOnThing = collectionList.get(position).getAddOn();
 
         String addOnValue="";
-        final ArrayList<AddOn> addOnList = collection.getAddOnList();
+        final ArrayList<AddOn> addOnList = collection.getAddOn();
         Log.d("what is the size", "457845 What is the size: "+ addOnList.size());
         for (int i =0; i<addOnThing.size();i++){
             addOnValue += String.format("%-30s$%.2f\n", addOnThing.get(i).getName().trim(), addOnThing.get(i).getPrice());
@@ -142,7 +142,7 @@ public class CollectionAdapter extends BaseAdapter {
                 intent.putExtra("endTime", collection.getEndTime());
                 intent.putExtra("status", collection.getStatus());
                 intent.putExtra("image", collection.getImage());
-                addOnListIndividual = collection.getAddOnList();
+                addOnListIndividual = collection.getAddOn();
                 context.startActivity(intent);
             }
         });

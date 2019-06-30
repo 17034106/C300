@@ -20,12 +20,16 @@ public class Drink {
     @SerializedName("amount")
     private double amount;
 
-    public Drink(double changedValueMax, double changedValueMin, double defaultValueMax, double defaultValueMin, double amount) {
+    @SerializedName("used")
+    private double used;
+
+    public Drink(double changedValueMax, double changedValueMin, double defaultValueMax, double defaultValueMin, double amount, double used) {
         this.changedValueMax = changedValueMax;
         this.changedValueMin = changedValueMin;
         this.defaultValueMax = defaultValueMax;
         this.defaultValueMin = defaultValueMin;
         this.amount = amount;
+        this.used = used;
     }
 
 
@@ -70,5 +74,13 @@ public class Drink {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public double getUsed() {
+        return used;
+    }
+
+    public void setUsed(double used) {
+        this.used = used;
     }
 }

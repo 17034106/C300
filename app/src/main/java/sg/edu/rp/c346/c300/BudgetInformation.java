@@ -28,13 +28,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Budget;
 import sg.edu.rp.c346.c300.model.Cart;
 
 public class BudgetInformation extends AppCompatActivity {
 
-
+    TextView dateSelected;
     TextView foodMin, foodMax, drinkMin, drinkMax, stationeryMin, stationeryMax, charityMin, charityMax, othersMin, othersMax;
     TextView foodValue, drinkValue, stationeryValue, charityValue, othersValue;
 //    Switch switchFood, switchDrink, switchStationery, switchCharity, switchOthers;
@@ -63,6 +64,7 @@ public class BudgetInformation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget_information);
 
+        dateSelected = findViewById(R.id.dateSelected);
 
         foodMin = findViewById(R.id.foodMin);
         foodMax = findViewById(R.id.foodMax);
@@ -112,6 +114,12 @@ public class BudgetInformation extends AppCompatActivity {
         }
 
         Log.d("What is the value", "What is the day now: "+dayOfWeekInDB);
+
+
+        //region Display the date
+        dateSelected.setText(MainpageActivity.convertDateToString(currentTime, "dd/MM/yyyy E"));
+
+        //endregion
 
 
         //region retrieving all the data for the budget

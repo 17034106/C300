@@ -20,12 +20,16 @@ public class Stationery {
     @SerializedName("amount")
     private double amount;
 
-    public Stationery(double changedValueMax, double changedValueMin, double defaultValueMax, double defaultValueMin, double amount) {
+    @SerializedName("used")
+    private double used;
+
+    public Stationery(double changedValueMax, double changedValueMin, double defaultValueMax, double defaultValueMin, double amount, double used) {
         this.changedValueMax = changedValueMax;
         this.changedValueMin = changedValueMin;
         this.defaultValueMax = defaultValueMax;
         this.defaultValueMin = defaultValueMin;
         this.amount = amount;
+        this.used = used;
     }
 
 
@@ -70,5 +74,13 @@ public class Stationery {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public double getUsed() {
+        return used;
+    }
+
+    public void setUsed(double used) {
+        this.used = used;
     }
 }
