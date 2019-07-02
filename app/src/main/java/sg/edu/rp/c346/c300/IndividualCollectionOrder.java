@@ -105,6 +105,39 @@ public class IndividualCollectionOrder extends AppCompatActivity {
             tvAddOn.setText(addOnString.trim());
         }
 
+        //region Receive the order and send the data to HO and HC
+        findViewById(R.id.IndividualConfirmReceiveOrderBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+
+
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(IndividualCollectionOrder.this);
+                builder.setMessage("Did you receive your order?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+
+            }
+        });
+
+        //endregion
+
+
         //region intent to IndividualEditFoodDisplay to change the confirmed order
         findViewById(R.id.IndividualEditOrderBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,9 +191,6 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
             }
         });
-
-
-
         //endregion
 
 
@@ -207,8 +237,10 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     String startTime = dataSnapshot.child(i+"").child("startTime").getValue().toString();
                     String endTime = dataSnapshot.child(i+"").child("endTime").getValue().toString();
                     String customerUID = dataSnapshot.child(i+"").child("customerUID").getValue().toString();
+                    String stallUID = dataSnapshot.child(i+"").child("stallUID").getValue().toString();
                     String status = dataSnapshot.child(i+"").child("status").getValue().toString();
                     String image = dataSnapshot.child(i+"").child("imageurl").getValue().toString();
+                    String school = dataSnapshot.child(i+"").child("school").getValue().toString();
 
                     int numOfAddOn = Integer.parseInt(dataSnapshot.child(i+"").child("addOn").child("numOfAddOn").getValue().toString());
 
@@ -219,7 +251,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                         addOnList.add(new AddOn(addOnName, addOnPrice));
                     }
 
-                    collectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, status,image));
+                    collectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, stallUID, status,image, school));
 
                     //endregion
                 }
@@ -253,8 +285,10 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     drTC.child(Integer.toString(positionInCustomer + i)).child("endTime").setValue(readdedCollectionList.get(i).getEndTime());
                     drTC.child(Integer.toString(positionInCustomer + i)).child("lastChangesInMin").setValue(readdedCollectionList.get(i).getLastChangesInMin());
                     drTC.child(Integer.toString(positionInCustomer + i)).child("customerUID").setValue(readdedCollectionList.get(i).getCustomerUID());
+                    drTC.child(Integer.toString(positionInCustomer + i)).child("stallUID").setValue(readdedCollectionList.get(i).getStallUID());
                     drTC.child(Integer.toString(positionInCustomer + i)).child("status").setValue(readdedCollectionList.get(i).getStatus());
                     drTC.child(Integer.toString(positionInCustomer + i)).child("imageurl").setValue(readdedCollectionList.get(i).getImage());
+                    drTC.child(Integer.toString(positionInCustomer + i)).child("school").setValue(readdedCollectionList.get(i).getSchool());
 
                     drTC.child(Integer.toString(positionInCustomer + i)).child("addOn").child("numOfAddOn").setValue(0);
                     for (int h = 0; h < readdedCollectionList.get(i).getAddOn().size(); h++) {
@@ -319,8 +353,10 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                             String startTime = dataSnapshot.child(i+"").child("startTime").getValue().toString();
                             String endTime = dataSnapshot.child(i+"").child("endTime").getValue().toString();
                             String customerUID = dataSnapshot.child(i+"").child("customerUID").getValue().toString();
+                            String stallUID = dataSnapshot.child(i+"").child("stallUID").getValue().toString();
                             String status = dataSnapshot.child(i+"").child("status").getValue().toString();
                             String image = dataSnapshot.child(i+"").child("imageurl").getValue().toString();
+                            String school = dataSnapshot.child(i+"").child("school").getValue().toString();
 
                             int numOfAddOn = Integer.parseInt(dataSnapshot.child(i+"").child("addOn").child("numOfAddOn").getValue().toString());
 
@@ -331,7 +367,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                 addOnList.add(new AddOn(addOnName, addOnPrice));
                             }
 
-                            readdedOwnerCollectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, status, image));
+                            readdedOwnerCollectionList.add(new Collection(name, price, dataTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, stallUID, status, image, school));
                             drTO.child(i+"").removeValue();
                         }
 
@@ -353,8 +389,10 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                             drTO.child(Integer.toString(positionInOwner + r)).child("endTime").setValue(readdedOwnerCollectionList.get(r).getEndTime());
                             drTO.child(Integer.toString(positionInOwner + r)).child("lastChangesInMin").setValue(readdedOwnerCollectionList.get(r).getLastChangesInMin());
                             drTO.child(Integer.toString(positionInOwner + r)).child("customerUID").setValue(readdedOwnerCollectionList.get(r).getCustomerUID());
+                            drTO.child(Integer.toString(positionInOwner + r)).child("stallUID").setValue(readdedOwnerCollectionList.get(r).getStallUID());
                             drTO.child(Integer.toString(positionInOwner + r)).child("status").setValue(readdedOwnerCollectionList.get(r).getStatus());
                             drTO.child(Integer.toString(positionInOwner + r)).child("imageurl").setValue(readdedOwnerCollectionList.get(r).getImage());
+                            drTO.child(Integer.toString(positionInOwner + r)).child("school").setValue(readdedOwnerCollectionList.get(r).getSchool());
 
                             drTO.child(Integer.toString(positionInOwner + r)).child("addOn").child("numOfAddOn").setValue(0);
                             for (int h = 0; h < readdedOwnerCollectionList.get(r).getAddOn().size(); h++) {

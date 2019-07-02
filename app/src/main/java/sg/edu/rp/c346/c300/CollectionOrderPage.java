@@ -1,15 +1,11 @@
 package sg.edu.rp.c346.c300;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -18,27 +14,32 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
+import sg.edu.rp.c346.c300.adapter.Collection2Adapter;
 import sg.edu.rp.c346.c300.adapter.CollectionAdapter;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
-import sg.edu.rp.c346.c300.model.Cart;
 import sg.edu.rp.c346.c300.model.Collection;
-import sg.edu.rp.c346.c300.model.Food;
 
 public class CollectionOrderPage extends AppCompatActivity {
 
     DatabaseReference drTC;
 
-    TextView displayNoCollection;
+//    TextView displayNoCollection;
 
     ListView collectionListView;
     CollectionAdapter collectionAdapter;
     ArrayList<Collection> collectionList = new ArrayList<>();
     ArrayList<Collection> arrangeCollectionList = new ArrayList<>();
+
+    Collection2Adapter collection2Adapter;
+    ArrayList<Collection> readyCollectionList = new ArrayList<>();
+    ArrayList<Collection> preparingCollectionList = new ArrayList<>();
+    ArrayList<Collection> purchasedCollectionList = new ArrayList<>();
+    ArrayList<Object> overallCollectionList = new ArrayList<>();
+
+
 
     static CollectionOrderPage thisActivity;
 
@@ -49,7 +50,7 @@ public class CollectionOrderPage extends AppCompatActivity {
 
         thisActivity = this;
 
-        displayNoCollection = findViewById(R.id.displayNoCollection);
+//        displayNoCollection = findViewById(R.id.displayNoCollection);
 
 
         drTC = FirebaseDatabase.getInstance().getReference().child("tc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order");
@@ -74,8 +75,11 @@ public class CollectionOrderPage extends AppCompatActivity {
                     String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
                     String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
                     String customerUID= dataSnapshot.child(Integer.toString(i)).child("customerUID").getValue().toString();
+                    String stallUID = dataSnapshot.child(Integer.toString(i)).child("stallUID").getValue().toString();
                     String status= dataSnapshot.child(Integer.toString(i)).child("status").getValue().toString();
                     String image= dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+                    String school= dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
+
 
 
                     ArrayList<AddOn> addOnList = new ArrayList<>();
@@ -88,7 +92,7 @@ public class CollectionOrderPage extends AppCompatActivity {
                         addOnList.add(addOn);
                     }
 
-                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime, customerUID, status, image);
+                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime, customerUID, stallUID, status, image,school);
                     collectionList.add(collection);
                 }
 
@@ -122,19 +126,67 @@ public class CollectionOrderPage extends AppCompatActivity {
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //endregion
 
+                Log.d("What is size arrange","What is the size of the arrange: "+arrangeCollectionList.size());
+
+                //region split everything based on the status
+                for(int i=0; i<arrangeCollectionList.size();i++){
+                    if (arrangeCollectionList.get(i).getStatus().equals("purchased")){
+                        purchasedCollectionList.add(arrangeCollectionList.get(i));
+//                        arrangeCollectionList.remove(arrangeCollectionList.get(i));
+                    }
+                    else if (arrangeCollectionList.get(i).getStatus().equals("preparing")){
+                        preparingCollectionList.add(arrangeCollectionList.get(i));
+//                        arrangeCollectionList.remove(arrangeCollectionList.get(i));
+                    }
+                    else if (arrangeCollectionList.get(i).getStatus().equals("ready")){
+                        readyCollectionList.add(arrangeCollectionList.get(i));
+//                        arrangeCollectionList.remove(arrangeCollectionList.get(i));
+                    }
+                }
+                Log.d("What is size arrange","What is the size of the ready: "+readyCollectionList.size());
+                Log.d("What is size arrange","What is the size of the preparing: "+preparingCollectionList.size());
+                Log.d("What is size arrange","What is the size of the purchased: "+purchasedCollectionList.size());
+
+
+                overallCollectionList.add(new String("Ready"));
+                for (Collection i : readyCollectionList){
+                    overallCollectionList.add(i);
+                }
+
+                overallCollectionList.add(new String("Preparing"));
+                for (Collection i : preparingCollectionList){
+                    overallCollectionList.add(i);
+                }
+
+                overallCollectionList.add(new String("Purchased"));
+                for (Collection i : purchasedCollectionList){
+                    overallCollectionList.add(i);
+                }
+
+
+                //endregion
+
+
+
+
+
                 collectionListView = findViewById(R.id.collectionOrderListView);
-                collectionAdapter = new CollectionAdapter(CollectionOrderPage.this, arrangeCollectionList);
-                collectionListView.setAdapter(collectionAdapter);
+//                collectionAdapter = new CollectionAdapter(CollectionOrderPage.this, arrangeCollectionList);
+                collection2Adapter = new Collection2Adapter(CollectionOrderPage.this, overallCollectionList);
+                collectionListView.setAdapter(collection2Adapter);
+
+//                collectionListView.setAdapter(collectionAdapter);
 
 
 
-
-                if (arrangeCollectionList.size()==0){
-                    displayNoCollection.setVisibility(TextView.VISIBLE);
-                }
-                else{
-                    displayNoCollection.setVisibility(TextView.INVISIBLE);
-                }
+                //region if no order then display "No collection of order"
+//                if (arrangeCollectionList.size()==0){
+//                    displayNoCollection.setVisibility(TextView.VISIBLE);
+//                }
+//                else{
+//                    displayNoCollection.setVisibility(TextView.INVISIBLE);
+//                }
+                //endregion
 
 
             }

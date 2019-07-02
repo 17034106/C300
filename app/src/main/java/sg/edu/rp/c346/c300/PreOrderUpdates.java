@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -38,6 +39,7 @@ public class PreOrderUpdates extends AppCompatActivity {
     private HashMap<NotificationHeader, ArrayList<Collection>> preOrderListHash;
     private HashMap<NotificationHeader, ArrayList<WalkIn>> walkInListHash;
 
+    TextView notificationTitle;
 
     ArrayList<NotificationHeader> preOrderHeaderList = new ArrayList<>();
     ArrayList<Collection> preOrderContentList = new ArrayList<>();
@@ -54,7 +56,11 @@ public class PreOrderUpdates extends AppCompatActivity {
 
         String page = getIntent().getStringExtra("page");
 
+        notificationTitle = findViewById(R.id.notificationTitle);
+
         if (page.equals("PreOrder")) {
+
+            notificationTitle.setText("PreOrder Updates");
 
             listView = findViewById(R.id.preOrderNotificationExpandableListView);
             initDataForPreOrder();
@@ -73,6 +79,8 @@ public class PreOrderUpdates extends AppCompatActivity {
             }, 1000);
 
         }else{
+
+            notificationTitle.setText("Walk-In Order Updates");
 
             listView = findViewById(R.id.preOrderNotificationExpandableListView);
             initDataForWalkIn();
@@ -105,7 +113,6 @@ public class PreOrderUpdates extends AppCompatActivity {
                 preOrderHeaderList.clear();
                 preOrderContentList.clear();
 
-                Log.d("nlabnfngfd", "-----------------------------------------------------------------------------------------------fghhfng bvnhgghngngh---");
 
                 int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString());
 
@@ -125,9 +132,11 @@ public class PreOrderUpdates extends AppCompatActivity {
                     String startTime = dataSnapshot.child(Integer.toString(i)).child("startTime").getValue().toString();
                     String endTime = dataSnapshot.child(Integer.toString(i)).child("endTime").getValue().toString();
                     String customerUID= dataSnapshot.child(Integer.toString(i)).child("customerUID").getValue().toString();
+                    String stallUID= dataSnapshot.child(Integer.toString(i)).child("stallUID").getValue().toString();
                     String status= dataSnapshot.child(Integer.toString(i)).child("status").getValue().toString();
                     String notificationTiming = dataSnapshot.child(Integer.toString(i)).child("notificationTiming").getValue().toString();
                     String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+                    String school = dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
 
 
                     ArrayList<AddOn> addOnList = new ArrayList<>();
@@ -143,7 +152,7 @@ public class PreOrderUpdates extends AppCompatActivity {
                     NotificationHeader notificationHeader = new NotificationHeader(foodName, status, notificationTiming, image);
                     preOrderHeaderList.add(notificationHeader);
 
-                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime, customerUID, status, image);
+                    Collection collection = new Collection(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote,lastChanges,lastChangesInMin, tId, startTime, endTime, customerUID, stallUID, status, image,school);
                     preOrderContentList.add(collection);
                 }
 
@@ -199,8 +208,10 @@ public class PreOrderUpdates extends AppCompatActivity {
                     double totalPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("totalPrice").getValue().toString());
                     String tId = dataSnapshot.child(Integer.toString(i)).child("tId").getValue().toString();
                     String customerUID = dataSnapshot.child(Integer.toString(i)).child("customerUID").getValue().toString();
+                    String stallUID = dataSnapshot.child(Integer.toString(i)).child("stallUID").getValue().toString();
                     String status = "Completed";
                     String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+                    String school = dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
 
 
                     ArrayList<AddOn> addOnList = new ArrayList<>();
@@ -216,7 +227,7 @@ public class PreOrderUpdates extends AppCompatActivity {
                     NotificationHeader notificationHeader = new NotificationHeader(foodName, status, dateTimeOrder, image);
                     walkInHeaderList.add(notificationHeader);
 
-                    WalkIn walkIn = new WalkIn(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, tId, customerUID, image);
+                    WalkIn walkIn = new WalkIn(foodName, foodPrice, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList, tId, customerUID, stallUID, image, school);
                     walkInContentList.add(walkIn);
                 }
 

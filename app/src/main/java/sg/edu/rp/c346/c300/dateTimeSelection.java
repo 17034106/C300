@@ -128,6 +128,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         final int stallId = intentReceive.getIntExtra("stallId",-1);
         final int foodId = intentReceive.getIntExtra("foodId", -1);
         final String image = intentReceive.getStringExtra("image");
+        final String stallUID = intentReceive.getStringExtra("stallUID");
+        final String school = intentReceive.getStringExtra("school");
 
         final ArrayList<AddOn> addOnArrayList =Food_display.addOnArray;
 
@@ -196,6 +198,8 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("foodId").setValue(foodId);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("lastChangesInMin").setValue(lastChanges);
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("imageurl").setValue(image);
+                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("stallUID").setValue(stallUID);
+                databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("school").setValue(school);
 
 
                 databaseReferenceAddFoodCart.child(Integer.toString(numOfCartFood)).child("addOn").child("numOfAddOn").setValue(0);
@@ -420,7 +424,6 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                                     dateFormatSelectedByUser = datePattern.parse(dateSelectedByUser);
                                     stringCurrentDateConverted = dateComparePattern.parse(currentTime.getDate()+""+(currentTime.getMonth()+1)+(currentTime.getYear()+1900));
                                     stringSelectedUserDateConverted = dateComparePattern.parse(dateFormatSelectedByUser.getDate()+""+(dateFormatSelectedByUser.getMonth()+1)+(dateFormatSelectedByUser.getYear()+1900));
-                                    Log.d("0","qwertyuio--++++++++: "+dateFormatSelectedByUser);
 
 
                                 }catch (ParseException e){
@@ -430,42 +433,41 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
 
                                 //region Check condition to enable or disable the foodDisplayCheckOut
-                                Log.d("456487", "54621: " +currentTime.compareTo(dateFormatSelectedByUser));
 
-                                if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){
-                                    if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                        if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
-                                            correctTimeSelected(true, "11");
+                                if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){ //on the same day
+                                    if(currentTime.getHours()<=endTimeDate.getHours()) { //check current is before the endtime
+                                        if (dateFormatSelectedByUser.getHours() == earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
+                                            if (dateFormatSelectedByUser.getMinutes() >= earliestMinute && dateFormatSelectedByUser.getMinutes() >= startTimeDate.getMinutes()) {
+                                                correctTimeSelected(true, "11");
+                                            } else {
+                                                correctTimeSelected(false, "Earliest timing to pre-order is above");
+
+                                            }
+                                        } else if (dateFormatSelectedByUser.getHours() > earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
+
+                                            correctTimeSelected(true, "12");
+
+                                        } else if (dateFormatSelectedByUser.getHours() == endTimeDate.getHours()) {
+                                            if (dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes()) {
+                                                correctTimeSelected(true, "121");
+
+                                            } else {
+                                                correctTimeSelected(false, "Stall is closed during that timing");
+
+                                            }
+                                        } else if (dateFormatSelectedByUser.getHours() < earlierHour) {
+                                            correctTimeSelected(false, "Earliest timing to pre-order is above");
+
+                                        } else {
+                                            correctTimeSelected(false, "Stall is closed during that timing");
                                         }
-                                        else{
-                                            correctTimeSelected(false,"Earliest timing to pre-order is above");
-
-                                        }
-                                    }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-
-                                        correctTimeSelected(true, "12");
-
-                                    }
-                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
-                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                            correctTimeSelected(true, "121");
-
-                                        }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-
-                                        }
-                                    }
-                                    else if (dateFormatSelectedByUser.getHours()<earlierHour){
-                                        correctTimeSelected(false,"Earliest timing to pre-order is above");
-
                                     }
                                     else{
-                                        correctTimeSelected(false,"Stall is closed during that timing");
+                                        correctTimeSelected(false, "Earliest timing to pre-order is above");
                                     }
 
                                 }
-                                else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){
+                                else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){ //before the selected day
                                     if ( dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
                                         if ( dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
                                             correctTimeSelected(true, "41");
@@ -530,7 +532,6 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
             lastChangesHour = dateFormatSelectedByUser.getHours();
             lastChangesMinute = dateFormatSelectedByUser.getMinutes();
 
-            Log.d("hhhhhhhhh", "What is the lastChangeHour: "+lastChangesHour+" What is the start time hour: "+startTimeDate.getHours());
 
             if (lastChangesHour<startTimeDate.getHours()){
                 lastChangesHour = startTimeDate.getHours();
@@ -549,7 +550,6 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 lastChangesMinute+=60;
             }
 
-            Log.d("--------------", "What is the lastChangeHour: "+lastChangesHour+" What is the start time hour: "+startTimeDate.getHours());
 
 
             SimpleDateFormat timeSelectedToDatePattern = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -558,8 +558,6 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
             try{
                 Date change = timeSelectedToDatePattern.parse(dateFormatSelectedByUser.getDate()+"/"+dateFormatSelectedByUser.getMonth()+1+"/"+ dateFormatSelectedByUser.getYear()+1900+" "+lastChangesHour+":"+lastChangesMinute);
-                Log.d("change", "what is change: "+change);
-                Log.d("123445665454", "What is the lastChangeHour: "+lastChangesHour+" What is the lastChangesMinute: "+lastChangesMinute);
 
                 timeSelectedLastChanges = timeSelectedToStringPattern.format(change);
             }
@@ -567,7 +565,6 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
             }
 
-            Log.d("timeSelectedLastChanges", "TimeSelctedLastChanges is "+timeSelectedLastChanges);
 
             lastChangesToEdit = String.format("%02d/%02d/%02d %s", dateFormatSelectedByUser.getDate(), dateFormatSelectedByUser.getMonth()+1, dateFormatSelectedByUser.getYear()+1900, timeSelectedLastChanges);
             tvLastChanges.setText(Html.fromHtml(String.format("<b>Latest</b> Editable: %s",lastChangesToEdit)));

@@ -268,6 +268,21 @@
 
 
                     <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                        android:id="@+id/IndividualConfirmReceiveOrderBtn"
+                        android:layout_width="300dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/custom_background_loading_button_login"
+                        android:text="Received Order"
+                        android:textSize="22dp"
+                        android:textColor="#000000"
+                        app:spinning_bar_color="#fff"
+                        app:spinning_bar_padding="6dp"
+                        app:spinning_bar_width="4dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_horizontal"/>
+
+
+                    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
                         android:id="@+id/IndividualEditOrderBtn"
                         android:layout_width="300dp"
                         android:layout_height="50dp"

@@ -14,7 +14,7 @@
         android:layout_height="132dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="85dp"
         app:srcCompat="@drawable/eating2" />
 
     <AutoCompleteTextView
@@ -23,7 +23,7 @@
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="270dp"
+        android:layout_marginBottom="310dp"
         android:textColor="#FFFFFF"
         android:paddingLeft="5dp"
         android:background="#11000000"
@@ -55,7 +55,7 @@
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="210dp"
+        android:layout_marginBottom="250dp"
         android:paddingLeft="5dp"
         android:paddingRight="10dp"
         android:background="#11000000"
@@ -68,6 +68,18 @@
         android:textColorHint="#F1F1F1"
         android:textColor="#FFFFFF"
         android:textSize="16dp" />
+
+    <ImageView
+        android:id="@+id/fingerprintLogin"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="150dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/border_box"
+        android:src="@drawable/ic_fingerprint"/>
+
+
 
     <!--<android.support.v7.widget.CardView-->
         <!--android:id="@+id/btnLogin"-->
@@ -113,27 +125,7 @@
         android:layout_marginTop="20dp"/>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp">
 
-        <CheckBox
-            android:id="@+id/rememberMe"
-            android:layout_width="200dp"
-            android:layout_height="25dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="43dp"
-            android:layout_marginBottom="174dp"
-            android:text="Remember Me"
-            android:textColor="#FFFFFF"
-            android:textSize="15dp" />
-
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/tvRegister"

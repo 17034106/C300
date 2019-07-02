@@ -82,6 +82,7 @@ public class FoodMenu extends Fragment {
 
 
         foodAdapter = new FoodAdapter(getActivity(), foods);
+        foodAdapter.notifyDataSetChanged();
         listView.setAdapter(foodAdapter);
 
 

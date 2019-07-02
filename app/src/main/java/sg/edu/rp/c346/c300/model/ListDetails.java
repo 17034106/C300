@@ -99,10 +99,11 @@ public class ListDetails {
                             String startTime = dataSnapshot.child(school).child("stall").child(num).child("startTime").getValue().toString();
                             String endTime = dataSnapshot.child(school).child("stall").child(num).child("endTime").getValue().toString();
                             String image = dataSnapshot.child(school).child("stall").child(num).child("food").child(StringNumOfFood).child("imageurl").getValue().toString();
+                            String stallUID = dataSnapshot.child(school).child("stall").child(num).child("stallUID").getValue().toString();
                             int stallId = Integer.parseInt(num);
                             int foodId = h;
                             //Food food = dataSnapshot.child("0").child("stall").child(num).child("food").child(StringNumOfFood).getValue(Food.class);
-                            menuList.add(new Food(name, Double.parseDouble(price), Integer.parseInt(lastChanges),stallName, school,stallId,foodId, startTime,endTime, image));
+                            menuList.add(new Food(name, Double.parseDouble(price), Integer.parseInt(lastChanges),stallName, school,stallId,foodId, startTime,endTime, image, stallUID));
                         }
                         //endregion
 

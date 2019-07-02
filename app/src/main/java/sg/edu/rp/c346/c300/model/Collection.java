@@ -21,11 +21,12 @@ public class Collection {
     private String startTime;
     private String endTime;
     private String customerUID;
+    private String stallUID;
     private String status;
     private String image;
+    private String school;
 
-
-    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> AddOn, String additionalNote, String lastChanges, int lastChangesInMin, String tId, String startTime, String endTime, String customerUID, String status, String image) {
+    public Collection(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> AddOn, String additionalNote, String lastChanges, int lastChangesInMin, String tId, String startTime, String endTime, String customerUID, String stallUID, String status, String image, String school) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -42,8 +43,10 @@ public class Collection {
         this.startTime = startTime;
         this.endTime = endTime;
         this.customerUID = customerUID;
+        this.stallUID = stallUID;
         this.status = status;
         this.image = image;
+        this.school = school;
     }
 
     public String getName() {
@@ -114,7 +117,7 @@ public class Collection {
         return AddOn;
     }
 
-    public void setAddOnList(ArrayList<AddOn> addOn) {
+    public void setAddOn(ArrayList<AddOn> addOn) {
         this.AddOn = addOn;
     }
 
@@ -175,6 +178,14 @@ public class Collection {
         this.customerUID = customerUID;
     }
 
+    public String getStallUID() {
+        return stallUID;
+    }
+
+    public void setStallUID(String stallUID) {
+        this.stallUID = stallUID;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -189,5 +200,13 @@ public class Collection {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 }

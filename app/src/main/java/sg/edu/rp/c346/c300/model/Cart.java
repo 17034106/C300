@@ -21,9 +21,11 @@ public class Cart {
     private String lastChanges;
     private int lastChangesInMin;
     private String image;
+    private String stallUID;
+    private String school;
 
 
-    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges, int lastChangesInMin, String image) {
+    public Cart(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<AddOn> addOnList, String additionalNote, String startTime, String endTime, String lastChanges, int lastChangesInMin, String image, String stallUID, String school) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -39,6 +41,8 @@ public class Cart {
         this.lastChanges = lastChanges;
         this.lastChangesInMin = lastChangesInMin;
         this.image = image;
+        this.stallUID = stallUID;
+        this.school = school;
     }
 
     public String getName() {
@@ -159,5 +163,21 @@ public class Cart {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getStallUID() {
+        return stallUID;
+    }
+
+    public void setStallUID(String stallUID) {
+        this.stallUID = stallUID;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 }

@@ -319,6 +319,8 @@ public class Food_display extends AppCompatActivity {
                 intentCheckOut.putExtra("stallId", intent.getIntExtra("stallId",-1));
                 intentCheckOut.putExtra("foodId", intent.getIntExtra("foodId", -1));
                 intentCheckOut.putExtra("image", intent.getStringExtra("image"));
+                intentCheckOut.putExtra("stallUID", intent.getStringExtra("stallUID"));
+                intentCheckOut.putExtra("school", intent.getStringExtra("school"));
 
 
 

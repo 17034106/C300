@@ -60,6 +60,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     String tId;
     String foodImage;
     String customerUID;
+    String stallUID;
 
     String customerSchool;
 
@@ -269,6 +270,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     foodPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("price").getValue().toString());
                     stallName = dataSnapshot.child("StallName").getValue().toString();
                     foodImage = dataSnapshot.child("food").child(foodId).child("imageurl").getValue().toString().trim();
+                    stallUID = dataSnapshot.child("stallUID").getValue().toString().trim();
 
                     totalPrice = foodPrice;
 
@@ -329,6 +331,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     foodName = dataSnapshot.child("item").child(foodId).child("name").getValue().toString();
                     foodPrice = Double.parseDouble(dataSnapshot.child("item").child(foodId).child("price").getValue().toString());
                     stallName = dataSnapshot.child("StallName").getValue().toString();
+                    stallUID = dataSnapshot.child("stallUID").getValue().toString().trim();
+
 
                     totalPrice = foodPrice;
 
@@ -395,6 +399,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 drHC.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
                 drHC.child(numOfDO+"").child("imageurl").setValue(foodImage);
                 drHC.child(numOfDO+"").child("customerUID").setValue(customerUID);
+                drHC.child(numOfDO+"").child("stallUID").setValue(stallUID);
+                drHC.child(numOfDO+"").child("school").setValue(school);
 
                 if (schoolFood) {
                     for (int i = 0; i < addOnList.size(); i++) {
@@ -434,6 +440,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 drHO.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
                 drHO.child(numOfDO+"").child("imageurl").setValue(foodImage);
                 drHO.child(numOfDO+"").child("customerUID").setValue(customerUID);
+                drHO.child(numOfDO+"").child("stallUID").setValue(stallUID);
+                drHO.child(numOfDO+"").child("school").setValue(school);
 
                 if (schoolFood) {
                     for (int i = 0; i < addOnList.size(); i++) {
@@ -476,6 +484,8 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     drNotificationCustomerWI.child(numOfWalkIn + "").child("ISITFOOD").setValue(schoolFood);
                     drNotificationCustomerWI.child(numOfWalkIn + "").child("imageurl").setValue(foodImage);
                     drNotificationCustomerWI.child(numOfWalkIn+"").child("customerUID").setValue(customerUID);
+                    drNotificationCustomerWI.child(numOfWalkIn+"").child("stallUID").setValue(stallUID);
+                    drNotificationCustomerWI.child(numOfWalkIn+"").child("school").setValue(school);
 
 
 

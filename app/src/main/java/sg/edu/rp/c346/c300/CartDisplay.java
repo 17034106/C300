@@ -168,6 +168,9 @@ public class CartDisplay extends AppCompatActivity {
                         int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
                         int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
                         String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+                        String stallUID = dataSnapshot.child(Integer.toString(i)).child("stallUID").getValue().toString();
+                        String school = dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
+
 
                         ArrayList<AddOn> addOnList = new ArrayList<>();
                         addOnList.clear();
@@ -182,7 +185,7 @@ public class CartDisplay extends AppCompatActivity {
                         }
 
 
-                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges, lastChangesInMin, image);
+                        Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges, lastChangesInMin, image, stallUID,school);
                         cartList.add(cart);
 
 //                        Log.d("------------","--------------------------------------------------------------------");
@@ -368,6 +371,8 @@ public class CartDisplay extends AppCompatActivity {
                             final int foodId = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("foodId").getValue().toString());
                             final int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
                             final String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
+                            final String stallUID = dataSnapshot.child(Integer.toString(i)).child("stallUID").getValue().toString();
+                            final String school = dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
 
                             final ArrayList<AddOn> addOnList= new ArrayList<>();
                             addOnList.clear();
@@ -382,7 +387,7 @@ public class CartDisplay extends AppCompatActivity {
                             }
 
 
-                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges,lastChangesInMin, image);
+                            Cart cart = new Cart(name, price, dateTimeOrder, quantity, stallName, stallId, foodId,totalPrice, addOnList,additionalNote, startTime, endTime, lastChanges,lastChangesInMin, image, stallUID,school);
                             transactionList.add(cart);
                             //endregion
 
@@ -434,6 +439,8 @@ public class CartDisplay extends AppCompatActivity {
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("customerUID").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("status").setValue("purchased");
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("imageurl").setValue(image);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("stallUID").setValue(stallUID);
+                                    drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("school").setValue(school);
 
 
                                     drTO.child(Integer.toString(stallId)).child("order").child(Integer.toString(numOfOwnerOrder)).child("addOn").child("numOfAddOn").setValue(0);
@@ -500,6 +507,8 @@ public class CartDisplay extends AppCompatActivity {
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("customerUID").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("status").setValue("purchased");
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("imageurl").setValue(transactionList.get(i).getImage());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("stallUID").setValue(transactionList.get(i).getStallUID());
+                                    drTC.child(Integer.toString(numOfCustomerOrder + i)).child("school").setValue(transactionList.get(i).getSchool());
 
                                     drTC.child(Integer.toString(numOfCustomerOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {
@@ -556,7 +565,10 @@ public class CartDisplay extends AppCompatActivity {
                                     drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("customerUID").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("status").setValue("purchased");
                                     drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("imageurl").setValue(transactionList.get(i).getImage());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("stallUID").setValue(transactionList.get(i).getStallUID());
+                                    drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("school").setValue(transactionList.get(i).getSchool());
                                     drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("notificationTiming").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a") );
+
 
                                     drNotificationPreOrder.child(Integer.toString(numOfPreOrder + i)).child("addOn").child("numOfAddOn").setValue(0);
                                     for (int h = 0; h < transactionList.get(i).getAddOnList().size(); h++) {
@@ -856,6 +868,8 @@ public class CartDisplay extends AppCompatActivity {
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("foodId").setValue(readdedCartList.get(t).getFoodId());
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("lastChangesInMin").setValue(readdedCartList.get(t).getLastChangesInMin());
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("imageurl").setValue(readdedCartList.get(t).getImage());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("stallUID").setValue(readdedCartList.get(t).getStallUID());
+            databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("school").setValue(readdedCartList.get(t).getSchool());
 
             databaseReferenceAddFoodCart.child(Integer.toString(position+t)).child("addOn").child("numOfAddOn").setValue(0);
 

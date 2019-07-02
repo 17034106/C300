@@ -85,4 +85,8 @@ dependencies {
     implementation 'com.android.support:support-annotations:28.0.0'
 
 
+    // For Fingerprint authentication
+    implementation 'com.multidots:fingerprint-auth:1.0.1'
+
+
 }

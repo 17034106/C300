@@ -524,35 +524,35 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
                                 Log.d("456487", "54621: " +currentTime.compareTo(dateFormatSelectedByUser));
 
                                 if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){
-                                    if (dateFormatSelectedByUser.getHours()==earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                        if (dateFormatSelectedByUser.getMinutes()>=earliestMinute && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
-                                            correctTimeSelected(true, "11");
+                                    if(currentTime.getHours()<=endTimeDate.getHours()) { //check current is before the endtime
+                                        if (dateFormatSelectedByUser.getHours() == earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
+                                            if (dateFormatSelectedByUser.getMinutes() >= earliestMinute && dateFormatSelectedByUser.getMinutes() >= startTimeDate.getMinutes()) {
+                                                correctTimeSelected(true, "11");
+                                            } else {
+                                                correctTimeSelected(false, "Earliest timing to pre-order is above");
+
+                                            }
+                                        } else if (dateFormatSelectedByUser.getHours() > earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
+
+                                            correctTimeSelected(true, "12");
+
+                                        } else if (dateFormatSelectedByUser.getHours() == endTimeDate.getHours()) {
+                                            if (dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes()) {
+                                                correctTimeSelected(true, "121");
+
+                                            } else {
+                                                correctTimeSelected(false, "Stall is closed during that timing");
+
+                                            }
+                                        } else if (dateFormatSelectedByUser.getHours() < earlierHour) {
+                                            correctTimeSelected(false, "Earliest timing to pre-order is above");
+
+                                        } else {
+                                            correctTimeSelected(false, "Stall is closed during that timing");
                                         }
-                                        else{
-                                            correctTimeSelected(false,"Earliest timing to pre-order is above");
-
-                                        }
-                                    }else if (dateFormatSelectedByUser.getHours()>earlierHour && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-
-                                        correctTimeSelected(true, "12");
-
-                                    }
-                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
-                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                            correctTimeSelected(true, "121");
-
-                                        }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-
-                                        }
-                                    }
-                                    else if (dateFormatSelectedByUser.getHours()<earlierHour){
-                                        correctTimeSelected(false,"Earliest timing to pre-order is above");
-
                                     }
                                     else{
-                                        correctTimeSelected(false,"Stall is closed during that timing");
+                                        correctTimeSelected(false, "Earliest timing to pre-order is above");
                                     }
 
                                 }

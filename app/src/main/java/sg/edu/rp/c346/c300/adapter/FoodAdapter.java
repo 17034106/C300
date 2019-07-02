@@ -82,6 +82,7 @@ public class FoodAdapter extends BaseAdapter {
                 intent.putExtra("endTime", food.getEndTime());
                 intent.putExtra("stallId", food.getStallId());
                 intent.putExtra("image", food.getImage());
+                intent.putExtra("stallUID", food.getStallUID());
                 context.startActivity(intent);
 
             }

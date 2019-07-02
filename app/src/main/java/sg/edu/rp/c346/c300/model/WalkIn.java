@@ -16,10 +16,12 @@ public class WalkIn {
     private ArrayList<AddOn> addOn;
     private String tId;
     private String customerUID;
+    private String stallUID;
     private String image;
+    private String school;
 
 
-    public WalkIn(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<sg.edu.rp.c346.c300.model.AddOn> addOn, String tId, String customerUID, String image) {
+    public WalkIn(String name, double price, String dateTimeOrder, int quantity, String stallName, int stallId, int foodId, double totalPrice, ArrayList<sg.edu.rp.c346.c300.model.AddOn> addOn, String tId, String customerUID, String stallUID, String image, String school) {
         this.name = name;
         this.price = price;
         this.dateTimeOrder = dateTimeOrder;
@@ -31,7 +33,9 @@ public class WalkIn {
         this.addOn = addOn;
         this.tId = tId;
         this.customerUID = customerUID;
+        this.stallUID = stallUID;
         this.image = image;
+        this.school = school;
     }
 
 
