@@ -1,9 +1,15 @@
 package sg.edu.rp.c346.c300;
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.multidots.fingerprintauth.AuthErrorCodes;
@@ -22,6 +28,27 @@ public class FingerprintAuthentication extends AppCompatActivity implements Fing
 
         mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this);
 
+
+        //region  pop up this activity with full screen
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        getWindow().setLayout((int)(width), (int)(height));
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+//        params.gravity = Gravity.CENTER;
+//        params.x = 0;
+//        params.y = -20;
+        getWindow().setAttributes(params);
+        //endregion
+
+
+        findViewById(R.id.fingerprintCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
 
@@ -76,7 +103,9 @@ public class FingerprintAuthentication extends AppCompatActivity implements Fing
         switch (errorCode) {    //Parse the error code for recoverable/non recoverable error.
             case AuthErrorCodes.CANNOT_RECOGNIZE_ERROR:
                 //Cannot recognize the fingerprint scanned.
-//                Toast.makeText(this, "Cannot Recognize", Toast.LENGTH_SHORT).show();
+                Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(1000);
+                Toast.makeText(this, "Invalid Fingerprint", Toast.LENGTH_SHORT).show();
                 break;
             case AuthErrorCodes.NON_RECOVERABLE_ERROR:
                 //This is not recoverable error. Try other options for user authentication. like pin, password.

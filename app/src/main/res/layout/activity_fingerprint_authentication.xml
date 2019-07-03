@@ -7,22 +7,44 @@
     tools:context=".FingerprintAuthentication">
 
 
+
+
+
+    <TextView
+        android:id="@+id/fingerprintText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Use your fingerprint to verify your identity"
+        android:textColor="#D6C9C9"
+        android:textSize="17sp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:layout_above="@id/fingerprintCancel"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/fingerprintCancel"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:textColor="#C4ABAB"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:background="@drawable/border_box_white"
+        android:layout_above="@id/imageFinger"
+        android:layout_marginBottom="30dp"/>
+
+
     <ImageView
         android:id="@+id/imageFinger"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/ic_fingerprint"/>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imageFinger"
-        android:text="Please place your fingerprint on the scanner"
-        android:textColor="#1D1A1A"
-        android:textSize="20sp"
-        android:layout_centerHorizontal="true"
-        android:textAlignment="center"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/border_box_white"
+        android:src="@drawable/ic_fingerprint_white"/>
 
 </RelativeLayout>

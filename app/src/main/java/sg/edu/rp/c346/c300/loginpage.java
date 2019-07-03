@@ -92,8 +92,9 @@ public class loginpage extends AppCompatActivity {
 
         resultOfFingerprintAuthentication = getIntent().getBooleanExtra("result",false);
         if (resultOfFingerprintAuthentication){
-            Log.d("What is the email","What is the correctEmail: "+correctEmail);
-            Log.d("What is the email","What is the correctPassword: "+correctPassword);
+            dialog.setMessage("Logging. Please wait..."); //show dialog
+            dialog.show();
+
             if (!correctEmail.isEmpty() && !correctPassword.isEmpty()) {
                 mAuth.signInWithEmailAndPassword(correctEmail, correctPassword).addOnCompleteListener(loginpage.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -102,9 +103,8 @@ public class loginpage extends AppCompatActivity {
                             Toast.makeText(loginpage.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
                             dialog.dismiss(); //cancel the dialog
                         } else {
-
                             mAuth.addAuthStateListener(firebaseAuthListener);
-
+                            Toast.makeText(loginpage.this, "Successfully Login", Toast.LENGTH_SHORT).show();
 
                             //Add the key-value pair
                             prefEditSaved.putString("correctEmail", correctEmail);
@@ -112,6 +112,8 @@ public class loginpage extends AppCompatActivity {
 
                             //Call commit() method to save the changes into the SharedPreferences
                             prefEditSaved.commit();
+
+                            dialog.dismiss(); //cancel the dialog
 
                         }
                     }
@@ -190,9 +192,10 @@ public class loginpage extends AppCompatActivity {
                                 dialog.dismiss(); //cancel the dialog
                             }
                             else{
+                                Toast.makeText(loginpage.this, "Successfully Login", Toast.LENGTH_SHORT).show();
+
                                 correctEmail = email;
                                 correctPassword = password;
-
 
                                 //Add the key-value pair
                                 prefEditSaved.putString("correctEmail", correctEmail);

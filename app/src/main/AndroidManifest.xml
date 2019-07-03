@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FingerprintAuthentication"></activity>
+        <activity android:name=".FingerprintAuthentication"
+            android:theme="@style/AppTheme.Transparent"></activity>
         <activity android:name=".QrCodeScannerPay" />
         <activity
             android:name=".BudgetInformation"
