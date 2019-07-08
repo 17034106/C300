@@ -1,6 +1,8 @@
 package sg.edu.rp.c346.c300.model;
 
-public class AddOn {
+import java.io.Serializable;
+
+public class AddOn implements Serializable {
 
 
     private String name;

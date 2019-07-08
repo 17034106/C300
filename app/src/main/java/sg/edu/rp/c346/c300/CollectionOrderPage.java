@@ -126,7 +126,6 @@ public class CollectionOrderPage extends AppCompatActivity {
                 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 //endregion
 
-                Log.d("What is size arrange","What is the size of the arrange: "+arrangeCollectionList.size());
 
                 //region split everything based on the status
                 for(int i=0; i<arrangeCollectionList.size();i++){
@@ -143,9 +142,9 @@ public class CollectionOrderPage extends AppCompatActivity {
 //                        arrangeCollectionList.remove(arrangeCollectionList.get(i));
                     }
                 }
-                Log.d("What is size arrange","What is the size of the ready: "+readyCollectionList.size());
-                Log.d("What is size arrange","What is the size of the preparing: "+preparingCollectionList.size());
-                Log.d("What is size arrange","What is the size of the purchased: "+purchasedCollectionList.size());
+//                Log.d("What is size arrange","What is the size of the ready: "+readyCollectionList.size());
+//                Log.d("What is size arrange","What is the size of the preparing: "+preparingCollectionList.size());
+//                Log.d("What is size arrange","What is the size of the purchased: "+purchasedCollectionList.size());
 
 
                 overallCollectionList.add(new String("Ready"));
@@ -171,11 +170,9 @@ public class CollectionOrderPage extends AppCompatActivity {
 
 
                 collectionListView = findViewById(R.id.collectionOrderListView);
-//                collectionAdapter = new CollectionAdapter(CollectionOrderPage.this, arrangeCollectionList);
                 collection2Adapter = new Collection2Adapter(CollectionOrderPage.this, overallCollectionList);
                 collectionListView.setAdapter(collection2Adapter);
 
-//                collectionListView.setAdapter(collectionAdapter);
 
 
 

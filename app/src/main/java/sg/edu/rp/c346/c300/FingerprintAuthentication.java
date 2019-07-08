@@ -104,7 +104,7 @@ public class FingerprintAuthentication extends AppCompatActivity implements Fing
             case AuthErrorCodes.CANNOT_RECOGNIZE_ERROR:
                 //Cannot recognize the fingerprint scanned.
                 Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                vibrator.vibrate(1000);
+                vibrator.vibrate(500);
                 Toast.makeText(this, "Invalid Fingerprint", Toast.LENGTH_SHORT).show();
                 break;
             case AuthErrorCodes.NON_RECOVERABLE_ERROR:

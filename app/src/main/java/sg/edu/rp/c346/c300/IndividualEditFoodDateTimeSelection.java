@@ -38,6 +38,7 @@ import java.util.Date;
 
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
+import sg.edu.rp.c346.c300.model.Collection;
 import sg.edu.rp.c346.c300.model.Customer;
 
 public class IndividualEditFoodDateTimeSelection extends Activity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -114,19 +115,21 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
 
 
         //region Get the value from the previous activity (intent)
-        final Intent intentReceive = getIntent();
-        final String foodName = intentReceive.getStringExtra("foodName");
-        final double foodPrice = intentReceive.getDoubleExtra("foodPrice",0);
-        final String stallname = intentReceive.getStringExtra("stallName");
-        lastChanges = intentReceive.getIntExtra("lastChangesInMin", 0);
-        final int quantityValue = intentReceive.getIntExtra("quantity", 0);
-        final String additionalNote = intentReceive.getStringExtra("additionalNote");
-        final double totalPrice = intentReceive.getDoubleExtra("totalPrice",0);
-        final String startTime = intentReceive.getStringExtra("startTime");
-        final String endTime = intentReceive.getStringExtra("endTime");
-        final int stallId = intentReceive.getIntExtra("stallId",-1);
-        final int foodId = intentReceive.getIntExtra("foodId", -1);
-        final String tId = intentReceive.getStringExtra("tId");
+        final Intent intentReceived = getIntent();
+        final Collection collectionReceived = (Collection) intentReceived.getSerializableExtra("collection");
+
+        final String foodName = collectionReceived.getName();
+        final double foodPrice = collectionReceived.getPrice();
+        final String stallname = collectionReceived.getStallName();
+        lastChanges = collectionReceived.getLastChangesInMin();
+        final int quantityValue = collectionReceived.getQuantity();
+        final String additionalNote = collectionReceived.getAdditionalNote();
+        final double totalPrice = collectionReceived.getTotalPrice();
+        final String startTime = collectionReceived.getStartTime();
+        final String endTime = collectionReceived.getEndTime();
+        final int stallId = collectionReceived.getStallId();
+        final int foodId = collectionReceived.getFoodId();
+        final String tId = collectionReceived.gettId();
 
 
 
@@ -194,7 +197,7 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int totalNumOfOrder = Integer.parseInt(dataSnapshot.child("numOfOrder").getValue().toString().trim());
                 for (int i =0; i<totalNumOfOrder;i++){
-                    if (dataSnapshot.child(i+"").child("tId").getValue().toString().equals(intentReceive.getStringExtra("tId"))){
+                    if (dataSnapshot.child(i+"").child("tId").getValue().toString().equals(collectionReceived.gettId())){
                         positionInOrder_Firebase = i;
                     }
                 }
@@ -521,69 +524,42 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
 
 
                                 //region Check condition to enable or disable the foodDisplayCheckOut
-                                Log.d("456487", "54621: " +currentTime.compareTo(dateFormatSelectedByUser));
-
                                 if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){
-                                    if(currentTime.getHours()<=endTimeDate.getHours()) { //check current is before the endtime
-                                        if (dateFormatSelectedByUser.getHours() == earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
-                                            if (dateFormatSelectedByUser.getMinutes() >= earliestMinute && dateFormatSelectedByUser.getMinutes() >= startTimeDate.getMinutes()) {
-                                                correctTimeSelected(true, "11");
-                                            } else {
-                                                correctTimeSelected(false, "Earliest timing to pre-order is above");
-
+                                    if (currentTime.getHours()<endTimeDate.getHours() || (currentTime.getHours()== endTimeDate.getHours() && currentTime.getMinutes() <=endTimeDate.getMinutes())){
+                                        if (dateFormatSelectedByUser.getHours()>startTimeDate.getHours() || ( dateFormatSelectedByUser.getHours()== startTimeDate.getHours() && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes())){
+                                            if (dateFormatSelectedByUser.getHours()<endTimeDate.getHours() || (dateFormatSelectedByUser.getHours()== endTimeDate.getHours() && dateFormatSelectedByUser.getMinutes()<= endTimeDate.getMinutes())){
+                                                if (dateFormatSelectedByUser.getHours()>earlierHour || (dateFormatSelectedByUser.getHours()==earlierHour &&  dateFormatSelectedByUser.getMinutes() >= earliestMinute)) {
+                                                    correctTimeSelected(true, "9999");
+                                                }
+                                                else{
+                                                    correctTimeSelected(false,"Earliest Timing to pre-order is above");
+                                                }
                                             }
-                                        } else if (dateFormatSelectedByUser.getHours() > earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
-
-                                            correctTimeSelected(true, "12");
-
-                                        } else if (dateFormatSelectedByUser.getHours() == endTimeDate.getHours()) {
-                                            if (dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes()) {
-                                                correctTimeSelected(true, "121");
-
-                                            } else {
+                                            else{
                                                 correctTimeSelected(false, "Stall is closed during that timing");
-
                                             }
-                                        } else if (dateFormatSelectedByUser.getHours() < earlierHour) {
-                                            correctTimeSelected(false, "Earliest timing to pre-order is above");
-
-                                        } else {
+                                        }
+                                        else{
                                             correctTimeSelected(false, "Stall is closed during that timing");
                                         }
                                     }
                                     else{
                                         correctTimeSelected(false, "Earliest timing to pre-order is above");
                                     }
-
                                 }
                                 else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){
-                                    if ( dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                        if ( dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
-                                            correctTimeSelected(true, "41");
-
-                                        }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-
-
-                                        }
-                                    }
-                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
-                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                            correctTimeSelected(true, "421");
-
-                                        }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-
-                                        }
+                                    if ((dateFormatSelectedByUser.getHours()> startTimeDate.getHours()
+                                            || (dateFormatSelectedByUser.getHours()==startTimeDate.getHours()) && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours())
+                                            && (dateFormatSelectedByUser.getHours() < endTimeDate.getHours()
+                                            || (dateFormatSelectedByUser.getHours()== endTimeDate.getHours())&& dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes())){
+                                        correctTimeSelected(true, "8888");
                                     }
                                     else{
-                                        correctTimeSelected(false,"Stall is closed during that timing");
+                                        correctTimeSelected(false, "Stall is close during that timing");
                                     }
                                 }
-                                else {
-                                    correctTimeSelected(false,"Earliest timing to pre-order is above");
+                                else{
+                                    correctTimeSelected(false,"Unable to book past timing");
                                 }
 
 

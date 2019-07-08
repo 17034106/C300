@@ -297,7 +297,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
         hourFinal = hourOfDay;
         minuteFinal = minute;
 
-        String timeInputPattern = "h:mm";
+        String timeInputPattern = "H:mm";
         SimpleDateFormat timeInputFormat = new SimpleDateFormat(timeInputPattern);
         Date timeConverted=null;
 
@@ -434,69 +434,110 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
 
                                 //region Check condition to enable or disable the foodDisplayCheckOut
 
-                                if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){ //on the same day
-                                    if(currentTime.getHours()<=endTimeDate.getHours()) { //check current is before the endtime
-                                        if (dateFormatSelectedByUser.getHours() == earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
-                                            if (dateFormatSelectedByUser.getMinutes() >= earliestMinute && dateFormatSelectedByUser.getMinutes() >= startTimeDate.getMinutes()) {
-                                                correctTimeSelected(true, "11");
-                                            } else {
-                                                correctTimeSelected(false, "Earliest timing to pre-order is above");
-
+                                if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){
+                                    if (currentTime.getHours()<endTimeDate.getHours() || (currentTime.getHours()== endTimeDate.getHours() && currentTime.getMinutes() <=endTimeDate.getMinutes())){
+                                        if (dateFormatSelectedByUser.getHours()>startTimeDate.getHours() || ( dateFormatSelectedByUser.getHours()== startTimeDate.getHours() && dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes())){
+                                            if (dateFormatSelectedByUser.getHours()<endTimeDate.getHours() || (dateFormatSelectedByUser.getHours()== endTimeDate.getHours() && dateFormatSelectedByUser.getMinutes()<= endTimeDate.getMinutes())){
+                                                if (dateFormatSelectedByUser.getHours()>earlierHour || (dateFormatSelectedByUser.getHours()==earlierHour &&  dateFormatSelectedByUser.getMinutes() >= earliestMinute)) {
+                                                    correctTimeSelected(true, "9999");
+                                                }
+                                                else{
+                                                    correctTimeSelected(false,"Earliest Timing to pre-order is above");
+                                                }
                                             }
-                                        } else if (dateFormatSelectedByUser.getHours() > earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
-
-                                            correctTimeSelected(true, "12");
-
-                                        } else if (dateFormatSelectedByUser.getHours() == endTimeDate.getHours()) {
-                                            if (dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes()) {
-                                                correctTimeSelected(true, "121");
-
-                                            } else {
+                                            else{
                                                 correctTimeSelected(false, "Stall is closed during that timing");
-
                                             }
-                                        } else if (dateFormatSelectedByUser.getHours() < earlierHour) {
-                                            correctTimeSelected(false, "Earliest timing to pre-order is above");
-
-                                        } else {
+                                        }
+                                        else{
                                             correctTimeSelected(false, "Stall is closed during that timing");
                                         }
                                     }
                                     else{
                                         correctTimeSelected(false, "Earliest timing to pre-order is above");
                                     }
-
                                 }
-                                else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){ //before the selected day
-                                    if ( dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
-                                        if ( dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
-                                            correctTimeSelected(true, "41");
-
-                                        }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-
-
-                                        }
-                                    }
-                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
-                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
-                                            correctTimeSelected(true, "421");
-
-                                        }
-                                        else{
-                                            correctTimeSelected(false,"Stall is closed during that timing");
-
-                                        }
+                                else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){
+                                    if ((dateFormatSelectedByUser.getHours()> startTimeDate.getHours()
+                                            || (dateFormatSelectedByUser.getHours()==startTimeDate.getHours()) && dateFormatSelectedByUser.getHours()>=startTimeDate.getHours())
+                                            && (dateFormatSelectedByUser.getHours() < endTimeDate.getHours()
+                                            || (dateFormatSelectedByUser.getHours()== endTimeDate.getHours())&& dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes())){
+                                        correctTimeSelected(true, "8888");
                                     }
                                     else{
-                                        correctTimeSelected(false,"Stall is closed during that timing");
+                                        correctTimeSelected(false, "Stall is close during that timing");
                                     }
                                 }
-                                else {
-                                    correctTimeSelected(false,"Earliest timing to pre-order is above");
+                                else{
+                                    correctTimeSelected(false,"Unable to book past timing");
                                 }
 
+
+                                //region Previous Time Checking ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)==0){ //on the same day
+//                                    if (currentTime.getHours() <endTimeDate.getHours() || (currentTime.getHours() == endTimeDate.getHours() && stringCurrentDateConverted.getMinutes()<=endTimeDate.getMinutes())) { //check current is before the endtime
+//                                        if (dateFormatSelectedByUser.getHours() == earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
+//                                            if (dateFormatSelectedByUser.getMinutes() >= earliestMinute && dateFormatSelectedByUser.getMinutes() >= startTimeDate.getMinutes()) {
+//                                                correctTimeSelected(true, "11");
+//                                            } else {
+//                                                correctTimeSelected(false, "Earliest timing to pre-order is above");
+//
+//                                            }
+//                                        } else if (dateFormatSelectedByUser.getHours() > earlierHour && dateFormatSelectedByUser.getHours() >= startTimeDate.getHours() && dateFormatSelectedByUser.getHours() < endTimeDate.getHours()) {
+//
+//                                            correctTimeSelected(true, "12");
+//
+//                                        } else if (dateFormatSelectedByUser.getHours() == endTimeDate.getHours()) {
+//                                            if (dateFormatSelectedByUser.getMinutes() <= endTimeDate.getMinutes()) {
+//                                                correctTimeSelected(true, "121");
+//
+//                                            } else {
+//                                                correctTimeSelected(false, "Stall is closed during that timing");
+//
+//                                            }
+//                                        } else if (dateFormatSelectedByUser.getHours() < earlierHour) {
+//                                            correctTimeSelected(false, "Earliest timing to pre-order is above");
+//
+//                                        } else {
+//                                            correctTimeSelected(false, "Stall is closed during that timing");
+//                                        }
+//                                    }
+//                                    else{
+//                                        correctTimeSelected(false, "Earliest timing to pre-order is above");
+//                                    }
+//
+//                                }
+//                                else if (stringCurrentDateConverted.compareTo(stringSelectedUserDateConverted)<0){ //before the selected day
+//                                    if ( dateFormatSelectedByUser.getHours()>=startTimeDate.getHours() && dateFormatSelectedByUser.getHours()<endTimeDate.getHours()){
+//                                        if ( dateFormatSelectedByUser.getMinutes()>=startTimeDate.getMinutes() ){
+//                                            correctTimeSelected(true, "41");
+//
+//                                        }
+//                                        else{
+//                                            correctTimeSelected(false,"Stall is closed during that timing");
+//
+//
+//                                        }
+//                                    }
+//                                    else if (dateFormatSelectedByUser.getHours()==endTimeDate.getHours()){
+//                                        if (dateFormatSelectedByUser.getMinutes()<=endTimeDate.getMinutes()){
+//                                            correctTimeSelected(true, "421");
+//
+//                                        }
+//                                        else{
+//                                            correctTimeSelected(false,"Stall is closed during that timing");
+//
+//                                        }
+//                                    }
+//                                    else{
+//                                        correctTimeSelected(false,"Stall is closed during that timing");
+//                                    }
+//                                }
+//                                else {
+//                                    correctTimeSelected(false,"Earliest timing to pre-order is above");
+//                                }
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//endregion
 
                                     //endregion
 

@@ -116,7 +116,7 @@ public class PreOrderUpdates extends AppCompatActivity {
 
                 int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString());
 
-                for(int i =0; i<numOfPreOrder;i++){
+                for(int i =numOfPreOrder-1; i>=0;i--){
                     String foodName = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
                     double foodPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString());
                     String dateTimeOrder = dataSnapshot.child(Integer.toString(i)).child("dateTimeOrder").getValue().toString();
@@ -197,7 +197,7 @@ public class PreOrderUpdates extends AppCompatActivity {
 
                 int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfWalkIn").getValue().toString());
 
-                for (int i = 0; i < numOfPreOrder; i++) {
+                for (int i = numOfPreOrder-1; i >=0; i--) {
                     String foodName = dataSnapshot.child(Integer.toString(i)).child("name").getValue().toString();
                     double foodPrice = Double.parseDouble(dataSnapshot.child(Integer.toString(i)).child("price").getValue().toString());
                     String dateTimeOrder = dataSnapshot.child(Integer.toString(i)).child("dateTimeOrder").getValue().toString();

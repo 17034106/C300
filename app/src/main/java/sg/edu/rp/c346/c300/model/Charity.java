@@ -5,32 +5,32 @@ import com.google.gson.annotations.SerializedName;
 
 public class Charity {
 
-    @PropertyName("change_value_max")
+    @PropertyName("changeValueMax")
     private double changedValueMax;
 
     @PropertyName("changedValueMin")
     private double changedValueMin;
 
-    @PropertyName("default_value_max")
+    @PropertyName("defaultValueMax")
     private double defaultValueMax;
 
     @PropertyName("defaultValueMin")
     private double defaultValueMin;
 
-    @SerializedName("amount")
+    @PropertyName("amount")
     private double amount;
 
-    @SerializedName("used")
-    private double used;
+    @PropertyName("left")
+    private double left;
 
 
-    public Charity(double changedValueMax, double changedValueMin, double defaultValueMax, double defaultValueMin, double amount, double used) {
+    public Charity(double changedValueMax, double changedValueMin, double defaultValueMax, double defaultValueMin, double amount, double left) {
         this.changedValueMax = changedValueMax;
         this.changedValueMin = changedValueMin;
         this.defaultValueMax = defaultValueMax;
         this.defaultValueMin = defaultValueMin;
         this.amount = amount;
-        this.used = used;
+        this.left = left;
     }
 
     public Charity() {
@@ -76,11 +76,11 @@ public class Charity {
         this.amount = amount;
     }
 
-    public double getUsed() {
-        return used;
+    public double getLeft() {
+        return left;
     }
 
-    public void setUsed(double used) {
-        this.used = used;
+    public void setLeft(double used) {
+        this.left = left;
     }
 }

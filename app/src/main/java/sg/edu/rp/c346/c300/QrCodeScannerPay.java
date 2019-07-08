@@ -33,7 +33,11 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
+import sg.edu.rp.c346.c300.model.Budget;
+import sg.edu.rp.c346.c300.model.Category;
 import sg.edu.rp.c346.c300.model.Customer;
+import sg.edu.rp.c346.c300.model.DirectOrderReceive;
+import sg.edu.rp.c346.c300.model.DirectOrderSend;
 
 import static android.Manifest.permission.CAMERA;
 
@@ -44,37 +48,54 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     private ZXingScannerView mScannerView;
 
 
-    String foodName;
-    double foodPrice;
-    int quantity;
-    boolean schoolFood;
-    String school;
-    String stallName;
-    String stallId;
-    String foodId;
-    double totalPrice;
-    String currentDateTimeString;
-    String addOnListString; //get the value from the qrcode (combined)
-    String[] addOnListIndividual; // split out all the value (individual)
-    final ArrayList<AddOn> addOnList = new ArrayList<>(); // get the value from the firebase and store them here
-    String tId;
-    String foodImage;
-    String customerUID;
-    String stallUID;
-
-    String customerSchool;
-
+//    String foodName;
+//    double foodPrice;
+//    int quantity;
+//    boolean schoolFood;
+//    String school;
+//    String stallName;
+//    String stallId;
+//    String foodId;
+//    double totalPrice;
+//    String currentDateTimeString;
+//    String addOnListString; //get the value from the qrcode (combined)
+//    String[] addOnListIndividual; // split out all the value (individual)
+//    final ArrayList<AddOn> addOnList = new ArrayList<>(); // get the value from the firebase and store them here
+//    String tId;
+//    String foodImage;
+//    String customerUID;
+//    String stallUID;
+//
+//    String customerSchool;
+//
     String foodOrder;
+
+    boolean roleCoffeeShop;
+
+    String school;
+    int stallId;
+    String ownerUID;
+
+    ArrayList<DirectOrderReceive> directOrderReceiveList; // retrieve all the information that the customer has chosen to buy (For role = coffee shop)
+
+    String returnString; // the return String value to display the menu when the QR code scanner scans the QR code
+
+    double overallTotalPrice; // find out the total price
+
+    boolean enoughBudget; //Check whether there is enough budget or not
+
+    Budget budget;
+    double customerBalance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("onCreate", "onCreate");
 
+        directOrderReceiveList = new ArrayList<>();
 
-        getCustomerSchool();
-        customerUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
+        getBalanceAndCategory();
 
         mScannerView = new ZXingScannerView(this);
         setContentView(mScannerView);
@@ -180,27 +201,45 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
 
                 foodOrder = displayOrder(result);
 
+                if (enoughBudget) { //if enough budget
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
-                builder.setTitle("Order Details");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        makePayment();
-                    }
-                });
-                builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mScannerView.resumeCameraPreview(QrCodeScannerPay.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
+                    builder.setTitle("Order Details");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            makePayment();
+                        }
+                    });
+                    builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mScannerView.resumeCameraPreview(QrCodeScannerPay.this);
+                            directOrderReceiveList.clear();
+                        }
+                    });
+                    builder.setMessage(foodOrder);
+                    builder.setCancelable(false);
+                    AlertDialog alert1 = builder.create();
+                    alert1.show();
+                }
+                else{ // not enough budget
 
-                    }
-                });
-                builder.setMessage(foodOrder);
-                builder.setCancelable(false);
-                AlertDialog alert1 = builder.create();
-                alert1.show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
+                    builder.setTitle("Error");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mScannerView.resumeCameraPreview(QrCodeScannerPay.this);
+                            directOrderReceiveList.clear();
+                        }
+                    });
 
+                    builder.setMessage("Insufficient Budget");
+                    builder.setCancelable(false);
+                    AlertDialog alert1 = builder.create();
+                    alert1.show();
+                }
             }
         }, 320);
 
@@ -209,164 +248,138 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     }
 
 
-    private void getCustomerSchool(){
 
-        final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Customer customer = dataSnapshot.getValue(Customer.class);
-                customerSchool = customer.getCustomerschool();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
 
     //region display information about the order when the user scan the QR code
     //----------------------------------------------------------------------------------------------------------------------------------
     private String displayOrder(String element){
 
+        overallTotalPrice=0;
+
+        returnString =""; // the return String value
+
         final String[] elementList = element.split("\\|");
 
+        school = elementList[1];
+        stallId = Integer.parseInt(elementList[2]);
+
+        if (elementList[0].equals("T")){ // the role is coffee shop
+            roleCoffeeShop = true;
+            Toast.makeText(this, "Coffee Shop", Toast.LENGTH_SHORT).show();
+
+            //region retrieve all the information that the customer has chosen
+            String allFood = elementList[3];
+            final String[] splitFood = allFood.split(",");
+
+            DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(school).child("stall").child(stallId+"");
+            drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    for (int i =0; i<splitFood.length;i++){
+
+                        String[] individualFood = splitFood[i].split("\\*");
+                        int foodId = Integer.parseInt(individualFood[0]);
+                        int quantity = Integer.parseInt(individualFood[1]);
+                        String allAddOn = individualFood[2];
+                        String[] individualAddOn = allAddOn.split(":");
+
+                        String name = dataSnapshot.child("food").child(foodId+"").child("name").getValue().toString();
+                        double price = Double.parseDouble(dataSnapshot.child("food").child(foodId+"").child("price").getValue().toString());
+                        String stallName = dataSnapshot.child("StallName").getValue().toString();
+                        String image = dataSnapshot.child("food").child(foodId+"").child("imageurl").getValue().toString();
+                        String stallUID = dataSnapshot.child("stallUID").getValue().toString();
+                        ownerUID = stallUID;
+
+                        ArrayList<AddOn> addOnList = new ArrayList<>();
+
+                        double totalPrice=price;
+
+                        if (!individualAddOn[0].equals("-1")){
+                            for (int h =0; h<individualAddOn.length;h++){
+                                String addOnName = dataSnapshot.child("food").child(foodId+"").child("AddOn").child(individualAddOn[h]).child("name").getValue().toString();
+                                double addOnPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId+"").child("AddOn").child(individualAddOn[h]).child("price").getValue().toString());
+                                addOnList.add(new AddOn(addOnName, addOnPrice));
+                                totalPrice+=addOnPrice;
+                            }
+                        }
+
+                        totalPrice = totalPrice * quantity;
 
 
-        schoolFood = elementList[0].substring(0,1).equals("T") ? true : false; // if is T, means it is true which is school's food
+                        directOrderReceiveList.add(new DirectOrderReceive(name, price, stallName, stallId, school, foodId, quantity, addOnList, totalPrice, image, stallUID));
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
 
+            overallTotalPrice=0;
 
+            int count =0;
+            returnString="";
+            for (DirectOrderReceive i : directOrderReceiveList) {
 
-            school = elementList[0].substring(1);
-            stallId = elementList[1];
-            foodId = elementList[2];
-            quantity = Integer.parseInt(elementList[3]);
+                Log.d("Size", "what is the size of theis 1: "+directOrderReceiveList.size());
 
-        if (schoolFood){
+                String addOnString ="";
 
-            if(elementList.length==5){
-                addOnListString = elementList[4];
+                for (int h =0; h<i.getAddOn().size();h++){
+                    addOnString += String.format("%-15s: +$%.2f\n", i.getAddOn().get(h).getName(), i.getAddOn().get(h).getPrice());
+                }
+
+                if (count !=0) {
+                    returnString += "\n";
+                    returnString += "\n";
+                }
+                returnString += "Name: "+i.getName()+"\n";
+                returnString+="--------------------------------------------------\n";
+                returnString +=String.format("%-15s: $%.2f\n", "Price", i.getPrice());
+                returnString+="--------------------------------------------------\n";
+                returnString+=addOnString;
+                if(i.getAddOn().size()!=0) {
+                    returnString += "--------------------------------------------------\n";
+                }
+                returnString+=String.format("%-15s: %dSet(s)\n", "Quantity", i.getQuantity());
+                returnString+="--------------------------------------------------\n";
+                returnString+=String.format("%-15s: $%.2f\n", "Total Price", i.getTotalPrice());
+
+                overallTotalPrice += i.getTotalPrice();
+                count++;
+            }
+            returnString+="==================================\n";
+            returnString+= String.format("Overall Total Price: %.2f\n", overallTotalPrice);
+            returnString+="==================================\n";
+            returnString+="\nAre you sure?";
+
+            if(budget.getCategory().getFood().getLeft()>= overallTotalPrice){
+                enoughBudget = true;
             }
             else{
-                addOnListString="";
-            }
-            addOnListIndividual = addOnListString.split("\\*");
-
-
-
-            DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference("menu").child("school").child(school).child("stall").child(stallId);
-            drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-
-                    foodName = dataSnapshot.child("food").child(foodId).child("name").getValue().toString();
-                    foodPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("price").getValue().toString());
-                    stallName = dataSnapshot.child("StallName").getValue().toString();
-                    foodImage = dataSnapshot.child("food").child(foodId).child("imageurl").getValue().toString().trim();
-                    stallUID = dataSnapshot.child("stallUID").getValue().toString().trim();
-
-                    totalPrice = foodPrice;
-
-                    addOnList.clear();
-                    if (elementList.length ==5) {
-                        for (int i = 0; i < addOnListIndividual.length; i++) {
-                            String addOnName = dataSnapshot.child("food").child(foodId).child("AddOn").child(addOnListIndividual[i]).child("name").getValue().toString();
-                            double addOnPrice = Double.parseDouble(dataSnapshot.child("food").child(foodId).child("AddOn").child(addOnListIndividual[i]).child("price").getValue().toString());
-                            addOnList.add(new AddOn(addOnName, addOnPrice));
-                            totalPrice += addOnList.get(i).getPrice();
-                        }
-                    }
-                    tId = ""+CartDisplay.randomStringValue(18)+stallId+foodId;
-
-                    totalPrice = totalPrice*quantity;
-
-
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-            String addOnString ="";
-
-            for (int i =0; i<addOnList.size();i++){
-                addOnString += String.format("%-15s: +$%.2f\n", addOnList.get(i).getName(), addOnList.get(i).getPrice());
+                enoughBudget = false;
             }
 
-            String orderDetail = "Name: "+foodName+"\n";
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail +=String.format("%-15s: $%.2f\n", "Price", foodPrice );
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail+=addOnString;
-            if(addOnList.size()!=0) {
-                orderDetail += "--------------------------------------------------\n";
-            }
-            orderDetail+=String.format("%-15s: %dSet(s)\n", "Quantity", quantity);
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail+=String.format("%-15s: $%.2f\n", "Total Price", totalPrice);
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail+="\nAre you sure?";
 
-            return orderDetail;
+
         }
-        else{
+        else{   // the role is non-coffee shop
+            roleCoffeeShop = false;
 
-            DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference("menu").child("school").child(school).child("stall").child(stallId);
-            drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            Toast.makeText(this, "Non-Coffee Shop", Toast.LENGTH_SHORT).show();
 
-
-
-                    foodName = dataSnapshot.child("item").child(foodId).child("name").getValue().toString();
-                    foodPrice = Double.parseDouble(dataSnapshot.child("item").child(foodId).child("price").getValue().toString());
-                    stallName = dataSnapshot.child("StallName").getValue().toString();
-                    stallUID = dataSnapshot.child("stallUID").getValue().toString().trim();
-
-
-                    totalPrice = foodPrice;
-
-
-                    tId = ""+CartDisplay.randomStringValue(18)+stallId+foodId;
-
-                    totalPrice = totalPrice*quantity;
-
-
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-
-
-            String orderDetail = "Name: "+foodName+"\n";
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail +=String.format("%-15s: $%.2f\n", "Price", foodPrice );
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail+=String.format("%-15s: %d\n", "Quantity", quantity);
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail+=String.format("%-15s: $%.2f\n", "Total Price", totalPrice);
-            orderDetail+="--------------------------------------------------\n";
-            orderDetail+="\nAre you sure?";
-
-            return orderDetail;
         }
 
 
+
+
+        return returnString;
     }
     //----------------------------------------------------------------------------------------------------------------------------------
     //endregion
@@ -378,127 +391,42 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     //----------------------------------------------------------------------------------------------------------------------------------
     public void makePayment(){
 
-        //region send data to history customer (HC)
-        //----------------------------------------------------------------------------------------------------------------------------------
-        final DatabaseReference drHC = FirebaseDatabase.getInstance().getReference().child("hc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("do");
-        drHC.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int numOfDO = Integer.parseInt(dataSnapshot.child("numOfDO").getValue().toString());
+        if (roleCoffeeShop){
 
-                Date currentDateTime = Calendar.getInstance().getTime();
-                currentDateTimeString = MainpageActivity.convertDateToString(currentDateTime, "dd/MM/yyyy h:mm:ss a");
-
-                drHC.child(numOfDO+"").child("name").setValue(foodName);
-                drHC.child(numOfDO+"").child("price").setValue(foodPrice);
-                drHC.child(numOfDO+"").child("quantity").setValue(quantity);
-                drHC.child(numOfDO+"").child("stallName").setValue(stallName);
-                drHC.child(numOfDO+"").child("stallId").setValue(stallId);
-                drHC.child(numOfDO+"").child("foodId").setValue(foodId);
-                drHC.child(numOfDO+"").child("dateTimeOrder").setValue(currentDateTimeString);
-                drHC.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
-                drHC.child(numOfDO+"").child("imageurl").setValue(foodImage);
-                drHC.child(numOfDO+"").child("customerUID").setValue(customerUID);
-                drHC.child(numOfDO+"").child("stallUID").setValue(stallUID);
-                drHC.child(numOfDO+"").child("school").setValue(school);
-
-                if (schoolFood) {
-                    for (int i = 0; i < addOnList.size(); i++) {
-                        drHC.child(numOfDO + "").child("addOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                        drHC.child(numOfDO + "").child("addOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
-                    }
-                    drHC.child(numOfDO + "").child("addOn").child("numOfAddOn").setValue(addOnList.size());
-                }
-
-                drHC.child(numOfDO+"").child("totalPrice").setValue(totalPrice);
-                drHC.child(numOfDO+"").child("tId").setValue(tId);
-                drHC.child("numOfDO").setValue(numOfDO+1);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        //endregion
-
-        //region send data to history owner (HO)
-        final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(school).child("stall").child(stallId).child("do");
-        drHO.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int numOfDO = Integer.parseInt(dataSnapshot.child("numOfDO").getValue().toString().trim());
-
-                drHO.child(numOfDO+"").child("name").setValue(foodName);
-                drHO.child(numOfDO+"").child("price").setValue(foodPrice);
-                drHO.child(numOfDO+"").child("quantity").setValue(quantity);
-                drHO.child(numOfDO+"").child("stallName").setValue(stallName);
-                drHO.child(numOfDO+"").child("stallId").setValue(stallId);
-                drHO.child(numOfDO+"").child("foodId").setValue(foodId);
-                drHO.child(numOfDO+"").child("dateTimeOrder").setValue(currentDateTimeString);
-                drHO.child(numOfDO+"").child("ISITFOOD").setValue(schoolFood);
-                drHO.child(numOfDO+"").child("imageurl").setValue(foodImage);
-                drHO.child(numOfDO+"").child("customerUID").setValue(customerUID);
-                drHO.child(numOfDO+"").child("stallUID").setValue(stallUID);
-                drHO.child(numOfDO+"").child("school").setValue(school);
-
-                if (schoolFood) {
-                    for (int i = 0; i < addOnList.size(); i++) {
-                        drHO.child(numOfDO + "").child("addOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                        drHO.child(numOfDO + "").child("addOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
-                    }
-                    drHO.child(numOfDO + "").child("addOn").child("numOfAddOn").setValue(addOnList.size());
-                }
-
-                drHO.child(numOfDO+"").child("totalPrice").setValue(totalPrice);
-                drHO.child(numOfDO+"").child("tId").setValue(tId);
-                drHO.child("numOfDO").setValue(numOfDO+1);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //endregion
+            final String dateTimeOrder = MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a");
 
 
-        //region send data to customer notification (walk-in)
-        if (schoolFood) {
-            final DatabaseReference drNotificationCustomerWI = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("walkIn");
-            drNotificationCustomerWI.addListenerForSingleValueEvent(new ValueEventListener() {
+            //---------------------------------------------------------------------------------------------
+            //region send data to HC
+            final DatabaseReference drHC = FirebaseDatabase.getInstance().getReference().child("hc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("do");
+            drHC.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    int numOfWalkIn = Integer.parseInt(dataSnapshot.child("numOfWalkIn").getValue().toString().trim());
+                    int numOfDO = Integer.parseInt(dataSnapshot.child("numOfDO").getValue().toString());
 
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("name").setValue(foodName);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("price").setValue(foodPrice);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("quantity").setValue(quantity);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("stallName").setValue(stallName);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("stallId").setValue(stallId);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("foodId").setValue(foodId);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("dateTimeOrder").setValue(currentDateTimeString);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("ISITFOOD").setValue(schoolFood);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("imageurl").setValue(foodImage);
-                    drNotificationCustomerWI.child(numOfWalkIn+"").child("customerUID").setValue(customerUID);
-                    drNotificationCustomerWI.child(numOfWalkIn+"").child("stallUID").setValue(stallUID);
-                    drNotificationCustomerWI.child(numOfWalkIn+"").child("school").setValue(school);
+                    for (int i =0; i<directOrderReceiveList.size()/2;i++){
+                        Log.d("Size", "what is the size of theis 2: "+directOrderReceiveList.size());
 
-
-
-                    for (int i = 0; i < addOnList.size(); i++) {
-                        drNotificationCustomerWI.child(numOfWalkIn + "").child("addOn").child(i + "").child("name").setValue(addOnList.get(i).getName());
-                        drNotificationCustomerWI.child(numOfWalkIn + "").child("addOn").child(i + "").child("price").setValue(addOnList.get(i).getPrice());
+                        DirectOrderSend directOrderSend = new DirectOrderSend(directOrderReceiveList.get(i).getName(),
+                                directOrderReceiveList.get(i).getPrice(),
+                                directOrderReceiveList.get(i).getStallName(),
+                                directOrderReceiveList.get(i).getStallID(),
+                                directOrderReceiveList.get(i).getSchool(),
+                                directOrderReceiveList.get(i).getFoodID(),
+                                directOrderReceiveList.get(i).getQuantity(),
+                                directOrderReceiveList.get(i).getAddOn(),
+                                directOrderReceiveList.get(i).getTotalPrice(),
+                                directOrderReceiveList.get(i).getImage(),
+                                directOrderReceiveList.get(i).getStallUID(),
+                                FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                dateTimeOrder,
+                                ""+CartDisplay.randomStringValue(18)+stallId+directOrderReceiveList.get(i).getFoodID(),
+                                true);
+                        drHC.child((numOfDO+i)+"").setValue(directOrderSend);
+                        drHC.child((numOfDO+i)+"").child("addOn").child("numOfAddOn").setValue(directOrderReceiveList.get(i).getAddOn().size());
                     }
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("addOn").child("numOfAddOn").setValue(addOnList.size());
 
-
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("totalPrice").setValue(totalPrice);
-                    drNotificationCustomerWI.child(numOfWalkIn + "").child("tId").setValue(tId);
-                    drNotificationCustomerWI.child("numOfWalkIn").setValue(numOfWalkIn + 1);
+                    drHC.child("numOfDO").setValue(numOfDO+(directOrderReceiveList.size()/2));
 
                 }
 
@@ -508,15 +436,209 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 }
             });
 
+
+            //endregion
+
+
+            //---------------------------------------------------------------------------------------------
+            //region send data to HO
+
+
+            final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(school).child("stall").child(stallId+"").child("do");
+            drHO.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int numOfDO = Integer.parseInt(dataSnapshot.child("numOfDO").getValue().toString());
+
+                    for (int i =0; i<directOrderReceiveList.size()/2;i++){
+
+                        DirectOrderSend directOrderSend = new DirectOrderSend(directOrderReceiveList.get(i).getName(),
+                                directOrderReceiveList.get(i).getPrice(),
+                                directOrderReceiveList.get(i).getStallName(),
+                                directOrderReceiveList.get(i).getStallID(),
+                                directOrderReceiveList.get(i).getSchool(),
+                                directOrderReceiveList.get(i).getFoodID(),
+                                directOrderReceiveList.get(i).getQuantity(),
+                                directOrderReceiveList.get(i).getAddOn(),
+                                directOrderReceiveList.get(i).getTotalPrice(),
+                                directOrderReceiveList.get(i).getImage(),
+                                directOrderReceiveList.get(i).getStallUID(),
+                                FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                dateTimeOrder,
+                                ""+CartDisplay.randomStringValue(18)+stallId+directOrderReceiveList.get(i).getFoodID(),
+                                true);
+                        drHO.child((numOfDO+i)+"").setValue(directOrderSend);
+                        drHO.child((numOfDO+i)+"").child("addOn").child("numOfAddOn").setValue(directOrderReceiveList.get(i).getAddOn().size());
+                    }
+
+                    drHO.child("numOfDO").setValue(numOfDO+(directOrderReceiveList.size()/2));
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+            //endregion
+
+
+            //---------------------------------------------------------------------------------------------
+            //region send data to notification
+
+            final DatabaseReference drNotification = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("walkIn");
+            drNotification.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int numOfDO = Integer.parseInt(dataSnapshot.child("numOfWalkIn").getValue().toString());
+
+                    for (int i =0; i<directOrderReceiveList.size()/2;i++){
+
+                        DirectOrderSend directOrderSend = new DirectOrderSend(directOrderReceiveList.get(i).getName(),
+                                directOrderReceiveList.get(i).getPrice(),
+                                directOrderReceiveList.get(i).getStallName(),
+                                directOrderReceiveList.get(i).getStallID(),
+                                directOrderReceiveList.get(i).getSchool(),
+                                directOrderReceiveList.get(i).getFoodID(),
+                                directOrderReceiveList.get(i).getQuantity(),
+                                directOrderReceiveList.get(i).getAddOn(),
+                                directOrderReceiveList.get(i).getTotalPrice(),
+                                directOrderReceiveList.get(i).getImage(),
+                                directOrderReceiveList.get(i).getStallUID(),
+                                FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                dateTimeOrder,
+                                ""+CartDisplay.randomStringValue(18)+stallId+directOrderReceiveList.get(i).getFoodID(),
+                                true);
+                        drNotification.child((numOfDO+i)+"").setValue(directOrderSend);
+                        drNotification.child((numOfDO+i)+"").child("addOn").child("numOfAddOn").setValue(directOrderReceiveList.get(i).getAddOn().size());
+                    }
+
+                    drNotification.child("numOfWalkIn").setValue(numOfDO+(directOrderReceiveList.size()/2));
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            //endregion
+
+
+
+
+
+
+
+
         }
+        else{
+
+
+
+
+
+        }
+
+
+
+        //---------------------------------------------------------------------------------------------
+        //region deduct money from customer balance and Budget
+        DatabaseReference drCustomerBalance = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("balance");
+        drCustomerBalance.setValue(customerBalance-overallTotalPrice);
+
+        Calendar calendar = Calendar.getInstance();
+        int day1 = calendar.get(Calendar.DAY_OF_WEEK)-2;
+
+        if (day1==-1){
+            day1 = 6;
+        }
+
+        DatabaseReference drBudgetDeduct = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day").child(day1+"");
+        budget.getCategory().getFood().setLeft(budget.getCategory().getFood().getLeft()-overallTotalPrice);
+        drBudgetDeduct.setValue(budget);
+
+        //endregion
+
+
+        //---------------------------------------------------------------------------------------------
+        //region add money to owner
+
+        final DatabaseReference drOwnerBalance = FirebaseDatabase.getInstance().getReference().child("Owner").child(ownerUID).child("balance");
+        drOwnerBalance.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                double ownerBalance = Double.parseDouble(dataSnapshot.getValue().toString().trim());
+                drOwnerBalance.setValue(ownerBalance+overallTotalPrice);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         //endregion
 
 
 
-        finish();
 
+
+
+
+
+
+        finish();
     }
     //----------------------------------------------------------------------------------------------------------------------------------
     //endregion
+
+
+    private void getBalanceAndCategory(){
+        DatabaseReference drBalance = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("balance");
+        drBalance.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                customerBalance = Double.parseDouble(dataSnapshot.getValue().toString().trim());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        DatabaseReference drBudget = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day");
+        drBudget.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Calendar calendar = Calendar.getInstance();
+                int day1 = calendar.get(Calendar.DAY_OF_WEEK)-2;
+
+                if (day1==-1){
+                    day1 = 6;
+                }
+
+                budget = dataSnapshot.child(day1+"").getValue(Budget.class);
+                Log.d("Category","Catgory))))))))): "+budget.getCategory().getFood().getLeft());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
+
 
 }

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +35,7 @@ import java.util.Date;
 import sg.edu.rp.c346.c300.adapter.FoodAdapter;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
+import sg.edu.rp.c346.c300.model.Collection;
 
 public class IndividualEditFoodDisplay extends AppCompatActivity {
 
@@ -46,6 +48,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
     TextView tvFoodStallDuration;
     ImageView image;
 
+    Collection collectionReceived;
 
     TextView quantityDisplay;
     int quantityValue;
@@ -82,7 +85,9 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
             thisActivy = this;
 
 
-            final Intent intent = getIntent();
+            final Intent intentReceived = getIntent();
+            collectionReceived = (Collection) intentReceived.getSerializableExtra("collection");
+
 
             quantityValue = 1;
 
@@ -102,27 +107,27 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
 
 
-            eachPrice = intent.getDoubleExtra("foodPrice",0);
+            eachPrice = collectionReceived.getPrice();
             totalPrice =  eachPrice * quantityValue;
 
             school = MainpageActivity.school; //got it from MainpageActivity
 
             quantityDisplay.setText(Integer.toString(quantityValue));
 
-            tvTid.setText(intent.getStringExtra("tId"));
-            foodName.setText(intent.getStringExtra("foodName"));
-            foodPrice.setText(String.format("$%.2f",intent.getDoubleExtra("foodPrice",0)));
-            stallName.setText("Stall: "+intent.getStringExtra("stallName"));
-            int lastChangesInMin = intent.getIntExtra("lastChangesInMin",-1);
+            tvTid.setText(collectionReceived.gettId());
+            foodName.setText(collectionReceived.getName());
+            foodPrice.setText(String.format("$%.2f",collectionReceived.getPrice()));
+            stallName.setText("Stall: "+collectionReceived.getStallName());
+            int lastChangesInMin = collectionReceived.getLastChangesInMin();
             String lastChangeDisplay = "Changes can only be made before <b>"+lastChangesInMin+"min</b> of the collection time";
             lastChanges.setText(Html.fromHtml(lastChangeDisplay));
             checkOutPrice.setText(String.format("$%.2f", totalPrice));
-            Glide.with(IndividualEditFoodDisplay.this).load(intent.getStringExtra("image")).centerCrop().into(image);
+            Glide.with(IndividualEditFoodDisplay.this).load(collectionReceived.getImage()).centerCrop().into(image);
 
 
         //region displaying the stall's operation hour
-            Date startTimeDate = MainpageActivity.convertStringToDate(intent.getStringExtra("startTime"), "HHmm");
-            Date endTimeDate = MainpageActivity.convertStringToDate(intent.getStringExtra("endTime"), "HHmm");
+            Date startTimeDate = MainpageActivity.convertStringToDate(collectionReceived.getStartTime(), "HHmm");
+            Date endTimeDate = MainpageActivity.convertStringToDate(collectionReceived.getEndTime(), "HHmm");
             String startTime = MainpageActivity.convertDateToString(startTimeDate, "h:mm a");
             String endTime = MainpageActivity.convertDateToString(endTimeDate, "h:mm a");
             tvFoodStallDuration.setText(String.format("Working from %s to %s", startTime,endTime));
@@ -130,9 +135,9 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
 
 
-            int stallId = intent.getIntExtra("stallId",1);
+            int stallId = collectionReceived.getStallId();
 //            int foodId = Integer.parseInt(intent.getStringExtra("tId").charAt(18)+"");
-            int foodId = intent.getIntExtra("foodId", 1);
+            int foodId = collectionReceived.getFoodId();
 
 
             //region display all AddOn && getting the lastChanges
@@ -190,14 +195,12 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
                         cbAddOnWant.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                Log.d("What is addOnArray", "Tell me what is addOnArray: "+addOnArray);
 //                            addOnArray.clear();
 //                            Log.d("addOnArray is remove", "AddOn Array is remove ");
 
                                 if (isChecked){
 
                                     addOnArray.add(new AddOn(name, Double.parseDouble(price)));
-                                    Log.d("tyuiotyuioyui", "What is i: "+i);
 
 //                                totalPrice+=(doublePrice*quantityValue);
                                     totalAddOn += doublePrice;
@@ -220,9 +223,6 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
                                 calculateTotal();
                                 checkOutPrice.setText(String.format("$%.2f", totalPrice));
-                                Log.d("--------","----------------------------------------");
-                                Log.d("What is addOnArray", "Tell me what is addOnArray: "+addOnArray);
-                                Log.d("What is addOnArray size", "Tell me what is addOnArray Size : "+addOnArray.size());
 
 
                             }
@@ -310,22 +310,26 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intentDateTime = new Intent(getApplicationContext(), IndividualEditFoodDateTimeSelection.class);
 
-                intentDateTime.putExtra("foodName", intent.getStringExtra("foodName"));
-                intentDateTime.putExtra("foodPrice", intent.getDoubleExtra("foodPrice",0));
-                intentDateTime.putExtra("stallName", intent.getStringExtra("stallName"));
-                intentDateTime.putExtra("lastChanges",intent.getIntExtra("lastChanges",0) );
-                intentDateTime.putExtra("lastChangesInMin", intent.getIntExtra("lastChangesInMin",0));
-                Log.d("FoodDisplay", "What is the lastChangesInMin: "+intent.getIntExtra("lastChangesInMin",-1));
-                intentDateTime.putExtra("quantity", quantityValue);
-                intentDateTime.putExtra("additionalNote", additionalNote.getText().toString().trim());
-                intentDateTime.putExtra("totalPrice", totalPrice);
-                intentDateTime.putExtra("startTime", intent.getStringExtra("startTime"));
-                intentDateTime.putExtra("endTime", intent.getStringExtra("endTime"));
-                intentDateTime.putExtra("stallId", intent.getIntExtra("stallId",-1));
-                intentDateTime.putExtra("foodId", intent.getIntExtra("foodId", -1));
-                intentDateTime.putExtra("tId", intent.getStringExtra("tId"));
-                intentDateTime.putExtra("status", intent.getStringExtra("status"));
-                intentDateTime.putExtra("image", intent.getStringExtra("image"));
+//                intentDateTime.putExtra("foodName", intent.getStringExtra("foodName"));
+//                intentDateTime.putExtra("foodPrice", intent.getDoubleExtra("foodPrice",0));
+//                intentDateTime.putExtra("stallName", intent.getStringExtra("stallName"));
+//                intentDateTime.putExtra("lastChanges",intent.getIntExtra("lastChanges",0) );
+//                intentDateTime.putExtra("lastChangesInMin", intent.getIntExtra("lastChangesInMin",0));
+//                Log.d("FoodDisplay", "What is the lastChangesInMin: "+intent.getIntExtra("lastChangesInMin",-1));
+//                intentDateTime.putExtra("quantity", quantityValue);
+//                intentDateTime.putExtra("additionalNote", additionalNote.getText().toString().trim());
+//                intentDateTime.putExtra("totalPrice", totalPrice);
+//                intentDateTime.putExtra("startTime", intent.getStringExtra("startTime"));
+//                intentDateTime.putExtra("endTime", intent.getStringExtra("endTime"));
+//                intentDateTime.putExtra("stallId", intent.getIntExtra("stallId",-1));
+//                intentDateTime.putExtra("foodId", intent.getIntExtra("foodId", -1));
+//                intentDateTime.putExtra("tId", intent.getStringExtra("tId"));
+//                intentDateTime.putExtra("status", intent.getStringExtra("status"));
+//                intentDateTime.putExtra("image", intent.getStringExtra("image"));
+                collectionReceived.setQuantity(quantityValue);
+                collectionReceived.setTotalPrice(totalPrice);
+                collectionReceived.setAdditionalNote(additionalNote.getText().toString().trim());
+                intentDateTime.putExtra("collection", collectionReceived);
 
                 startActivity(intentDateTime);
             }

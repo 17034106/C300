@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,8 +23,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
+import sg.edu.rp.c346.c300.adapter.Collection2Adapter;
 import sg.edu.rp.c346.c300.adapter.CollectionAdapter;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
@@ -39,13 +42,38 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
     static IndividualCollectionOrder thisAcitivy;
 
-    String tId;
 
     int positionInCustomer; //finding the position of the confirmed order in customer firebase (TC)
     int positionInOwner; //finding the position of the confirmed order in Owner firebase (TO)
 
     DatabaseReference drTO;
     String customerSchool;
+
+    Collection collection;
+
+    String name;
+    double price;
+    String dateTimeOrder;
+    int quantity;
+    String stallName;
+    int stallId;
+    int foodId;
+    double totalPrice;
+    String additionalNote;
+    String lastChanges;
+    int lastChangesInMin;
+    String tId;
+    String startTime;
+    String endTime;
+    String customerUID;
+    String stallUID;
+    String status;
+    String image;
+    String school;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,29 +98,54 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
         final Intent intentReceive = getIntent();
 
+        name = intentReceive.getStringExtra("foodName");
+        price = intentReceive.getDoubleExtra("foodPrice", -0.0);
+        dateTimeOrder = intentReceive.getStringExtra("dateTimeOrder");
+        quantity = intentReceive.getIntExtra("quantity",-1);
+        stallName = intentReceive.getStringExtra("stallName");
+        stallId = intentReceive.getIntExtra("stallId",-1);
+        foodId = intentReceive.getIntExtra("foodId",-1);
+        totalPrice = intentReceive.getDoubleExtra("totalPrice",-1);
+        additionalNote = intentReceive.getStringExtra("additionalNote");
+        lastChanges = intentReceive.getStringExtra("lastChanges");
+        lastChangesInMin = intentReceive.getIntExtra("lastChangesInMin",-1);
         tId = intentReceive.getStringExtra("tId");
-        tvTID.setText(tId);
-        tvFoodName.setText(intentReceive.getStringExtra("foodName"));
-        tvFoodPrice.setText(String.format("$%.2f", intentReceive.getDoubleExtra("foodPrice",0)));
-        tvStallName.setText(String.format("Stall: %s",intentReceive.getStringExtra("stallName")));
-        Glide.with(IndividualCollectionOrder.this).load(intentReceive.getStringExtra("image")).centerCrop().into(ivimage);
+        startTime = intentReceive.getStringExtra("startTime");
+        endTime = intentReceive.getStringExtra("endTime");
+        status = intentReceive.getStringExtra("status");
+        image = intentReceive.getStringExtra("image");
+        customerUID = intentReceive.getStringExtra("customerUID");
+        stallUID = intentReceive.getStringExtra("stallUID");
+        school = intentReceive.getStringExtra("school");
+        addOnListIndividual = Collection2Adapter.addOnListIndividual;
 
-        Date stallStartOperationDate = MainpageActivity.convertStringToDate(intentReceive.getStringExtra("startTime"), "HHmm");
-        Date stallEndOperationDate = MainpageActivity.convertStringToDate(intentReceive.getStringExtra("endTime"), "HHmm");
+        collection = new Collection(name, price, dateTimeOrder, quantity, stallName, stallId, foodId, totalPrice, addOnListIndividual, additionalNote, lastChanges, lastChangesInMin, tId, startTime, endTime, customerUID, stallUID, status, image, school);
+
+
+
+
+        tvTID.setText(tId);
+        tvFoodName.setText(name);
+        tvFoodPrice.setText(String.format("$%.2f", price));
+        tvStallName.setText(String.format("Stall: %s",stallName));
+        Glide.with(IndividualCollectionOrder.this).load(image).centerCrop().into(ivimage);
+
+        Date stallStartOperationDate = MainpageActivity.convertStringToDate(startTime, "HHmm");
+        Date stallEndOperationDate = MainpageActivity.convertStringToDate(endTime, "HHmm");
 
         tvFoodStallOperation.setText(String.format("Working from %s to %s", MainpageActivity.convertDateToString(stallStartOperationDate, "hh:mm a"),MainpageActivity.convertDateToString(stallEndOperationDate, "hh:mm a") ));
         String lastChangeDisplay = "Changes can only be made before <b>"+intentReceive.getStringExtra("lastChanges")+"</b>";
         tvLastChange.setText(Html.fromHtml(lastChangeDisplay));
-        tvQuantity.setText(String.format("x%d", intentReceive.getIntExtra("quantity", 0)));
-        if (intentReceive.getStringExtra("additionalNote").isEmpty()){
+        tvQuantity.setText(String.format("x%d", quantity));
+        if (additionalNote.isEmpty()){
             tvAdditionalNotes.setText("No Additional Notes");
         }
         else{
-            tvAdditionalNotes.setText(intentReceive.getStringExtra("additionalNote"));
+            tvAdditionalNotes.setText(additionalNote);
         }
 
 
-        addOnListIndividual = CollectionAdapter.addOnListIndividual;
+        addOnListIndividual = Collection2Adapter.addOnListIndividual;
         String addOnString ="";
         for (AddOn i: addOnListIndividual){
             addOnString+=String.format("%-70s +$%.2f\n", i.getName(), i.getPrice());
@@ -115,6 +168,237 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
+
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region deduct money from the customer
+                                    final DatabaseReference drCustomerBalance = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("balance");
+                                    drCustomerBalance.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            double balance = Double.parseDouble(dataSnapshot.getValue().toString().trim());
+                                            drCustomerBalance.setValue(balance-collection.getTotalPrice());
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                //endregion
+
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region add money to the owner
+                                final DatabaseReference drOwnerBalance = FirebaseDatabase.getInstance().getReference().child("Owner").child(collection.getStallUID()).child("balance");
+                                drOwnerBalance.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        double balance = Double.parseDouble(dataSnapshot.getValue().toString().trim());
+                                        drOwnerBalance.setValue(balance+collection.getTotalPrice());
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                //endregion
+
+
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region Remove prePayment and add to postPayment
+
+                                final DatabaseReference drPrePayment = FirebaseDatabase.getInstance().getReference().child("prePayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                drPrePayment.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int numOfPrePayment = Integer.parseInt(dataSnapshot.child("numOfPrePayment").getValue().toString());
+                                        for (int i =0; i<numOfPrePayment;i++){
+                                            if (dataSnapshot.child(i+"").child("tID").getValue().toString().equals(collection.gettId())){
+
+                                                final double amount = Double.parseDouble(dataSnapshot.child(i+"").child("amount").getValue().toString());
+                                                final String customerUID = dataSnapshot.child(i+"").child("customerUID").getValue().toString();
+                                                final String paymentDateTime = dataSnapshot.child(i+"").child("paymentDateTime").getValue().toString();
+                                                final String school = dataSnapshot.child(i+"").child("school").getValue().toString();
+                                                final String stallUID = dataSnapshot.child(i+"").child("stallUID").getValue().toString();
+                                                final String tId = dataSnapshot.child(i+"").child("tID").getValue().toString();
+
+
+                                                //region add to postPayment
+                                                final DatabaseReference drPostPayment = FirebaseDatabase.getInstance().getReference().child("postPayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                drPostPayment.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        int numOfPostPayment = Integer.parseInt(dataSnapshot.child("numOfPostPayment").getValue().toString().trim());
+                                                        drPostPayment.child(numOfPostPayment+"").child("amount").setValue(amount);
+                                                        drPostPayment.child(numOfPostPayment+"").child("customerUID").setValue(customerUID);
+                                                        drPostPayment.child(numOfPostPayment+"").child("paymentDateTime").setValue(paymentDateTime);
+                                                        drPostPayment.child(numOfPostPayment+"").child("school").setValue(school);
+                                                        drPostPayment.child(numOfPostPayment+"").child("stallUID").setValue(stallUID);
+                                                        drPostPayment.child(numOfPostPayment+"").child("tID").setValue(tId);
+                                                        drPostPayment.child(numOfPostPayment+"").child("paymentMadeDateTime").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+
+                                                        drPostPayment.child("numOfPostPayment").setValue(numOfPostPayment+1);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                                //endregion
+
+
+                                                //region re-add the prePayment
+                                                for (int h = i+1;h<numOfPrePayment;h++){
+                                                    double amountReadded = Double.parseDouble(dataSnapshot.child(h+"").child("amount").getValue().toString());
+                                                    String customerUIDReadded = dataSnapshot.child(h+"").child("customerUID").getValue().toString();
+                                                    String paymentDateTimeReadded = dataSnapshot.child(h+"").child("paymentDateTime").getValue().toString();
+                                                    String schoolReadded = dataSnapshot.child(h+"").child("school").getValue().toString();
+                                                    String stallUIDReadded = dataSnapshot.child(h+"").child("stallUID").getValue().toString();
+                                                    String tIdReadded = dataSnapshot.child(h+"").child("tID").getValue().toString();
+
+
+                                                    drPrePayment.child((h-1)+"").child("amount").setValue(amountReadded);
+                                                    drPrePayment.child((h-1)+"").child("customerUID").setValue(customerUIDReadded);
+                                                    drPrePayment.child((h-1)+"").child("paymentDateTime").setValue(paymentDateTimeReadded);
+                                                    drPrePayment.child((h-1)+"").child("school").setValue(schoolReadded);
+                                                    drPrePayment.child((h-1)+"").child("stallUID").setValue(stallUIDReadded);
+                                                    drPrePayment.child((h-1)+"").child("tID").setValue(tIdReadded);
+
+                                                }
+
+                                                drPrePayment.child((numOfPrePayment-1)+"").removeValue();
+                                                drPrePayment.child("numOfPrePayment").setValue(numOfPrePayment-1);
+                                                //endregion
+
+
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                                //endregion
+
+
+                                //---------------------------------------------------------------------------------------
+                                //region update the owner graph
+
+
+                                //endregion
+
+
+                                //---------------------------------------------------------------------------------------
+                                //region update the customer graph
+
+                                //endregion
+
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region add to HC
+
+                                final DatabaseReference drHC = FirebaseDatabase.getInstance().getReference().child("hc").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("preOrder");
+                                drHC.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString().trim());
+
+                                        drHC.child(numOfPreOrder+"").setValue(collection);
+                                        drHC.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
+                                        drHC.child("numOfPreOrder").setValue(numOfPreOrder+1);
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                                //endregion
+
+
+
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region add to HO
+
+                                final DatabaseReference drHO = FirebaseDatabase.getInstance().getReference().child("ho").child("school").child(collection.getSchool()).child("stall").child(collection.getStallId()+"").child("preOrder");
+                                drHO.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString().trim());
+
+                                        drHO.child(numOfPreOrder+"").setValue(collection);
+                                        drHO.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
+
+                                        drHO.child("numOfPreOrder").setValue(numOfPreOrder+1);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                                //endregion
+
+
+
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region add to notification
+
+                                final DatabaseReference drNotification = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("preOrder");
+                                drNotification.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString().trim());
+
+                                        collection.setStatus("completed");
+                                        drNotification.child(numOfPreOrder+"").setValue(collection);
+                                        drNotification.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
+                                        drNotification.child(numOfPreOrder+"").child("notificationTiming").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+
+                                        drNotification.child("numOfPreOrder").setValue(numOfPreOrder+1);
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+
+                                //endregion
+
+
+
+
+
+
+
+
+                                deleteOrder();
 
 
 
@@ -142,20 +426,28 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         findViewById(R.id.IndividualEditOrderBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(IndividualCollectionOrder.this, IndividualEditFoodDisplay.class);
-                intent.putExtra("tId",intentReceive.getStringExtra("tId") );
-                intent.putExtra("foodName", intentReceive.getStringExtra("foodName"));
-                intent.putExtra("foodPrice", intentReceive.getDoubleExtra("foodPrice",0));
-                intent.putExtra("stallName", intentReceive.getStringExtra("stallName"));
-                intent.putExtra("stallId", intentReceive.getIntExtra("stallId", 0));
-                intent.putExtra("startTime", intentReceive.getStringExtra("startTime"));
-                intent.putExtra("endTime", intentReceive.getStringExtra("endTime"));
-                intent.putExtra("quantity",intentReceive.getIntExtra("quantity", 0));
-                intent.putExtra("additionalNote",intentReceive.getStringExtra("additionalNote"));
-                intent.putExtra("status",intentReceive.getStringExtra("status"));
-                intent.putExtra("image",intentReceive.getStringExtra("image"));
-                intent.putExtra("lastChangesInMin", intentReceive.getIntExtra("lastChangesInMin",-1));
-                startActivity(intent);
+
+                if (intentReceive.getStringExtra("status").equals("purchased")) {
+
+                    Intent intent = new Intent(IndividualCollectionOrder.this, IndividualEditFoodDisplay.class);
+//                    intent.putExtra("tId", tId);
+//                    intent.putExtra("foodName", name);
+//                    intent.putExtra("foodPrice", price);
+//                    intent.putExtra("stallName", stallName);
+//                    intent.putExtra("stallId", intentReceive.getIntExtra("stallId", 0));
+//                    intent.putExtra("startTime", intentReceive.getStringExtra("startTime"));
+//                    intent.putExtra("endTime", intentReceive.getStringExtra("endTime"));
+//                    intent.putExtra("quantity", intentReceive.getIntExtra("quantity", 0));
+//                    intent.putExtra("additionalNote", intentReceive.getStringExtra("additionalNote"));
+//                    intent.putExtra("status", intentReceive.getStringExtra("status"));
+//                    intent.putExtra("image", intentReceive.getStringExtra("image"));
+//                    intent.putExtra("lastChangesInMin", intentReceive.getIntExtra("lastChangesInMin", -1));
+                    intent.putExtra("collection", collection);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(IndividualCollectionOrder.this, "Unable to edit the food", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         //endregion
@@ -442,6 +734,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //endregion
+
+
+
 
 
 }

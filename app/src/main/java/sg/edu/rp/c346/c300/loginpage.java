@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,6 +40,8 @@ public class loginpage extends AppCompatActivity {
     EditText etPassword;
     CircularProgressButton btnLogin;
     TextView registerAccount;
+
+    boolean showPassword;
 
     ImageView fingerprintLogin;
     String correctEmail; // save the correct email
@@ -141,6 +145,7 @@ public class loginpage extends AppCompatActivity {
         fingerprintLogin = findViewById(R.id.fingerprintLogin);
         //endregion
 
+        showPassword = false; //starting not showing the password
 
 
         //region For AutoComplete (Display all username)
@@ -181,7 +186,6 @@ public class loginpage extends AppCompatActivity {
                 final String email = etEmail.getText().toString();
                 final String password = etPassword.getText().toString();
 
-                mAuth.addAuthStateListener(firebaseAuthListener);
                 if (!email.isEmpty() && !password.isEmpty()){
 
                     mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(loginpage.this, new OnCompleteListener<AuthResult>() {
@@ -193,6 +197,7 @@ public class loginpage extends AppCompatActivity {
                             }
                             else{
                                 Toast.makeText(loginpage.this, "Successfully Login", Toast.LENGTH_SHORT).show();
+                                mAuth.addAuthStateListener(firebaseAuthListener);
 
                                 correctEmail = email;
                                 correctPassword = password;
@@ -246,6 +251,22 @@ public class loginpage extends AppCompatActivity {
             }
         });
 
+
+        findViewById(R.id.revealPassword).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!showPassword){
+                    etPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    showPassword = true;
+                }
+                else{
+                    etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    showPassword = false;
+                }
+
+            }
+        });
 
 
 

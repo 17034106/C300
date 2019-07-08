@@ -164,7 +164,7 @@ public class GoalSavingDetails extends AppCompatActivity {
 
                     int numOfWeekDays = 0;
                     int numOfDays = 0;
-                    while (userSelectedCalendar.after(currentDateCalendar) || userSelectedCalendar.compareTo(currentDateCalendar) == 0) {
+                    while (userSelectedCalendar.compareTo(currentDateCalendar) >= 0) {
                         if (currentDateCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || currentDateCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
 
                         } else {
@@ -179,7 +179,7 @@ public class GoalSavingDetails extends AppCompatActivity {
                     double eachDaySavingDeducted = remainingAmountRequired / (double) numOfDays;
 
                     double eachDaySavingWeekdays = goalSavingIntentReceive.getPrice() / (double) numOfWeekDays;
-                    double eachDaySaving = goalSavingIntentReceive.getPrice() / (double) numOfWeekDays;
+                    double eachDaySaving = goalSavingIntentReceive.getPrice() / (double) numOfDays;
 
 
                     final LinearLayout linearLayout = findViewById(R.id.resultOfWhen);
@@ -230,7 +230,12 @@ public class GoalSavingDetails extends AppCompatActivity {
 
                     TextView tvEachDaySavingDeductedAndWeekdays = new TextView(getApplication());
                     tvEachDaySavingDeductedAndWeekdays.setLayoutParams(layoutParamsFouthTitle);
-                    tvEachDaySavingDeductedAndWeekdays.setText(String.format("$%.2f", eachDaySavingDeductedAndWeekdays));
+                    if (numOfWeekDays!=0){
+                        tvEachDaySavingDeductedAndWeekdays.setText(String.format("$%.2f", eachDaySavingDeductedAndWeekdays));
+                    }
+                    else{
+                        tvEachDaySavingDeductedAndWeekdays.setText("Unable to achieve");
+                    }
                     tvEachDaySavingDeductedAndWeekdays.setTextSize(18);
                     tvEachDaySavingDeductedAndWeekdays.setTextColor(Color.GRAY);
 
@@ -268,7 +273,12 @@ public class GoalSavingDetails extends AppCompatActivity {
 
                     TextView tvEachDaySavingWeekdays = new TextView(getApplication());
                     tvEachDaySavingWeekdays.setLayoutParams(layoutParamsFouthTitle);
-                    tvEachDaySavingWeekdays.setText(String.format("$%.2f", eachDaySavingWeekdays));
+                    if (numOfWeekDays!=0){
+                        tvEachDaySavingWeekdays.setText(String.format("$%.2f", eachDaySavingWeekdays));
+                    }
+                    else{
+                        tvEachDaySavingWeekdays.setText("Unable to achieve");
+                    }
                     tvEachDaySavingWeekdays.setTextSize(18);
                     tvEachDaySavingWeekdays.setTextColor(Color.GRAY);
 

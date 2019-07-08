@@ -60,7 +60,6 @@
         android:paddingRight="10dp"
         android:background="#11000000"
         android:drawableLeft="@drawable/ic_action_password"
-        android:drawableRight="@drawable/ic_password_eye"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
@@ -68,6 +67,17 @@
         android:textColorHint="#F1F1F1"
         android:textColor="#FFFFFF"
         android:textSize="16dp" />
+
+    <ImageView
+        android:id="@+id/revealPassword"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="9dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="250dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="43dp"
+        android:src="@drawable/ic_password_eye"/>
 
     <ImageView
         android:id="@+id/fingerprintLogin"

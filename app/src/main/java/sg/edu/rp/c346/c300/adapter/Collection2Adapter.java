@@ -162,12 +162,14 @@ public class Collection2Adapter extends BaseAdapter {
                         intent.putExtra("additionalNote", collection.getAdditionalNote());
                         intent.putExtra("lastChanges", collection.getLastChanges());
                         intent.putExtra("lastChangesInMin", collection.getLastChangesInMin());
-                        Log.d("CollectionAdapter", "What is the lastChangesInMin: "+collection.getLastChangesInMin());
                         intent.putExtra("tId", collection.gettId());
                         intent.putExtra("startTime", collection.getStartTime());
                         intent.putExtra("endTime", collection.getEndTime());
                         intent.putExtra("status", collection.getStatus());
                         intent.putExtra("image", collection.getImage());
+                        intent.putExtra("customerUID", collection.getCustomerUID());
+                        intent.putExtra("stallUID", collection.getStallUID());
+                        intent.putExtra("school", collection.getSchool());
                         addOnListIndividual = collection.getAddOn();
                         context.startActivity(intent);
                     }
