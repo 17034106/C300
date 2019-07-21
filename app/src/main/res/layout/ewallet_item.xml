@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/draw_line"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id="@+id/EWalletAllNo"
+            android:layout_width="30dp"
+            android:layout_height="147dp"
+            android:background="@drawable/draw_line"
+            android:text="1"
+            android:textSize="35dp"
+            android:gravity="center"/>
+
+
+        <TextView
+            android:id="@+id/EWalletAllCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category: "
+            android:textSize="25dp"
+            android:paddingLeft="8dp"
+            android:layout_toRightOf="@id/EWalletAllNo"/>
+
+        <ImageView
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/EWalletAllCategory"
+            android:layout_toRightOf="@id/EWalletAllNo"/>
+
+
+        <TextView
+            android:id="@+id/EWalletAllAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Amount: $"
+            android:textSize="25dp"
+            android:layout_below="@+id/EWalletAllCategory"
+            android:layout_toRightOf="@id/EWalletAllNo"
+            android:paddingLeft="8dp"/>
+
+
+        <ImageView
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/EWalletAllAmount"
+            android:layout_toRightOf="@id/EWalletAllNo"/>
+
+        <TextView
+            android:id="@+id/EWalletAllComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/EWalletAllAmount"
+            android:layout_toRightOf="@id/EWalletAllNo"
+            android:paddingLeft="8dp"
+            android:minLines="2"
+            android:maxLines="4"
+            android:text="Comment: "
+            android:textSize="20dp" />
+
+        <ImageView
+            android:id="@+id/line3"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/EWalletAllComment"
+            android:layout_toRightOf="@id/EWalletAllNo"/>
+
+        <TextView
+            android:id="@+id/EWalletAllStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status: "
+            android:textSize="20dp"
+            android:layout_below="@+id/EWalletAllComment"
+            android:layout_toRightOf="@id/EWalletAllNo"
+            android:paddingLeft="8dp"/>
+
+        <ImageView
+            android:id="@+id/line4"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/EWalletAllStatus"
+            android:layout_toRightOf="@id/EWalletAllNo"/>
+
+
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>

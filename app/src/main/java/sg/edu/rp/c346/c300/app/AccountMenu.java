@@ -15,13 +15,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import sg.edu.rp.c346.c300.BudgetInformation;
 import sg.edu.rp.c346.c300.CartDisplay;
 import sg.edu.rp.c346.c300.CollectionOrderPage;
+import sg.edu.rp.c346.c300.EmergencyWallet;
 import sg.edu.rp.c346.c300.GoalSavingAll;
+import sg.edu.rp.c346.c300.HistoryTransactionMainPage;
 import sg.edu.rp.c346.c300.MainActivity;
 import sg.edu.rp.c346.c300.QrCodePay;
 import sg.edu.rp.c346.c300.QrCodeScannerPay;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.SettingEditablePage;
 import sg.edu.rp.c346.c300.SettingPage;
+import sg.edu.rp.c346.c300.TestingParentMain;
 
 
 public class AccountMenu extends Fragment {
@@ -110,6 +113,15 @@ public class AccountMenu extends Fragment {
         });
 
 
+        view.findViewById(R.id.accountHistoryTransaction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), HistoryTransactionMainPage.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         view.findViewById(R.id.accountQrScanner).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +149,25 @@ public class AccountMenu extends Fragment {
                 startActivity(intent);
             }
         });
+
+        view.findViewById(R.id.accountEmergencyWallet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EmergencyWallet.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+        view.findViewById(R.id.accountParent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), TestingParentMain.class);
+                startActivity(intent);
+            }
+        });
+
 
 
         return view;

@@ -78,6 +78,7 @@ public class CartAdapter extends BaseAdapter {
         TextView tvEndTime = convertView.findViewById(R.id.tvEndTime);
         TextView tvLastChanges = convertView.findViewById(R.id.lastChanges);
         ImageView image = convertView.findViewById(R.id.CartfoodStallImage);
+        TextView school = convertView.findViewById(R.id.school);
 
 
         final Cart cart = carts.get(position);
@@ -123,6 +124,7 @@ public class CartAdapter extends BaseAdapter {
         cartQuantity.setNumber(Integer.toString(cart.getQuantity()));
         totalPriceIndividual.setText(String.format("$%.2f", cart.getTotalPrice()));
         Glide.with(context).load(cart.getImage()).centerCrop().into(image);
+        school.setText("Location: "+ cart.getSchool());
 
 
         if (addOnValue.isEmpty()){

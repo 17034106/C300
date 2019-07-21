@@ -171,7 +171,7 @@
                     app:cardCornerRadius="25dp">
 
                     <LinearLayout
-                        android:id="@+id/accountHistoryOrder"
+                        android:id="@+id/accountHistoryTransaction"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -187,7 +187,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="History Order"
+                            android:text="All Transaction"
                             android:textSize="18dp"
                             android:textColor="#6f6f6f"
                             android:layout_marginTop="12dp"/>
@@ -470,7 +470,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Budget"
+                            android:text="Categorization"
                             android:textSize="18dp"
                             android:textColor="#6f6f6f"
                             android:layout_marginTop="12dp"/>
@@ -480,6 +480,48 @@
 
 
                 </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/accountEmergencyWallet"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_emergency_wallet"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SOS E-Wallet"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
 
             </GridLayout>
 

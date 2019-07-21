@@ -1,8 +1,9 @@
 package sg.edu.rp.c346.c300.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class WalkIn {
+public class WalkIn implements Serializable {
 
 
     private String name;
@@ -133,5 +134,21 @@ public class WalkIn {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getStallUID() {
+        return stallUID;
+    }
+
+    public void setStallUID(String stallUID) {
+        this.stallUID = stallUID;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 }

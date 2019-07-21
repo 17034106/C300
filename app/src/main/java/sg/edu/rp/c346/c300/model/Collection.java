@@ -72,6 +72,9 @@ public class Collection implements Serializable {
         this.school = school;
     }
 
+    public Collection() {
+    }
+
     @PropertyName("name")
     public String getName() {
         return name;

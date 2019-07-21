@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EmergencyWalletNotificationMain">
+
+
+    <RelativeLayout
+        android:id="@+id/relativeBiggest"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1A53E6">
+
+        <ImageButton
+            android:id="@+id/btnCartBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_left_arrow"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="SOS Requests"
+            android:textSize="28dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/relativeBiggest2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeBiggest"
+        android:background="@drawable/border_box"
+        android:layout_marginTop="10dp">
+
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:hint="Request Type"
+            android:paddingLeft="20dp"
+            android:singleLine="true"
+            android:textSize="18dp" />
+    </RelativeLayout>
+
+
+
+    <ListView
+        android:id="@+id/listViewEWallet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relativeBiggest2"></ListView>
+
+
+
+
+
+</RelativeLayout>

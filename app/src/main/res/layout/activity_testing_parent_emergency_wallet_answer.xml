@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EmergencyWalletAdd"
+    android:background="@drawable/emergency_wallet_add_background">
+
+
+    <TextView
+        android:id="@+id/tvCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Category:"
+        android:textSize="20dp"
+        android:textStyle="bold|italic"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"/>
+
+
+    <TextView
+        android:id="@+id/etCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvCategory"
+        android:background="@drawable/border_box"
+        android:gravity="center_horizontal"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/tvAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Price Required ($): "
+        android:textSize="20dp"
+        android:textStyle="bold|italic"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/etCategory"
+        android:layout_marginTop="25dp"/>
+
+
+    <TextView
+        android:id="@+id/etAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvAmount"
+        android:background="@drawable/border_box"
+        android:gravity="center_horizontal"
+        android:textSize="20dp" />
+
+
+    <TextView
+        android:id="@+id/tvComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comment:"
+        android:textSize="20dp"
+        android:textStyle="bold|italic"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/etAmount"
+        android:layout_marginTop="25dp"/>
+
+
+    <TextView
+        android:id="@+id/etComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvComment"
+        android:background="@drawable/border_box"
+        android:gravity="center_horizontal"
+        android:textSize="20dp"
+        android:minLines="2"
+        android:maxLines="4"/>
+
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/btnRequestAccept"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_background_loading_button_goal_saving_add"
+        android:text="Accept Request"
+        android:textSize="20dp"
+        app:spinning_bar_color="#fff"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/etComment"/>
+
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/btnRequestReject"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_background_loading_button_goal_saving_add"
+        android:text="Reject Request"
+        android:textSize="20dp"
+        app:spinning_bar_color="#fff"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnRequestAccept"/>
+
+
+</RelativeLayout>

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -28,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+import sg.edu.rp.c346.c300.app.FoodMenu;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
 import sg.edu.rp.c346.c300.model.Budget;
@@ -52,6 +54,7 @@ public class BudgetInformation extends AppCompatActivity {
     int progressSeekBarFood, progressSeekBarDrink, progressSeekBarStationery, progressSeekBarCharity, progressSeekBarOthers;
 
     DatabaseReference drBudget;
+    DatabaseReference drBudgetChange;
 
     Budget budget;
 
@@ -59,10 +62,30 @@ public class BudgetInformation extends AppCompatActivity {
 
     boolean withinBudget;
 
+    //region get the current left budget for each category
+    double currentFoodUsed;
+    double currentDrinkUsed;
+    double currentStationeryUsed;
+    double currentCharityUsed;
+    double currentOthersUsed;
+
+    boolean currentFoodLeftOkay;
+    boolean currentDrinkLeftOkay;
+    boolean currentStationeryLeftOkay;
+    boolean currentCharityLeftOkay;
+    boolean currentOthersLeftOkay;
+    //endregion
+
+
+    boolean allowToChange = FoodMenu.allowToChange; // check whether the parent allow the kid to change multiple times after the kid confirm the categorization
+    String changeBudgetTiming = FoodMenu.changeBudgetTiming; // check whether the kid has already confirm the categorization
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget_information);
+
+        getChangeBudgetTimingAndChangeAllow();
 
         dateSelected = findViewById(R.id.dateSelected);
 
@@ -102,6 +125,8 @@ public class BudgetInformation extends AppCompatActivity {
 
 
         drBudget = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day");
+        drBudgetChange = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
 
         // getting the day of the week
         Date currentTime = Calendar.getInstance().getTime();
@@ -113,7 +138,6 @@ public class BudgetInformation extends AppCompatActivity {
             dayOfWeekInDB =6;
         }
 
-        Log.d("What is the value", "What is the day now: "+dayOfWeekInDB);
 
 
         //region Display the date
@@ -129,7 +153,25 @@ public class BudgetInformation extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 budget = dataSnapshot.child(dayOfWeekInDB+"").getValue(Budget.class);
 
-                totalBudget = budget.getAllowance();
+                currentFoodUsed =budget.getCategory().getFood().getAmount() - budget.getCategory().getFood().getLeft();
+                currentDrinkUsed = budget.getCategory().getDrink().getAmount() - budget.getCategory().getDrink().getLeft();
+                currentStationeryUsed =budget.getCategory().getStationery().getAmount() -  budget.getCategory().getStationery().getLeft();
+                currentCharityUsed =budget.getCategory().getCharity().getAmount() -   budget.getCategory().getCharity().getLeft();
+                currentOthersUsed =budget.getCategory().getOthers().getAmount() -   budget.getCategory().getOthers().getLeft();
+
+                Log.d("currentCharityUsed", "currentCharityUsed is: "+ currentCharityUsed);
+                Log.d("Charity Amount", "Amount is: "+ budget.getCategory().getCharity().getAmount());
+                Log.d("Charity left", "left is: "+ budget.getCategory().getCharity().getLeft());
+                Log.d("Food left", "left is: "+ budget.getCategory().getFood().getLeft());
+
+
+                if (budget.getChangedAllowance()!=-1){
+                    totalBudget = budget.getChangedAllowance();
+                }
+                else{
+                    totalBudget = budget.getAllowance();
+                }
+
                 totalValueAvailable.setText(String.format("%.2f", totalBudget));
 
                 if (budget.getCategory().getFood().getChangedValueMax() !=-1 || budget.getCategory().getFood().getChangedValueMin() !=-1){
@@ -239,6 +281,7 @@ public class BudgetInformation extends AppCompatActivity {
 
 
 
+
             }
 
             @Override
@@ -250,201 +293,309 @@ public class BudgetInformation extends AppCompatActivity {
         //-----------------------------------------------------------------------------------------------------------------------------------------
         //endregion
 
+        final String todayDate = MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy");
+        Log.d("change", "What is it: "+ changeBudgetTiming);
+        Log.d("today", "What is it: "+ todayDate);
+        Log.d("allowToChange", "What is this: "+allowToChange);
 
-        //region seekBar
-        //------------------------------------------------------------------------------------------------------------------------------------------
-        seekBarFood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progressNow = progressSeekBarFood;
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressSeekBarFood = progress+minSeekBarFood;
-                foodValue.setText(String.format("%.2f", progressSeekBarFood/10.0));
-                progressNow = progress + minSeekBarFood;
+        if(!todayDate.equals(changeBudgetTiming) || allowToChange) { //the kid haven't confirm the budget OR the parent allow the kid to change
 
-                cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
+            //region seekBar
+            //------------------------------------------------------------------------------------------------------------------------------------------
+            seekBarFood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int progressNow = progressSeekBarFood;
 
-                checking();
-            }
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progressSeekBarFood = progress + minSeekBarFood;
+                    foodValue.setText(String.format("%.2f", progressSeekBarFood / 10.0));
+                    progressNow = progress + minSeekBarFood; //useless
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                    if ((progressSeekBarFood / 10.0) < currentFoodUsed) {
+                        foodValue.setTextColor(Color.RED);
+                        currentFoodLeftOkay = false;
+                    } else {
+                        foodValue.setTextColor(Color.BLACK);
+                        currentFoodLeftOkay = true;
+                    }
 
-            }
+                    cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers) / 10.0;
+                    totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                    checking();
+                }
 
-            }
-        });
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
+                }
 
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
+                }
+            });
 
-        seekBarDrink.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progressNow = progressSeekBarDrink;
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressSeekBarDrink = progress+minSeekBarDrink;
-                drinkValue.setText(String.format("%.2f", progressSeekBarDrink/10.0));
-                progressNow = progress + minSeekBarDrink;
+            seekBarDrink.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int progressNow = progressSeekBarDrink;
 
-                cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progressSeekBarDrink = progress + minSeekBarDrink;
+                    drinkValue.setText(String.format("%.2f", progressSeekBarDrink / 10.0));
+                    progressNow = progress + minSeekBarDrink; //useless
 
-                checking();
-            }
+                    if ((progressSeekBarDrink / 10.0) < currentDrinkUsed) {
+                        drinkValue.setTextColor(Color.RED);
+                        currentDrinkLeftOkay = false;
+                    } else {
+                        drinkValue.setTextColor(Color.BLACK);
+                        currentDrinkLeftOkay = true;
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                    cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers) / 10.0;
+                    totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
-            }
+                    checking();
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                }
 
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
+                }
+            });
 
-        seekBarStationery.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progressNow = progressSeekBarStationery;
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressSeekBarStationery = progress+minSeekBarStationery;
-                stationeryValue.setText(String.format("%.2f", progressSeekBarStationery/10.0));
-                progressNow = progress + minSeekBarStationery;
+            seekBarStationery.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int progressNow = progressSeekBarStationery;
 
-                cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progressSeekBarStationery = progress + minSeekBarStationery;
+                    stationeryValue.setText(String.format("%.2f", progressSeekBarStationery / 10.0));
+                    progressNow = progress + minSeekBarStationery; //useless
 
-                checking();
-            }
+                    if ((progressSeekBarStationery / 10.0) < currentStationeryUsed) {
+                        stationeryValue.setTextColor(Color.RED);
+                        currentStationeryLeftOkay = false;
+                    } else {
+                        stationeryValue.setTextColor(Color.BLACK);
+                        currentStationeryLeftOkay = true;
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                    cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers) / 10.0;
+                    totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
-            }
+                    checking();
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
+                }
 
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
 
+                }
+            });
 
 
-        seekBarCharity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progressNow = progressSeekBarCharity;
+            seekBarCharity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int progressNow = progressSeekBarCharity;
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressSeekBarCharity = progress+minSeekBarCharity;
-                charityValue.setText(String.format("%.2f", progressSeekBarCharity/10.0));
-                progressNow = progress + minSeekBarCharity;
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progressSeekBarCharity = progress + minSeekBarCharity;
+                    charityValue.setText(String.format("%.2f", progressSeekBarCharity / 10.0));
+                    progressNow = progress + minSeekBarCharity; //useless
 
-                cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
+                    if ((progressSeekBarCharity / 10.0) < currentCharityUsed) {
+                        charityValue.setTextColor(Color.RED);
+                        currentCharityLeftOkay = false;
+                    } else {
+                        charityValue.setTextColor(Color.BLACK);
+                        currentCharityLeftOkay = true;
+                    }
 
-                checking();
-            }
+                    cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers) / 10.0;
+                    totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
+                    checking();
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                }
 
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
+                }
+            });
 
-        seekBarOthers.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progressNow = progressSeekBarOthers;
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressSeekBarOthers = progress+minSeekBarOthers;
-                othersValue.setText(String.format("%.2f", progressSeekBarOthers/10.0));
-                progressNow = progress + minSeekBarOthers;
+            seekBarOthers.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int progressNow = progressSeekBarOthers;
 
-                cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers)/10.0;
-                totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progressSeekBarOthers = progress + minSeekBarOthers;
+                    othersValue.setText(String.format("%.2f", progressSeekBarOthers / 10.0));
+                    progressNow = progress + minSeekBarOthers; //useless
 
-                checking();
-            }
+                    if ((progressSeekBarOthers / 10.0) < currentOthersUsed) {
+                        othersValue.setTextColor(Color.RED);
+                        currentOthersLeftOkay = false;
+                    } else {
+                        othersValue.setTextColor(Color.BLACK);
+                        currentOthersLeftOkay = true;
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                    cumulativeBudget = (progressSeekBarFood + progressSeekBarDrink + progressSeekBarStationery + progressSeekBarCharity + progressSeekBarOthers) / 10.0;
+                    totalValueSelected.setText(String.format("%.2f", cumulativeBudget));
 
-            }
+                    checking();
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                }
 
-        //----------------------------------------------------------------------------------------------------------------------------
-        //endregion
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
+                }
+            });
 
+            //----------------------------------------------------------------------------------------------------------------------------
+            //endregion
 
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                if (withinBudget) {
+                    if (withinBudget) {
 
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
+                        if (currentFoodLeftOkay && currentDrinkLeftOkay && currentStationeryLeftOkay && currentCharityLeftOkay && currentOthersLeftOkay) {
+                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case DialogInterface.BUTTON_POSITIVE:
 
 
-                                    budget.getCategory().getFood().setAmount(progressSeekBarFood / 10.0);
-                                    budget.getCategory().getDrink().setAmount(progressSeekBarDrink / 10.0);
-                                    budget.getCategory().getStationery().setAmount(progressSeekBarStationery / 10.0);
-                                    budget.getCategory().getCharity().setAmount(progressSeekBarCharity / 10.0);
-                                    budget.getCategory().getOthers().setAmount(progressSeekBarOthers / 10.0);
+                                            budget.getCategory().getFood().setLeft(((progressSeekBarFood / 10.0) - currentFoodUsed));
+                                            budget.getCategory().getDrink().setLeft(((progressSeekBarDrink / 10.0) - currentDrinkUsed));
+                                            budget.getCategory().getStationery().setLeft(((progressSeekBarStationery / 10.0) - currentStationeryUsed));
+                                            budget.getCategory().getCharity().setLeft(((progressSeekBarCharity / 10.0) - currentCharityUsed));
+                                            budget.getCategory().getOthers().setLeft(((progressSeekBarOthers / 10.0) - currentOthersUsed));
 
 
-                                    drBudget.child(dayOfWeekInDB + "").setValue(budget);
+                                            budget.getCategory().getFood().setAmount(progressSeekBarFood / 10.0);
+                                            budget.getCategory().getDrink().setAmount(progressSeekBarDrink / 10.0);
+                                            budget.getCategory().getStationery().setAmount(progressSeekBarStationery / 10.0);
+                                            budget.getCategory().getCharity().setAmount(progressSeekBarCharity / 10.0);
+                                            budget.getCategory().getOthers().setAmount(progressSeekBarOthers / 10.0);
 
-                                    Toast.makeText(BudgetInformation.this, "Successfully updated", Toast.LENGTH_SHORT).show();
 
-                                    break;
+                                            drBudget.child(dayOfWeekInDB + "").setValue(budget);
 
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    //No button clicked
-                                    break;
-                            }
+                                            drBudgetChange.child("changeBudgetTiming").setValue(todayDate);
+
+                                            Toast.makeText(BudgetInformation.this, "Successfully updated", Toast.LENGTH_SHORT).show();
+
+                                            Log.d("food used", "currentCharityUsed is: "+ currentFoodUsed);
+                                            Log.d("food Amount", "Amount is: "+ budget.getCategory().getFood().getAmount());
+                                            Log.d("Food Progress", "left is: "+ (progressSeekBarFood/10.0));
+                                            Log.d("Food Progress Without", "left is: "+ (progressSeekBarFood));
+                                            Log.d("Food Last", "left is: "+((progressSeekBarFood / 10.0) - currentFoodUsed));
+
+
+                                            break;
+
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            //No button clicked
+                                            break;
+                                    }
+                                }
+                            };
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(BudgetInformation.this);
+                            builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                                    .setNegativeButton("No", dialogClickListener).show();
+
+                        } else {
+                            Toast.makeText(BudgetInformation.this, "Please recheck the allocation", Toast.LENGTH_SHORT).show();
                         }
-                    };
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(BudgetInformation.this);
-                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
+                    } else {
+                        Toast.makeText(BudgetInformation.this, "Over Budget", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
-                else{
-                    Toast.makeText(BudgetInformation.this, "Over Budget", Toast.LENGTH_SHORT).show();
+            });
+
+        }
+        else{
+            seekBarFood.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
                 }
+            });
 
-            }
-        });
+            seekBarDrink.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
 
+            seekBarStationery.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
+
+
+            seekBarCharity.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
+
+            seekBarOthers.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
+
+
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(BudgetInformation.this, "Unable to change", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
 
 
 
@@ -461,8 +612,32 @@ public class BudgetInformation extends AppCompatActivity {
         }
         else {
             totalValueSelected.setTextColor(Color.GREEN);
+
             withinBudget = true;
+
+
         }
+    }
+
+    //region check whether the kid has confirm the categorization and check whether the parent allow the kid to change again
+    private void getChangeBudgetTimingAndChangeAllow(){
+        drBudgetChange = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        drBudgetChange.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                changeBudgetTiming = dataSnapshot.child("changeBudgetTiming").getValue().toString();
+                Log.d("Change2", "What is this: "+changeBudgetTiming);
+                allowToChange = Boolean.parseBoolean(dataSnapshot.child("allowToChange").getValue().toString());
+                Log.d("allowToChange2", "What is this: "+allowToChange);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

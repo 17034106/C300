@@ -99,7 +99,7 @@ public class Collection2Adapter extends BaseAdapter {
                 TextView tvStartTime = convertView.findViewById(R.id.tvStartTime);
                 TextView tvEndTime = convertView.findViewById(R.id.tvEndTime);
                 TextView tvLastChanges = convertView.findViewById(R.id.CollectionlastChanges);
-
+                TextView tvSchool = convertView.findViewById(R.id.CollectionSchool);
 
                 final Collection collection = (Collection) list.get(position);
                 ArrayList<AddOn> addOnThing = ((Collection)list.get(position)).getAddOn();
@@ -129,6 +129,7 @@ public class Collection2Adapter extends BaseAdapter {
                 cartQuantity.setText(String.format("x%d",collection.getQuantity()));
                 totalPriceIndividual.setText(String.format("$%.2f", collection.getTotalPrice()));
                 Glide.with(context).load(collection.getImage()).centerCrop().into(collectionFoodImage);
+                tvSchool.setText("Location: "+collection.getSchool());
 
 
                 if (addOnValue.isEmpty()){

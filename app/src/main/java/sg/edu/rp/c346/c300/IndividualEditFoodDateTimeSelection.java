@@ -325,7 +325,7 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
                 day = c.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(IndividualEditFoodDateTimeSelection.this, IndividualEditFoodDateTimeSelection.this, year, month, day);
-                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)8.64e+7);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
             }
@@ -342,7 +342,7 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
 
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(IndividualEditFoodDateTimeSelection.this, IndividualEditFoodDateTimeSelection.this, year, month, day);
-                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)8.64e+7);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
             }

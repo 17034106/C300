@@ -36,7 +36,7 @@ import sg.edu.rp.c346.c300.model.Customer;
 public class IndividualCollectionOrder extends AppCompatActivity {
 
 
-    TextView tvTID, tvFoodName, tvFoodPrice, tvStallName, tvFoodStallOperation, tvLastChange, tvQuantity, tvAddOn, tvAdditionalNotes;
+    TextView tvTID, tvFoodName, tvFoodPrice, tvStallName, tvFoodStallOperation, tvLastChange, tvQuantity, tvAddOn, tvAdditionalNotes, tvSchool;
     ArrayList<AddOn> addOnListIndividual;
     ImageView ivimage;
 
@@ -93,6 +93,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         tvAdditionalNotes = findViewById(R.id.tvIndividualAddtionalNotes);
         tvAdditionalNotes = findViewById(R.id.tvIndividualAddtionalNotes);
         ivimage = findViewById(R.id.IndividualFoodImage);
+        tvSchool = findViewById(R.id.tvIndividualSchool);
 
 
 
@@ -129,6 +130,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         tvFoodPrice.setText(String.format("$%.2f", price));
         tvStallName.setText(String.format("Stall: %s",stallName));
         Glide.with(IndividualCollectionOrder.this).load(image).centerCrop().into(ivimage);
+        tvSchool.setText(school);
 
         Date stallStartOperationDate = MainpageActivity.convertStringToDate(startTime, "HHmm");
         Date stallEndOperationDate = MainpageActivity.convertStringToDate(endTime, "HHmm");
@@ -318,7 +320,11 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString().trim());
 
+                                        collection.setStatus("completed");
+
+
                                         drHC.child(numOfPreOrder+"").setValue(collection);
+                                        drHC.child(numOfPreOrder+"").child("dateTimePurchased").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
                                         drHC.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
                                         drHC.child("numOfPreOrder").setValue(numOfPreOrder+1);
 
@@ -346,7 +352,11 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString().trim());
 
+                                        collection.setStatus("completed");
+
                                         drHO.child(numOfPreOrder+"").setValue(collection);
+                                        drHO.child(numOfPreOrder+"").child("dateTimePurchased").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+
                                         drHO.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
 
                                         drHO.child("numOfPreOrder").setValue(numOfPreOrder+1);
@@ -374,6 +384,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
                                         collection.setStatus("completed");
                                         drNotification.child(numOfPreOrder+"").setValue(collection);
+                                        drNotification.child(numOfPreOrder+"").child("dateTimePurchased").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
                                         drNotification.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
                                         drNotification.child(numOfPreOrder+"").child("notificationTiming").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
 

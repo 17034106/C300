@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="8dp"
+    android:layout_marginTop="50dp"
+    android:layout_marginBottom="16dp">
+
+
+
+
+
+
+    <!--<LinearLayout-->
+    <!--android:orientation="horizontal"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="8dp">-->
+
+
+    <!--<ImageView-->
+    <!--android:id="@+id/cartFoodImage"-->
+    <!--android:layout_width="80dp"-->
+    <!--android:layout_height="80dp"-->
+    <!--android:src="@drawable/fishball"/>-->
+
+
+    <!--<LinearLayout-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/cartFoodName"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Name"-->
+    <!--android:textSize="20sp"-->
+    <!--android:textStyle="bold"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/cartFoodPrice"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Price"-->
+    <!--android:textSize="18sp"-->
+    <!--android:textStyle="bold"/>-->
+
+
+    <!--<LinearLayout-->
+    <!--android:orientation="horizontal"-->
+    <!--android:weightSum="7"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/cartOrderTiming"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="OrderTiming"-->
+    <!--android:layout_weight="6"-->
+    <!--android:textSize="20sp"-->
+    <!--android:textStyle="bold"/>-->
+
+    <!--<com.cepheuen.elegantnumberbutton.view.ElegantNumberButton-->
+    <!--android:id="@+id/CartQuantity"-->
+    <!--android:layout_width="80dp"-->
+    <!--android:layout_height="30dp"-->
+    <!--android:layout_weight="1"-->
+    <!--app:initialNumber="1"-->
+    <!--app:finalNumber="10"-->
+    <!--app:backGroundColor="@color/colorWhite"-->
+    <!--app:textSize="10sp"-->
+    <!--app:textColor="#000000" />-->
+
+
+
+
+    <!--</LinearLayout>-->
+
+
+    <!--</LinearLayout>-->
+
+
+
+
+    <!--</LinearLayout>-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/CartBiggestRelative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/draw_line">
+            <TextView
+                android:id="@+id/CollectionStallName"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Stall Name"
+                android:textSize="18dp"
+                android:textColor="#000000"
+                android:textStyle="italic"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                />
+
+            <TextView
+                android:id="@+id/tvCollectionTID"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="Transaction ID"
+                android:paddingRight="10dp"
+                android:textSize="15dp"
+                android:textStyle="italic"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                />
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/CartRelative1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="13dp"
+            android:paddingBottom="4dp"
+            android:background="@drawable/draw_line"
+            >
+
+            <ImageView
+                android:id="@+id/CollectionfoodImage"
+                android:layout_width="135dp"
+                android:layout_height="125dp"
+                android:layout_marginTop="22dp"
+                android:src="@drawable/fishball"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+
+
+            <TextView
+                android:id="@+id/CollectionfoodName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
+                android:text="Name:"
+                />
+
+
+
+            <TextView
+                android:id="@+id/CollectionfoodPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/CollectionfoodName"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
+                android:text="Price:"
+                />
+
+
+            <TextView
+                android:id="@+id/CollectionOrderTiming"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/CollectionfoodPrice"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
+                android:text="Order Timing"
+                />
+
+
+
+
+            <TextView
+                android:id="@+id/CollectionSchool"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/CollectionOrderTiming"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
+                android:text="Location:"
+                />
+
+
+
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/displayAddOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/CartRelative1"
+            android:background="@drawable/draw_line">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add On"
+                android:textSize="18dp"
+                android:textStyle="bold|italic"
+                android:textColor="#000000"
+                android:paddingBottom="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/draw_line"/>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/relativeAddOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/displayAddOn"
+            android:background="@drawable/draw_line">
+
+
+            <TextView
+                android:id="@+id/tvCollectionAddOn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add On item here"
+                android:textSize="16dp"
+                android:paddingLeft="10dp"/>
+
+
+        </RelativeLayout>
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relativeAddOn"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/draw_line">
+
+
+            <TextView
+                android:id="@+id/CollectionTotalPriceIndividual"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Price"
+                android:textColor="#BE5252"
+                android:textSize="23dp"
+                android:layout_marginLeft="40dp"
+                android:gravity="center_vertical"/>
+
+
+            <TextView
+                android:id="@+id/CollectionQuantity"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="x0"
+                android:textSize="23dp"
+                android:textColor="#000000"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="45dp"
+                android:gravity="center"/>
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

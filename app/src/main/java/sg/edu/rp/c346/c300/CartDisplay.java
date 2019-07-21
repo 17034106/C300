@@ -334,23 +334,23 @@ public class CartDisplay extends AppCompatActivity {
         //endregion
 
 
-        //region  get the customer's school
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-        final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Customer customer = dataSnapshot.getValue(Customer.class);
-                school = customer.getCustomerschool();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-        //endregion
+//        //region  get the customer's school
+//        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+//        final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//        databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Customer customer = dataSnapshot.getValue(Customer.class);
+//                school = customer.getCustomerschool();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//        //--------------------------------------------------------------------------------------------------------------------------------------------------------------
+//        //endregion
 
 
         //Press the check out button
@@ -390,7 +390,7 @@ public class CartDisplay extends AppCompatActivity {
                             final int lastChangesInMin = Integer.parseInt(dataSnapshot.child(Integer.toString(i)).child("lastChangesInMin").getValue().toString());
                             final String image = dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
                             final String stallUID = dataSnapshot.child(Integer.toString(i)).child("stallUID").getValue().toString();
-                            final String school = dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
+                            school = dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
 
                             final ArrayList<AddOn> addOnList= new ArrayList<>();
                             addOnList.clear();

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="sg.edu.rp.c346.c300">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,13 +14,39 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_piggy_pay"
+        tools:replace="android:icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FingerprintAuthentication"
-            android:theme="@style/AppTheme.Transparent"></activity>
+        <activity android:name=".EmergencyWalletNotificationMain"></activity>
+        <activity android:name=".SuccessfullyQRPurchased" />
+        <activity android:name=".HistoryTransactionOutside" />
+        <activity android:name=".HistoryTransactionPreOrder" />
+        <activity android:name=".HistoryTransactionQRPayment" />
+        <activity android:name=".HistoryTransactionMainPage" />
+        <activity android:name=".TestingParentTransactionPreOrderIndividual" />
+        <activity android:name=".TestingParentTransactionPreOrderAll" />
+        <activity android:name=".TestingParentTransactionHistory" />
+        <activity
+            android:name=".TestingParentEmergencyWalletAnswer"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpDateTimeSelection"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".TestingParentEmergencyWallet" />
+        <activity android:name=".TestingParentMain" />
+        <activity
+            android:name=".EmergencyWalletAdd"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpDateTimeSelection"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".EmergencyWallet" />
+        <activity
+            android:name=".FingerprintAuthentication"
+            android:theme="@style/AppTheme.Transparent" />
         <activity android:name=".QrCodeScannerPay" />
         <activity
             android:name=".BudgetInformation"

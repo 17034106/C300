@@ -15,6 +15,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <RelativeLayout
+                android:id="@+id/relativeTitle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#1A53E6">
+
+                <ImageButton
+                    android:id="@+id/btnCartBack"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="#00FFFFFF"
+                    android:src="@drawable/ic_left_arrow"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="Categorization"
+                    android:textSize="28dp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"/>
+
+
+
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/dateSelected"
                 android:layout_width="match_parent"
@@ -24,7 +57,10 @@
                 android:textStyle="bold"
                 android:textColor="#000000"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/relativeTitle"/>
+
+
 
 //-----------------------------------------------------------------------------------------
 
@@ -34,7 +70,7 @@
                 android:layout_height="2dp"
                 android:background="@drawable/draw_line"
                 android:layout_below="@id/dateSelected"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:id="@+id/tvFood"

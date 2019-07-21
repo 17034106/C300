@@ -35,12 +35,16 @@ public class GoalSavingAll extends AppCompatActivity {
     ListView listView;
     GoalSavingAdapter  goalSavingAdapter;
 
+    double saving; // get how much the kid has save
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goal_saving_all);
 
         thisActivity = this;
+
+        getSaving();
 
         listView = findViewById(R.id.goalSavingListView);
 
@@ -77,6 +81,7 @@ public class GoalSavingAll extends AppCompatActivity {
                         Intent intent = new Intent(GoalSavingAll.this, GoalSavingDetails.class);
                         intent.putExtra("goalSaving", goalSaving);
                         intent.putExtra("goalPosition", position);
+                        intent.putExtra("saving", saving);
                         startActivity(intent);
                         finish();
 
@@ -110,6 +115,24 @@ public class GoalSavingAll extends AppCompatActivity {
 
 
     }
+
+    //region get the customer's saving
+    public void getSaving(){
+        DatabaseReference drSaving = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("saving");
+        drSaving.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                saving = Double.parseDouble(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    //endregion
+
 
     public static GoalSavingAll getInstance(){
         return thisActivity;

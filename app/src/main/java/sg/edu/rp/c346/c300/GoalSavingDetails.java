@@ -36,7 +36,7 @@ public class GoalSavingDetails extends AppCompatActivity {
 
     WaveLoadingView goalSavingWaveLoadingView;
     TextView goalName, goalPrice, goalRemainingAmountRequire, goalSavingNameTitle;
-    EditText currentSaving;
+    TextView currentSaving;
 
     TextView goalSavingNumberOfDay;
     DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -51,6 +51,7 @@ public class GoalSavingDetails extends AppCompatActivity {
     ArrayList<GoalSaving> goalSavingList = new ArrayList<>();
     int goalPosition; //identify the position of the goal selected in the arraylist - for deletion
 
+    double currentSavingDouble; //get the saving from firebase through GoalSavingDetails class
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,8 @@ public class GoalSavingDetails extends AppCompatActivity {
         //Get the value from GoalSavingAll class
         Intent intentReceive = getIntent();
         goalSavingIntentReceive = (GoalSaving) intentReceive.getSerializableExtra("goalSaving");
-        goalPosition = intentReceive.getIntExtra("goalPosition",-1);
+        goalPosition = intentReceive.getIntExtra("goalPosition", -1);
+        currentSavingDouble = intentReceive.getDoubleExtra("saving", 0);
 
         goalSavingList = GoalSavingAll.goalSavingList;
 
@@ -80,45 +82,27 @@ public class GoalSavingDetails extends AppCompatActivity {
         goalPrice.setText(String.format("$%.2f", goalSavingIntentReceive.getPrice()));
 
 
+        int percentageOfCompletion = (int) ((currentSavingDouble / goalSavingIntentReceive.getPrice()) * 100);
+
+        goalSavingWaveLoadingView.setProgressValue(percentageOfCompletion);
+
+        remainingAmountRequired = goalSavingIntentReceive.getPrice() - currentSavingDouble;
+        goalRemainingAmountRequire.setText(String.format("$%.2f", remainingAmountRequired));
 
 
-        findViewById(R.id.buttonCalculate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (currentSaving.getText()!=null) {
-
-                    int percentageOfCompletion = (int) ((Double.parseDouble(currentSaving.getText().toString()) / goalSavingIntentReceive.getPrice()) * 100);
-
-                    goalSavingWaveLoadingView.setProgressValue(percentageOfCompletion);
-
-                    remainingAmountRequired = goalSavingIntentReceive.getPrice() - Double.parseDouble(currentSaving.getText().toString());
-                    goalRemainingAmountRequire.setText(String.format("$%.2f", remainingAmountRequired));
-
-
-                    if ((int) ((Double.parseDouble(currentSaving.getText().toString()) / goalSavingIntentReceive.getPrice()) * 100) < 50) {
-                        goalSavingWaveLoadingView.setBottomTitle(String.format("%d%%", percentageOfCompletion));
-                        goalSavingWaveLoadingView.setCenterTitle("");
-                        goalSavingWaveLoadingView.setTopTitle("");
-                    } else if (percentageOfCompletion < 80) {
-                        goalSavingWaveLoadingView.setBottomTitle("");
-                        goalSavingWaveLoadingView.setCenterTitle(String.format("%d%%", percentageOfCompletion));
-                        goalSavingWaveLoadingView.setTopTitle("");
-                    } else {
-                        goalSavingWaveLoadingView.setBottomTitle("");
-                        goalSavingWaveLoadingView.setCenterTitle("");
-                        goalSavingWaveLoadingView.setTopTitle(String.format("%d%%", percentageOfCompletion));
-                    }
-
-                }
-                else{
-                    Toast.makeText(GoalSavingDetails.this, "Enter the amount", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
-
+        if ((int) ((currentSavingDouble / goalSavingIntentReceive.getPrice()) * 100) < 50) {
+            goalSavingWaveLoadingView.setBottomTitle(String.format("%d%%", percentageOfCompletion));
+            goalSavingWaveLoadingView.setCenterTitle("");
+            goalSavingWaveLoadingView.setTopTitle("");
+        } else if (percentageOfCompletion < 80) {
+            goalSavingWaveLoadingView.setBottomTitle("");
+            goalSavingWaveLoadingView.setCenterTitle(String.format("%d%%", percentageOfCompletion));
+            goalSavingWaveLoadingView.setTopTitle("");
+        } else {
+            goalSavingWaveLoadingView.setBottomTitle("");
+            goalSavingWaveLoadingView.setCenterTitle("");
+            goalSavingWaveLoadingView.setTopTitle(String.format("%d%%", percentageOfCompletion));
+        }
 
 
         //region Display DatePicker
@@ -140,8 +124,8 @@ public class GoalSavingDetails extends AppCompatActivity {
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                month = month +1;
-                goalSavingNumberOfDay.setText(dayOfMonth+"/"+month+"/"+year);
+                month = month + 1;
+                goalSavingNumberOfDay.setText(dayOfMonth + "/" + month + "/" + year);
             }
         };
 
@@ -230,10 +214,9 @@ public class GoalSavingDetails extends AppCompatActivity {
 
                     TextView tvEachDaySavingDeductedAndWeekdays = new TextView(getApplication());
                     tvEachDaySavingDeductedAndWeekdays.setLayoutParams(layoutParamsFouthTitle);
-                    if (numOfWeekDays!=0){
+                    if (numOfWeekDays != 0) {
                         tvEachDaySavingDeductedAndWeekdays.setText(String.format("$%.2f", eachDaySavingDeductedAndWeekdays));
-                    }
-                    else{
+                    } else {
                         tvEachDaySavingDeductedAndWeekdays.setText("Unable to achieve");
                     }
                     tvEachDaySavingDeductedAndWeekdays.setTextSize(18);
@@ -273,10 +256,9 @@ public class GoalSavingDetails extends AppCompatActivity {
 
                     TextView tvEachDaySavingWeekdays = new TextView(getApplication());
                     tvEachDaySavingWeekdays.setLayoutParams(layoutParamsFouthTitle);
-                    if (numOfWeekDays!=0){
+                    if (numOfWeekDays != 0) {
                         tvEachDaySavingWeekdays.setText(String.format("$%.2f", eachDaySavingWeekdays));
-                    }
-                    else{
+                    } else {
                         tvEachDaySavingWeekdays.setText("Unable to achieve");
                     }
                     tvEachDaySavingWeekdays.setTextSize(18);
@@ -310,8 +292,7 @@ public class GoalSavingDetails extends AppCompatActivity {
                     linearLayout.addView(tvEachDay);
                     linearLayout.addView(tvEachDaySaving);
 
-                }
-                else{
+                } else {
                     Toast.makeText(GoalSavingDetails.this, "Please Choose a Date", Toast.LENGTH_SHORT).show();
                 }
 
@@ -325,18 +306,18 @@ public class GoalSavingDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (dailySaving.getText()!=null){
+                if (dailySaving.getText() != null) {
 
                     double dailySavingDouble = Double.parseDouble(dailySaving.getText().toString());
 
-                    double withCurrentSaving =goalSavingIntentReceive.getPrice()- Double.parseDouble(currentSaving.getText().toString());
-                    int  numOfDayWithSaving = (int) (withCurrentSaving / dailySavingDouble);
-                    if(withCurrentSaving % dailySavingDouble > 0){
-                        numOfDayWithSaving ++;
+                    double withCurrentSaving = goalSavingIntentReceive.getPrice() - currentSavingDouble;
+                    int numOfDayWithSaving = (int) (withCurrentSaving / dailySavingDouble);
+                    if (withCurrentSaving % dailySavingDouble > 0) {
+                        numOfDayWithSaving++;
                     }
 
                     int numOfDayWithoutSaving = (int) (goalSavingIntentReceive.getPrice() / dailySavingDouble);
-                    if (goalSavingIntentReceive.getPrice() % dailySavingDouble > 0){
+                    if (goalSavingIntentReceive.getPrice() % dailySavingDouble > 0) {
                         numOfDayWithoutSaving++;
                     }
 
@@ -400,8 +381,7 @@ public class GoalSavingDetails extends AppCompatActivity {
                     linearLayout.addView(tvWithoutSaving);
 
 
-                }
-                else{
+                } else {
                     Toast.makeText(GoalSavingDetails.this, "Please enter the daily Saving", Toast.LENGTH_SHORT).show();
                 }
 
@@ -415,11 +395,10 @@ public class GoalSavingDetails extends AppCompatActivity {
             public void onClick(View v) {
 
 
-
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
+                        switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
                                 deleteGoal();
@@ -444,22 +423,22 @@ public class GoalSavingDetails extends AppCompatActivity {
 
     }
 
-    public void deleteGoal(){
+    public void deleteGoal() {
 
         DatabaseReference drGoalSaving = FirebaseDatabase.getInstance().getReference().child("goalSaving").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        int nextPosition = goalPosition+1;
+        int nextPosition = goalPosition + 1;
 
-        drGoalSaving.child(goalPosition+"").removeValue();
+        drGoalSaving.child(goalPosition + "").removeValue();
 
-        for (int i =nextPosition; i<goalSavingList.size();i++){
-            drGoalSaving.child((i-1)+"").setValue(goalSavingList.get(i));
+        for (int i = nextPosition; i < goalSavingList.size(); i++) {
+            drGoalSaving.child((i - 1) + "").setValue(goalSavingList.get(i));
 
         }
-        drGoalSaving.child((goalSavingList.size()-1)+"").removeValue();
+        drGoalSaving.child((goalSavingList.size() - 1) + "").removeValue();
 
 
-        drGoalSaving.child("numOfGoal").setValue((goalSavingList.size()-1));
+        drGoalSaving.child("numOfGoal").setValue((goalSavingList.size() - 1));
 
         Intent intent = new Intent(GoalSavingDetails.this, GoalSavingAll.class);
         startActivity(intent);

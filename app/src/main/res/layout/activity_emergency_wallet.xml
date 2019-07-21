@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EmergencyWallet">
+
+
+    <RelativeLayout
+        android:id="@+id/biggestRelative1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1A53E6">
+
+        <ImageButton
+            android:id="@+id/btnEmergencyWalletBack"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_left_arrow"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="SOS Wallet"
+            android:textSize="28dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/relativeEWallet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="15dp"
+        android:layout_below="@id/biggestRelative1">
+
+        <TextView
+            android:id="@+id/tvEWalletRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No. of Requests: "
+            android:textSize="17dp"
+            android:layout_centerVertical="true"
+            android:paddingTop="4dp"/>
+
+
+        <RelativeLayout
+            android:id="@+id/btnEWalletBiggest"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+
+            <TextView
+                android:id="@+id/btnEWalletAdd"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:text="Add new Request"
+                android:textSize="17dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingTop="4dp"/>
+
+
+            <ImageView
+                android:id="@+id/imageViewEWallet"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_add"
+                android:layout_toLeftOf="@id/btnEWalletAdd"
+                android:layout_centerVertical="true"
+                android:paddingTop="5dp"
+                android:layout_marginRight="10dp"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/draw_line"
+        android:layout_marginTop="2dp"
+        android:layout_below="@+id/relativeEWallet"/>
+
+
+    <ListView
+        android:id="@+id/listViewEWallet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/line"
+        android:layout_marginTop="10dp"></ListView>
+
+
+
+
+
+</RelativeLayout>

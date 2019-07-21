@@ -158,9 +158,9 @@
 
             <ImageView
                 android:id="@+id/CollectionfoodImage"
-                android:layout_width="117dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="18dp"
+                android:layout_width="135dp"
+                android:layout_height="125dp"
+                android:layout_marginTop="22dp"
                 android:src="@drawable/fishball"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
@@ -223,7 +223,18 @@
                 />
 
 
-
+            <TextView
+                android:id="@+id/CollectionSchool"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/CollectionlastChanges"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@+id/CollectionfoodImage"
+                android:layout_toEndOf="@id/CollectionfoodImage"
+                android:text="Location:"
+                />
 
 
 

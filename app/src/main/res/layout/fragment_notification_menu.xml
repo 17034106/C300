@@ -174,7 +174,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginLeft="15dp"
             android:layout_centerVertical="true"
-            android:text="Outside Payment Updates"
+            android:text="QR Payment Updates"
             android:textSize="25dp"
             android:textColor="#000000"
             android:textStyle="bold"
@@ -182,6 +182,49 @@
 
 
     </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/notificationEWallet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_below="@+id/notificationOutside"
+        android:background="@drawable/draw_line">
+
+
+        <ImageView
+            android:id="@+id/notificationEWalletImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/ic_emergency_wallet"
+            />
+
+
+        <TextView
+            android:id="@+id/notificationEWalletTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:text="SOS E-Wallet Request"
+            android:textSize="25dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/notificationEWalletImage"/>
+
+
+    </RelativeLayout>
+
 
 
 

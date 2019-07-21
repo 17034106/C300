@@ -240,7 +240,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 day = c.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(dateTimeSelection.this, dateTimeSelection.this, year, month, day);
-                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)8.64e+7);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
             }
@@ -258,7 +258,7 @@ public class dateTimeSelection extends Activity implements DatePickerDialog.OnDa
                 Log.d("-----====", "What is c.getTimeInMillis: "+c.getTimeInMillis());
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(dateTimeSelection.this, dateTimeSelection.this, year, month, day);
-                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis()+(int)8.64e+7);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
                 datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
                 datePickerDialog.show();
             }

@@ -145,7 +145,6 @@ public class ListDetails {
 
         }
 
-        //Log.d(":::::what is menulist", "----------What is the overall menuList: "+menuList.get(0).getName());
         return menuList;
 
 

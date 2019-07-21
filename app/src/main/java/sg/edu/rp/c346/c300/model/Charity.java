@@ -80,7 +80,7 @@ public class Charity {
         return left;
     }
 
-    public void setLeft(double used) {
+    public void setLeft(double left) {
         this.left = left;
     }
 }

@@ -127,6 +127,15 @@
                         />
 
                     <TextView
+                        android:id="@+id/tvIndividualSchool"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Location: "
+                        android:textSize="15dp"
+                        android:textColor="#0A0A0A"
+                        />
+
+                    <TextView
                         android:id="@+id/tvIndividualLastChanges"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

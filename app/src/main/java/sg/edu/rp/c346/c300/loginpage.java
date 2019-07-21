@@ -149,7 +149,7 @@ public class loginpage extends AppCompatActivity {
 
 
         //region For AutoComplete (Display all username)
-        usernameList.addAll(Arrays.asList("Andrew", "Ben", "Cai", "Darius", "Elex"));
+        usernameList.addAll(Arrays.asList("hi@gmail.com", "Andrew", "Ben", "Cai", "Darius", "Elex"));
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.select_dialog_item, usernameList);
         etEmail.setThreshold(1);
         etEmail.setAdapter(adapter);

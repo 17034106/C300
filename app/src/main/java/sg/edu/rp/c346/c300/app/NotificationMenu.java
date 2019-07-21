@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import sg.edu.rp.c346.c300.EmergencyWalletNotificationMain;
+import sg.edu.rp.c346.c300.HistoryTransactionQRPayment;
 import sg.edu.rp.c346.c300.PreOrderUpdates;
 import sg.edu.rp.c346.c300.R;
 
@@ -38,6 +40,25 @@ public class NotificationMenu extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PreOrderUpdates.class);
                 intent.putExtra("page","WalkIn");
+                startActivity(intent);
+            }
+        });
+
+
+        view.findViewById(R.id.notificationOutside).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), HistoryTransactionQRPayment.class);
+                intent.putExtra("parent",false);
+                startActivity(intent);
+            }
+        });
+
+
+        view.findViewById(R.id.notificationEWallet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EmergencyWalletNotificationMain.class);
                 startActivity(intent);
             }
         });
