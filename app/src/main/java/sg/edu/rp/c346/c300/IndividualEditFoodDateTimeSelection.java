@@ -86,6 +86,8 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
 
     int positionInOrder_Firebase; //check the position in the order(firebase)
 
+    String dateTimeOrderString; // for the change dateTimeOrder
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_individual_edit_food_date_time_selection);
@@ -117,6 +119,7 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
         //region Get the value from the previous activity (intent)
         final Intent intentReceived = getIntent();
         final Collection collectionReceived = (Collection) intentReceived.getSerializableExtra("collection");
+        final double deductFirebase = intentReceived.getDoubleExtra("deductFirebase",0.0); // use for changing the food budget amount in firebase
 
         final String foodName = collectionReceived.getName();
         final double foodPrice = collectionReceived.getPrice();
@@ -236,7 +239,7 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
                                 //region Commit the changes for the confirmed order in customer firebase (TC)
                                 drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("additionalNote").setValue(additionalNote);
                                 Date dateTimeOrderDate = MainpageActivity.convertStringToDate(String.format("%02d/%02d/%02d %02d:%02d",dayFinal,monthFinal,yearFinal,hourFinal,minuteFinal), "dd/MM/yyyy HH:mm");
-                                String dateTimeOrderString = MainpageActivity.convertDateToString(dateTimeOrderDate, "dd/MM/yyyy h:mm a");
+                                dateTimeOrderString = MainpageActivity.convertDateToString(dateTimeOrderDate, "dd/MM/yyyy h:mm a");
                                 drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("dateTimeOrder").setValue(dateTimeOrderString);
                                 drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("lastChanges").setValue(lastChangesToEdit);
                                 drEditConfirmFoodTC.child(positionInOrder_Firebase+"").child("price").setValue(foodPrice);
@@ -275,6 +278,109 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
                                     drEditConfirmFoodTO.child("addOn").child("numOfAddOn").setValue(i+1);
 
                                 }
+                                //endregion
+
+
+                                //region change the food Budget available in firebase
+
+                                // getting the day of the week
+                                Date currentTime = Calendar.getInstance().getTime();
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTime(currentTime);
+                                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                                int dayOfWeekInDB = dayOfWeek - 2;
+                                if (dayOfWeekInDB==-1){
+                                    dayOfWeekInDB =6;
+                                }
+
+                                DatabaseReference drChangeFoodBudget  = FirebaseDatabase.getInstance().getReference()
+                                        .child("budget")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child("day")
+                                        .child(dayOfWeekInDB+"")
+                                        .child("category")
+                                        .child("food")
+                                        .child("left");
+                                drChangeFoodBudget.setValue(deductFirebase);
+                                //endregion
+
+
+                                //---------------------------------------------------------------------------------------------------------
+                                //region change the amount in prePayment
+
+                                final DatabaseReference drPrePayment = FirebaseDatabase.getInstance().getReference().child("prePayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                drPrePayment.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int numOfPrePayment = Integer.parseInt(dataSnapshot.child("numOfPrePayment").getValue().toString());
+                                        for (int i =0; i<numOfPrePayment;i++){
+                                            if (dataSnapshot.child(i+"").child("tID").getValue().toString().equals(collectionReceived.gettId())){
+
+                                                drPrePayment.child(i+"").child("amount").setValue(totalPrice);
+
+
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                                //endregion
+
+
+
+
+
+
+
+                                //region add to notification
+
+                                final DatabaseReference drNotification = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("preOrder");
+                                drNotification.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString());
+                                        drNotification.child(numOfPreOrder+"").setValue(collectionReceived);
+                                        drNotification.child(numOfPreOrder+"").child("dateTimeOrder").setValue(dateTimeOrderString);
+                                        drNotification.child(numOfPreOrder+"").child("price").setValue(foodPrice);
+                                        drNotification.child(numOfPreOrder+"").child("quantity").setValue(quantityValue);
+                                        drNotification.child(numOfPreOrder+"").child("totalPrice").setValue(totalPrice);
+                                        drNotification.child(numOfPreOrder+"").child("additionalNote").setValue(additionalNote+"");
+                                        drNotification.child(numOfPreOrder+"").child("lastChanges").setValue(lastChangesToEdit);
+                                        drNotification.child(numOfPreOrder+"").child("status").setValue("Edited");
+                                        drNotification.child(numOfPreOrder+"").child("notificationTiming").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+
+
+                                        drNotification.child(numOfPreOrder+"").child("addOn").removeValue();
+                                        drNotification.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(0);
+                                        for (int i =0; i<IndividualEditFoodDisplay.addOnArray.size();i++) {
+                                            drNotification.child(numOfPreOrder+"").child("addOn").child(Integer.toString(i)).child("name").setValue(IndividualEditFoodDisplay.addOnArray.get(i).getName());
+                                            drNotification.child(numOfPreOrder+"").child("addOn").child(Integer.toString(i)).child("price").setValue(IndividualEditFoodDisplay.addOnArray.get(i).getPrice());
+                                            drNotification.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(i+1);
+
+                                        }
+
+
+                                        drNotification.child("numOfPreOrder").setValue(numOfPreOrder+1);
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                //endregion
+
+
 
                                 Toast.makeText(IndividualEditFoodDateTimeSelection.this, "Edited Successfully", Toast.LENGTH_SHORT).show();
 
@@ -285,7 +391,7 @@ public class IndividualEditFoodDateTimeSelection extends Activity implements Dat
                                 startActivity(intent);
                                 finish();
 
-                                //endregion
+
 
                                 break;
 

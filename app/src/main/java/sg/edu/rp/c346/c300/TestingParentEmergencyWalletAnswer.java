@@ -220,16 +220,93 @@ public class TestingParentEmergencyWalletAnswer extends AppCompatActivity {
             });
 
             if (eWalletRequest.getCategory().equalsIgnoreCase("food")){
+                if (budget.getCategory().getFood().getChangedValueMax()==-1) {
+                    budget.getCategory().getFood().setChangedValueMax(budget.getCategory().getFood().getDefaultValueMax() + eWalletRequest.getAmount());
+                    budget.getCategory().getFood().setChangedValueMin(budget.getCategory().getFood().getDefaultValueMin());
+                }
+                else{
+                    budget.getCategory().getFood().setChangedValueMax(budget.getCategory().getFood().getChangedValueMax() + eWalletRequest.getAmount());
+
+                }
+
+                if (budget.getCategory().getFood().getChangedValueMin()==-1){
+                    budget.getCategory().getFood().setChangedValueMin(budget.getCategory().getFood().getDefaultValueMin());
+                }else{
+                    budget.getCategory().getFood().setChangedValueMin(budget.getCategory().getFood().getChangedValueMin());
+
+                }
+
+
+                budget.getCategory().getFood().setAmount(budget.getCategory().getFood().getAmount() + eWalletRequest.getAmount());
                 budget.getCategory().getFood().setLeft(budget.getCategory().getFood().getLeft()+eWalletRequest.getAmount());
             }
             else if (eWalletRequest.getCategory().equalsIgnoreCase("drink")){
+                if (budget.getCategory().getDrink().getChangedValueMax()==-1) {
+                    budget.getCategory().getDrink().setChangedValueMax(budget.getCategory().getDrink().getDefaultValueMax() + eWalletRequest.getAmount());
+                    budget.getCategory().getDrink().setChangedValueMin(budget.getCategory().getDrink().getDefaultValueMin());
+
+                }else{
+                    budget.getCategory().getDrink().setChangedValueMax(budget.getCategory().getDrink().getChangedValueMax() + eWalletRequest.getAmount());
+
+                }
+
+                if (budget.getCategory().getDrink().getChangedValueMin()==-1){
+                    budget.getCategory().getDrink().setChangedValueMin(budget.getCategory().getDrink().getDefaultValueMin());
+                }else{
+                    budget.getCategory().getDrink().setChangedValueMin(budget.getCategory().getDrink().getChangedValueMin());
+
+                }
+
+                budget.getCategory().getDrink().setAmount(budget.getCategory().getDrink().getAmount() + eWalletRequest.getAmount());
                 budget.getCategory().getDrink().setLeft(budget.getCategory().getDrink().getLeft()+eWalletRequest.getAmount());
             }
             else if (eWalletRequest.getCategory().equalsIgnoreCase("stationery")){
+                if (budget.getCategory().getStationery().getChangedValueMax()==-1) {
+                    budget.getCategory().getStationery().setChangedValueMax(budget.getCategory().getStationery().getDefaultValueMax() + eWalletRequest.getAmount());
+                    budget.getCategory().getStationery().setChangedValueMin(budget.getCategory().getStationery().getDefaultValueMin());
+
+                }else{
+                    budget.getCategory().getStationery().setChangedValueMax(budget.getCategory().getStationery().getChangedValueMax() + eWalletRequest.getAmount());
+
+                }
+
+                if (budget.getCategory().getStationery().getChangedValueMin()==-1){
+                    budget.getCategory().getStationery().setChangedValueMin(budget.getCategory().getStationery().getDefaultValueMin());
+                }else{
+                    budget.getCategory().getStationery().setChangedValueMin(budget.getCategory().getStationery().getChangedValueMin());
+
+                }
+
+                budget.getCategory().getStationery().setAmount(budget.getCategory().getStationery().getAmount() + eWalletRequest.getAmount());
                 budget.getCategory().getStationery().setLeft(budget.getCategory().getStationery().getLeft()+eWalletRequest.getAmount());
             }
             else if (eWalletRequest.getCategory().equalsIgnoreCase("others")){
+                if (budget.getCategory().getOthers().getChangedValueMax()==-1) {
+                    budget.getCategory().getOthers().setChangedValueMax(budget.getCategory().getOthers().getDefaultValueMax() + eWalletRequest.getAmount());
+                    budget.getCategory().getOthers().setChangedValueMin(budget.getCategory().getOthers().getDefaultValueMin());
+
+                }else{
+                    budget.getCategory().getOthers().setChangedValueMax(budget.getCategory().getOthers().getChangedValueMax() + eWalletRequest.getAmount());
+
+                }
+
+                if (budget.getCategory().getOthers().getChangedValueMin()==-1){
+                    budget.getCategory().getOthers().setChangedValueMin(budget.getCategory().getOthers().getDefaultValueMin());
+                }else{
+                    budget.getCategory().getOthers().setChangedValueMin(budget.getCategory().getOthers().getChangedValueMin());
+
+                }
+
+                budget.getCategory().getOthers().setAmount(budget.getCategory().getOthers().getAmount() + eWalletRequest.getAmount());
                 budget.getCategory().getOthers().setLeft(budget.getCategory().getOthers().getLeft()+eWalletRequest.getAmount());
+            }
+
+
+            if (budget.getChangedAllowance()==-1) {
+                budget.setChangedAllowance(budget.getAllowance() + eWalletRequest.getAmount()); // add the eWalletRequest money to the changedAllowance
+            }
+            else{
+                budget.setChangedAllowance(budget.getChangedAllowance() + eWalletRequest.getAmount());
             }
 
             drBudget.child(day1+"").setValue(budget);

@@ -97,6 +97,8 @@ public class loginpage extends AppCompatActivity {
         resultOfFingerprintAuthentication = getIntent().getBooleanExtra("result",false);
         if (resultOfFingerprintAuthentication){
             dialog.setMessage("Logging. Please wait..."); //show dialog
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
 
             if (!correctEmail.isEmpty() && !correctPassword.isEmpty()) {
@@ -323,7 +325,15 @@ public class loginpage extends AppCompatActivity {
         correctPassword = prefRetrieve.getString("correctPassword", "");
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
 
 
     //detect whether there is any successful login user

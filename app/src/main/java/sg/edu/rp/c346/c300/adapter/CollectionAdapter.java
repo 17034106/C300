@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import sg.edu.rp.c346.c300.IndividualCollectionOrder;
+import sg.edu.rp.c346.c300.PreOrderCompleted;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.TestingParentTransactionPreOrderAll;
 import sg.edu.rp.c346.c300.TestingParentTransactionPreOrderIndividual;
@@ -40,15 +41,15 @@ public class CollectionAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<Collection> collectionList;
-
-
+    private boolean parentRole;
 
 
     public static ArrayList<AddOn> addOnListIndividual = new ArrayList<>(); //use for intent the addOnList to IndividualCollectionOrder class;
 
-    public CollectionAdapter(Context context, ArrayList<Collection> collectionList) {
+    public CollectionAdapter(Context context, ArrayList<Collection> collectionList, boolean parentRole) {
         this.context = context;
         this.collectionList = collectionList;
+        this.parentRole = parentRole;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class CollectionAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
 
 
@@ -141,32 +142,53 @@ public class CollectionAdapter extends BaseAdapter {
 
         }
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
-                                setDeny(collection);
-                                break;
 
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                //No button clicked
-                                break;
+
+
+
+
+        if (parentRole) { // whether the parent want to deny the future purchases
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    setDeny(collection);
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
                         }
-                    }
-                };
+                    };
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Are you sure to deny kid to purchase any item from this stall?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Are you sure to deny kid to purchase any item from this stall?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
 
-            }
-        });
-
+                }
+            });
+        }
+        else{
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, PreOrderCompleted.class);
+                    intent.putExtra("collection", collection);
+                    intent.putExtra("position", position);
+                    intent.putExtra("collectionListSize", collectionList.size());
+                    intent.putExtra("justReceived", false);
+                    context.startActivity(intent);
+                }
+            });
+        }
 
 
 //        convertView.setOnClickListener(new View.OnClickListener() {

@@ -15,6 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import sg.edu.rp.c346.c300.adapter.Collection2Adapter;
 import sg.edu.rp.c346.c300.adapter.CollectionAdapter;
@@ -80,6 +82,16 @@ public class CollectionOrderPage extends AppCompatActivity {
                     String image= dataSnapshot.child(Integer.toString(i)).child("imageurl").getValue().toString();
                     String school= dataSnapshot.child(Integer.toString(i)).child("school").getValue().toString();
 
+
+                    Date dateTimeOrderInDate = MainpageActivity.convertStringToDate(dateTimeOrder, "dd/MM/yyyy h:mm a");
+                    Date currentDateTime = MainpageActivity.convertStringToDate(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"), "dd/MM/yyyy h:mm:ss a");
+
+                    if (currentDateTime.compareTo(dateTimeOrderInDate) >0){
+                        if (!status.equals("ready")) {
+                            status = "preparing";
+                            drTC.child(i + "").child("status").setValue("preparing");
+                        }
+                    }
 
 
                     ArrayList<AddOn> addOnList = new ArrayList<>();

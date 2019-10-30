@@ -61,7 +61,6 @@
                 android:layout_centerHorizontal="true"
                 android:background="#C9C1C1"
                 android:drawableLeft="@drawable/ic_search_bar"
-                android:drawableRight="@drawable/ic_mic"
                 android:ems="10"
                 android:hint="Search"
                 android:singleLine="true"
@@ -75,7 +74,7 @@
                 android:layout_alignParentRight="true"
                 android:paddingTop="7.5dp"
                 android:paddingBottom="7.5dp"
-                android:layout_marginRight="68dp"
+                android:layout_marginRight="50dp"
                 android:src="@drawable/ic_cross" />
 
 

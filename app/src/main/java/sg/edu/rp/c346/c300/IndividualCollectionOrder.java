@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +31,7 @@ import sg.edu.rp.c346.c300.adapter.Collection2Adapter;
 import sg.edu.rp.c346.c300.adapter.CollectionAdapter;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
+import sg.edu.rp.c346.c300.model.Budget;
 import sg.edu.rp.c346.c300.model.Collection;
 import sg.edu.rp.c346.c300.model.Customer;
 
@@ -73,6 +75,8 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
 
 
+    int dayOfWeekInDB; //check the day in the firebase
+    Budget budget;
 
 
     @Override
@@ -81,6 +85,8 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         setContentView(R.layout.activity_individual_collection_order);
 
         thisAcitivy = this;
+
+        getBudget();
 
         tvTID = findViewById(R.id.tvIndividualTID);
         tvFoodName = findViewById(R.id.tvIndividualFoodName);
@@ -160,6 +166,18 @@ public class IndividualCollectionOrder extends AppCompatActivity {
             tvAddOn.setText(addOnString.trim());
         }
 
+
+        //Check whether the customer can change or delete order
+        if (!intentReceive.getStringExtra("status").equals("purchased")){
+            findViewById(R.id.IndividualEditOrderBtn).setVisibility(View.INVISIBLE);
+            findViewById(R.id.IndividualEditOrderBtn).setEnabled(false);
+
+            findViewById(R.id.IndividualDeleteOrderBtn).setVisibility(View.INVISIBLE);
+            findViewById(R.id.IndividualDeleteOrderBtn).setEnabled(false);
+
+        }
+
+
         //region Receive the order and send the data to HO and HC
         findViewById(R.id.IndividualConfirmReceiveOrderBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,8 +188,6 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
-
-
 
                                 //---------------------------------------------------------------------------------------------------------
                                 //region deduct money from the customer
@@ -300,6 +316,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                 //---------------------------------------------------------------------------------------
                                 //region update the owner graph
 
+                                updateGraph((MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy")), collection.getTotalPrice(), collection.getStallUID());
 
                                 //endregion
 
@@ -307,8 +324,12 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                 //---------------------------------------------------------------------------------------
                                 //region update the customer graph
 
+                                updateCustomerGraph((MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy")), collection.getTotalPrice(), collection.getCustomerUID(), "spending");
+
                                 //endregion
 
+
+                                final String dateTimePurchased = MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a");
 
 
                                 //---------------------------------------------------------------------------------------------------------
@@ -324,7 +345,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
 
                                         drHC.child(numOfPreOrder+"").setValue(collection);
-                                        drHC.child(numOfPreOrder+"").child("dateTimePurchased").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+                                        drHC.child(numOfPreOrder+"").child("dateTimePurchased").setValue(dateTimePurchased);
                                         drHC.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
                                         drHC.child("numOfPreOrder").setValue(numOfPreOrder+1);
 
@@ -355,7 +376,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                         collection.setStatus("completed");
 
                                         drHO.child(numOfPreOrder+"").setValue(collection);
-                                        drHO.child(numOfPreOrder+"").child("dateTimePurchased").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+                                        drHO.child(numOfPreOrder+"").child("dateTimePurchased").setValue(dateTimePurchased);
 
                                         drHO.child(numOfPreOrder+"").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
 
@@ -399,7 +420,6 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                                 });
 
 
-
                                 //endregion
 
 
@@ -409,9 +429,15 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
 
 
-                                deleteOrder();
+                                deleteOrder(false);
 
-
+                                CollectionOrderPage.getInstance().finish();
+                                Intent intent = new Intent(IndividualCollectionOrder.this, PreOrderCompleted.class);
+                                intent.putExtra("collection", collection);
+                                intent.putExtra("dateTimePurchased", dateTimePurchased);
+                                intent.putExtra("justReceived", true);
+                                startActivity(intent);
+                                finish();
 
                                 break;
 
@@ -475,7 +501,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
-                                deleteOrder();
+                                deleteOrder(true);
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -506,7 +532,7 @@ public class IndividualCollectionOrder extends AppCompatActivity {
 
     //region delete the confirmed order
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    public void deleteOrder(){
+    public void deleteOrder(boolean deleteTrue){
 
 
         //region delete the confirmed data in Customer firebase (TC)
@@ -617,14 +643,9 @@ public class IndividualCollectionOrder extends AppCompatActivity {
         //region delete the confirmed data in Owner firebase (TO)
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------
-        final DatabaseReference databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        databaseReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Customer customer = dataSnapshot.getValue(Customer.class);
-                customerSchool = customer.getCustomerschool(); // getting the user's school
 
-                drTO = FirebaseDatabase.getInstance().getReference().child("to").child("school").child(customerSchool).child("stall").child(getIntent().getIntExtra("stallId",-1)+"").child("order");
+
+                drTO = FirebaseDatabase.getInstance().getReference().child("to").child("school").child(collection.getSchool()).child("stall").child(getIntent().getIntExtra("stallId",-1)+"").child("order");
                 drTO.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -719,27 +740,114 @@ public class IndividualCollectionOrder extends AppCompatActivity {
                 });
 
 
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+
+
+        if (deleteTrue) {   //if the order is delete not receive
+
+
+            //region add to notification
+            //------------------------------------------------------------------------------------------------------------
+            final DatabaseReference drNotification = FirebaseDatabase.getInstance().getReference().child("notification").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("preOrder");
+            drNotification.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    int numOfPreOrder = Integer.parseInt(dataSnapshot.child("numOfPreOrder").getValue().toString());
+
+                    drNotification.child(numOfPreOrder + "").setValue(collection);
+                    drNotification.child(numOfPreOrder + "").child("status").setValue("Cancelled");
+                    drNotification.child(numOfPreOrder + "").child("addOn").child("numOfAddOn").setValue(collection.getAddOn().size());
+                    drNotification.child(numOfPreOrder + "").child("notificationTiming").setValue(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy h:mm:ss a"));
+                    drNotification.child("numOfPreOrder").setValue(numOfPreOrder + 1);
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            //------------------------------------------------------------------------------------------------------------
+            //endregion
+
+
+            //region add back the food budget
+            //-------------------------------------------------------------------------------------------------------------
+            budget.getCategory().getFood().setLeft(budget.getCategory().getFood().getLeft() + collection.getTotalPrice());
+
+            DatabaseReference drBudget = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day").child(dayOfWeekInDB + "");
+            drBudget.setValue(budget);
+
+
+            //-------------------------------------------------------------------------------------------------------------
+            //endregion
+
+
+
+            //---------------------------------------------------------------------------------------------------------
+            //region Remove prePayment
+
+            final DatabaseReference drPrePayment = FirebaseDatabase.getInstance().getReference().child("prePayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            drPrePayment.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int numOfPrePayment = Integer.parseInt(dataSnapshot.child("numOfPrePayment").getValue().toString());
+                    for (int i =0; i<numOfPrePayment;i++){
+                        if (dataSnapshot.child(i+"").child("tID").getValue().toString().equals(collection.gettId())){
+
+                            for (int h=i; h<numOfPrePayment-1; h++){
+                                drPrePayment.child(h+"").child("amount").setValue(Double.parseDouble(dataSnapshot.child((h+1)+"").child("amount").getValue().toString()));
+                                drPrePayment.child(h+"").child("customerUID").setValue(dataSnapshot.child((h+1)+"").child("customerUID").getValue().toString());
+                                drPrePayment.child(h+"").child("paymentDateTime").setValue(dataSnapshot.child((h+1)+"").child("paymentDateTime").getValue().toString());
+                                drPrePayment.child(h+"").child("school").setValue(dataSnapshot.child((h+1)+"").child("school").getValue().toString());
+                                drPrePayment.child(h+"").child("stallUID").setValue(dataSnapshot.child((h+1)+"").child("stallUID").getValue().toString());
+                                drPrePayment.child(h+"").child("tID").setValue(dataSnapshot.child((h+1)+"").child("tID").getValue().toString());
+                            }
+
+                            drPrePayment.child((numOfPrePayment-1)+"").removeValue();
+                            drPrePayment.child("numOfPrePayment").setValue(numOfPrePayment-1);
+
+
+                            break;
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+            //endregion
+
+
+            CollectionOrderPage.getInstance().finish();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    Intent intent = new Intent(IndividualCollectionOrder.this, CollectionOrderPage.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 500);
+
+
+
+
+        }
+
+
         //--------------------------------------------------------------------------------------------------------------------------------------------------------------
         //endregion
 
-        CollectionOrderPage.getInstance().finish();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 5s = 5000ms
-                Intent intent = new Intent(IndividualCollectionOrder.this, CollectionOrderPage.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 500);
 
 
     }
@@ -747,6 +855,198 @@ public class IndividualCollectionOrder extends AppCompatActivity {
     //endregion
 
 
+    public void getBudget(){
+        // getting the day of the week
+        Date currentTime = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentTime);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        dayOfWeekInDB = dayOfWeek - 2;
+        if (dayOfWeekInDB==-1){
+            dayOfWeekInDB =6;
+        }
+
+
+
+        DatabaseReference drBudget = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day").child(dayOfWeekInDB+"");
+        drBudget.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                budget = dataSnapshot.getValue(Budget.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    //Update the owner graph
+    private void updateGraph(final String date1, final double price1, final String stallUID1){
+        //Get the price
+        final DatabaseReference dbAccessGraph = FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1);
+        dbAccessGraph.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                int day = Integer.valueOf(date1.substring(0, 2));
+                int month = Integer.valueOf(date1.substring(3, 5));
+                int year = Integer.valueOf(date1.substring(6, 10));
+                String yearString = String.valueOf(year);
+
+
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.DAY_OF_MONTH, day);
+                c.set(Calendar.MONTH, month - 1);
+
+                System.out.println("Month: " + new SimpleDateFormat("MMMM").format(c.getTime()));
+                System.out.println("Day: " + c.get(Calendar.DAY_OF_MONTH));
+
+                int numOfYears = Integer.valueOf(dataSnapshot.child("year").child("numOfYears").getValue().toString());
+
+                //Check HO dates against Graph Dates then setValue of the profits from HO into Graph date's profit
+
+                for (int a = 0; a < numOfYears; a++) {
+                    if (yearString.equals(dataSnapshot.child("year").child(String.valueOf(a)).child("year").getValue().toString())) {
+
+
+                        String fbDate = dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                .child("date").getValue().toString();
+
+
+                        System.out.println("Input Date: " + date1.substring(0,10));
+                        System.out.println("Firebase Date: " + fbDate);
+                        if (date1.substring(0,10).equals(fbDate)) {
+                            System.out.println("Matched!");
+                            double currentProfit = 0;
+                            currentProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                    .child("profit").getValue().toString());
+
+                            double newProfit = currentProfit + price1;
+                            System.out.println("New Profit: " + newProfit);
+
+                            FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1).child("year")
+                                    .child(String.valueOf(a)).child("months").child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH)-1)).child("profit").setValue(newProfit);
+
+
+                            //Update Month Profit
+                            double currentMonthProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("profit").getValue().toString());
+
+                            double newMonthProfit = currentMonthProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1).child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("profit").setValue(newMonthProfit);
+
+                            //Update Year Profit
+                            double currentYearProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("profit").getValue().toString());
+
+                            double newYearProfit = currentYearProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1).child("year").child(String.valueOf(a)).child("profit").setValue(newYearProfit);
+
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    //update the customer spending graph
+    private void updateCustomerGraph(final String date1, final double price1, final String customerUID1,final String css){
+        final String cssPlusS = css + "s";
+
+//        //Get the price
+        final DatabaseReference dbAccessGraph = FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css);
+        dbAccessGraph.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
+                int day = Integer.valueOf(date1.substring(0, 2));
+                int month = Integer.valueOf(date1.substring(3, 5));
+                int year = Integer.valueOf(date1.substring(6, 10));
+                String yearString = String.valueOf(year);
+
+
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.DAY_OF_MONTH, day);
+                c.set(Calendar.MONTH, month - 1);
+
+                System.out.println("Month: " + new SimpleDateFormat("MMMM").format(c.getTime()));
+                System.out.println("Day: " + c.get(Calendar.DAY_OF_MONTH));
+
+                int numOfYears = Integer.valueOf(dataSnapshot.child("year").child("numOfYears").getValue().toString());
+
+                //Check HO dates against Graph Dates then setValue of the profits from HO into Graph date's profit
+
+                for (int a = 0; a < numOfYears; a++) {
+                    if (yearString.equals(dataSnapshot.child("year").child(String.valueOf(a)).child("year").getValue().toString())) {
+
+
+                        String fbDate = dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                .child("date").getValue().toString();
+
+
+                        System.out.println("Input Date: " + date1.substring(0,10));
+                        System.out.println("Firebase Date: " + fbDate);
+                        if (date1.substring(0,10).equals(fbDate)) {
+                            System.out.println("Matched!");
+                            double currentProfit = 0;
+                            currentProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                    .child(cssPlusS).getValue().toString());
+
+                            double newProfit = currentProfit + price1;
+                            System.out.println("New Profit: " + newProfit);
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year")
+                                    .child(String.valueOf(a)).child("months").child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH)-1)).child(cssPlusS).setValue(newProfit);
+
+
+                            //Update Month Profit
+                            double currentMonthProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child(cssPlusS).getValue().toString());
+
+                            double newMonthProfit = currentMonthProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child(cssPlusS).setValue(newMonthProfit);
+
+                            //Update Year Profit
+                            double currentYearProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child(cssPlusS).getValue().toString());
+
+                            double newYearProfit = currentYearProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year").child(String.valueOf(a)).child(cssPlusS).setValue(newYearProfit);
+
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 
 

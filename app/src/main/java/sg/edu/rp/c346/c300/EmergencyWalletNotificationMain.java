@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,8 @@ public class EmergencyWalletNotificationMain extends AppCompatActivity {
 
     EWalletAdapter eWalletAdapter;
 
+    TextView displayRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,10 +46,9 @@ public class EmergencyWalletNotificationMain extends AppCompatActivity {
         typeSpinner = findViewById(R.id.typeSpinner);
         listViewEWallet = findViewById(R.id.listViewEWallet);
         typeSpinner.setText("Request Type");
+        displayRequest = findViewById(R.id.DisplayRequest);
 
-
-
-
+        displayRequest.setText("Please select the type");
 
 
 
@@ -65,10 +67,26 @@ public class EmergencyWalletNotificationMain extends AppCompatActivity {
 
                     eWalletAdapter = new EWalletAdapter(EmergencyWalletNotificationMain.this, acceptedRequest);
 
+                    if (acceptedRequest.size()==0){
+                        displayRequest.setVisibility(View.VISIBLE);
+                        displayRequest.setText("No Request made");
+                    }
+                    else{
+                        displayRequest.setVisibility(View.INVISIBLE);
+                    }
+
                 }
                 else{
                     eWalletAdapter = new EWalletAdapter(EmergencyWalletNotificationMain.this, rejectedRequest);
 
+
+                    if (rejectedRequest.size()==0){
+                        displayRequest.setVisibility(View.VISIBLE);
+                        displayRequest.setText("No Request made");
+                    }
+                    else{
+                        displayRequest.setVisibility(View.INVISIBLE);
+                    }
                 }
 
                 listViewEWallet.setAdapter(eWalletAdapter);

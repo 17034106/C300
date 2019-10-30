@@ -1,31 +1,367 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".TestingParentMain">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".app.AccountMenu">
+
+    <!-- TODO: Update blank fragment layout -->
 
 
-    <Button
-        android:id="@+id/emergencyWalletRequest"
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Emergency Wallet Request" />
+        android:layout_height="match_parent">
 
 
-    <Button
-        android:id="@+id/transactionHistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kid's Transaction History" />
 
 
-    <ImageView
-        android:id="@+id/alert"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:src="@drawable/ic_info" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</LinearLayout>
+            <ImageView
+                android:id="@+id/top_half_background"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/custom_background_half"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+
+            <RelativeLayout
+                android:id="@+id/relativeAccountDisplay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="20dp">
+
+
+                <TextView
+                    android:id="@+id/accountName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:text="Name"
+                    android:textSize="22dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_toRightOf="@+id/accountStudentImage"/>
+
+                <TextView
+                    android:id="@+id/ewallet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Balance"
+                    android:textSize="16dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_below="@+id/accountName"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@+id/accountStudentImage"/>
+
+                <ImageView
+                    android:id="@+id/accountStudentImage"
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ic_action_person"/>
+
+
+
+            </RelativeLayout>
+
+
+
+
+            <GridLayout
+                android:id="@+id/grid1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alignmentMode="alignMargins"
+                android:columnCount="2"
+                android:rowCount="3"
+                android:columnOrderPreserved="false"
+                android:layout_marginTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_below="@+id/relativeAccountDisplay">
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/xLimit"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_pen"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Set Limit"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/transactionHistory"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_history_record"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All Transaction"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/denyList"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_block"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Deny List"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/emergencyWalletRequest"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_emergency_wallet"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SOS Request"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/topUp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/topupwithouttransparent"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Top Up Balance"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="120dp"
+                    android:layout_rowWeight="1"
+                    app:cardElevation="6dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp"
+                    app:cardCornerRadius="25dp">
+
+                    <LinearLayout
+                        android:id="@+id/profile"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+
+                        <ImageView
+                            android:src="@drawable/ic_setting"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Profile Setting"
+                            android:textSize="18dp"
+                            android:textColor="#6f6f6f"
+                            android:layout_marginTop="12dp"/>
+
+
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+
+
+
+
+
+            </GridLayout>
+
+            <!--<Button-->
+                <!--android:id="@+id/btnSignOut"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/grid1"-->
+                <!--android:text="Log Out"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_marginTop="12dp"-->
+                <!--android:layout_marginBottom="10dp"/>-->
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+    </ScrollView>
+
+
+
+
+</RelativeLayout>

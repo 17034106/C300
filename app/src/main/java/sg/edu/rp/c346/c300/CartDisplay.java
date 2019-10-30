@@ -108,12 +108,16 @@ public class CartDisplay extends AppCompatActivity {
     Map<Integer, Integer> checkingNumOfOrderRepeat = new Hashtable<Integer, Integer>();
 
 
+    double totalSpentInPrePayment; //check the total prePayment amount in firebase
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_display);
 
+
+        getTotalSpentInPrePayment(); //check the total prePayment amount in firebase
 
         final DatabaseReference drPrePayment = FirebaseDatabase.getInstance().getReference().child("prePayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         drPrePayment.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -451,11 +455,10 @@ public class CartDisplay extends AppCompatActivity {
                                     break;
                                 }
                                 else if (totalSpent.containsKey(i.getKey())){
-                                    customerBalance -= totalSpent.get(i.getKey());
+                                    customerBalance -= (totalSpent.get(i.getKey()) + totalSpentInPrePayment);
                                 }
 
                             }
-//                            Toast.makeText(CartDisplay.this, "Pass: " + pass, Toast.LENGTH_SHORT).show();
 
                             //endregion
 
@@ -1286,6 +1289,27 @@ public class CartDisplay extends AppCompatActivity {
     //endregion
 
 
+    private void getTotalSpentInPrePayment(){
+        DatabaseReference drPrePayment = FirebaseDatabase.getInstance().getReference().child("prePayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        drPrePayment.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int numOfPrePayment = Integer.parseInt(dataSnapshot.child("numOfPrePayment").getValue().toString());
+                for (int i =0; i<numOfPrePayment;i++){
+                    totalSpentInPrePayment+= Double.parseDouble(dataSnapshot.child(i+"").child("amount").getValue().toString());
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

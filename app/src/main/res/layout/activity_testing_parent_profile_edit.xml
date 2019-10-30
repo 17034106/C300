@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingEditablePage">
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/top_half_background"
+                android:layout_width="match_parent"
+                android:layout_height="185dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/custom_background_half"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/settingStudentImage"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_person_black"/>
+
+            <RelativeLayout
+                android:id="@+id/relativeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/settingStudentImage"
+                android:layout_marginTop="15dp"
+                >
+
+                <ImageView
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"/>
+
+                <TextView
+                    android:id="@+id/tvStudentName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Kid Name:"
+                    android:layout_below="@+id/line"/>
+
+                <EditText
+                    android:id="@+id/settingEditableStudentName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="Name"
+                    android:layout_below="@+id/tvStudentName"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingStudentName"/>
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/relativeNRIC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeName"
+                >
+
+                <TextView
+                    android:id="@+id/tvStudentNRIC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="NRIC:"/>
+
+                <TextView
+                    android:id="@+id/settingEditableStudentNRIC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="NRIC"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/tvStudentNRIC"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingStudentNRIC"/>
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/relativeDOB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeNRIC"
+                >
+
+                <TextView
+                    android:id="@+id/tvStudentDOB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Date of Birth (DD/MM/YYYY):"/>
+
+                <EditText
+                    android:id="@+id/settingEditableStudentDOB"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="DOB"
+                    android:layout_below="@+id/tvStudentDOB"/>
+
+                <ImageView
+                    android:id="@+id/settingEditableDobArrow"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="#9B9292"
+                    android:layout_toRightOf="@id/settingEditableStudentDOB"
+                    android:layout_below="@+id/tvStudentDOB"
+                    android:src="@drawable/ic_action_down_arrow" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingStudentDOB"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relativePhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeDOB"
+                >
+
+                <TextView
+                    android:id="@+id/tvStudentPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Kid Mobile Number"/>
+
+                <EditText
+                    android:id="@+id/settingEditableStudentPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="Phone Number"
+                    android:inputType="phone"
+                    android:layout_below="@+id/tvStudentPhone"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingStudentPhone"/>
+
+
+            </RelativeLayout>
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/relativeSchool"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativePhone"
+                >
+
+                <TextView
+                    android:id="@+id/tvStudentSchool"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="School"/>
+
+                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                    android:id="@+id/settingEditableStudentSchool"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@color/editTextColor"
+                    android:hint="School"
+                    android:paddingLeft="20dp"
+                    android:singleLine="true"
+                    android:textSize="18dp"
+                    android:layout_below="@id/tvStudentSchool"/>
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingStudentSchool"/>
+
+
+            </RelativeLayout>
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/relativeEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeSchool"
+                >
+
+                <TextView
+                    android:id="@+id/tvStudentEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Email"/>
+
+                <TextView
+                    android:id="@+id/settingEditableStudentEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Email"
+                    android:textSize="20dp"
+                    android:layout_below="@+id/tvStudentEmail"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingStudentEmail"/>
+
+
+            </RelativeLayout>
+
+
+            <ImageView
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/relativeEmail"
+                android:layout_marginTop="10dp"/>
+
+            <RelativeLayout
+                android:id="@+id/relativeParentName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/line1"
+                >
+
+                <TextView
+                    android:id="@+id/tvParentName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Parent Name"/>
+
+                <EditText
+                    android:id="@+id/settingEditableParentName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="Parent Name"
+                    android:inputType="phone"
+                    android:layout_below="@+id/tvParentName"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingEditableParentName"/>
+
+
+            </RelativeLayout>
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/relativeParentMobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeParentName"
+                >
+
+                <TextView
+                    android:id="@+id/tvParentMobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Parent Mobile Number"/>
+
+                <EditText
+                    android:id="@+id/settingEditableParentMobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="Parent Mobile Number"
+                    android:inputType="phone"
+                    android:layout_below="@+id/tvParentMobile"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingEditableParentMobile"/>
+
+
+            </RelativeLayout>
+
+
+            <ImageView
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/relativeParentMobile"
+                android:layout_marginTop="10dp"/>
+
+
+            <RelativeLayout
+                android:id="@+id/relativeRemind"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/line2"
+                >
+
+                <TextView
+                    android:id="@+id/tvRemind"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold|italic"
+                    android:text="Auto Remind for Top Up when the balance is below"/>
+
+                <EditText
+                    android:id="@+id/settingRemind"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="Amount"
+                    android:textSize="20dp"
+                    android:inputType="numberDecimal"
+                    android:layout_below="@+id/tvRemind"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@drawable/straight_line"
+                    android:layout_below="@+id/settingRemind"/>
+
+
+            </RelativeLayout>
+
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_below="@id/relativeRemind">
+
+                <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                    android:id="@+id/settingConfirm"
+                    android:layout_width="300dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/custom_background_loading_button_login"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="10dp"
+                    android:text="Confirm"
+                    android:textSize="22dp"
+                    app:spinning_bar_color="#535050"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp"
+                    android:textColor="#292525" />
+            </RelativeLayout>
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

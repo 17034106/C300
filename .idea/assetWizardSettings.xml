@@ -56,8 +56,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="D:\Android components\tick2Transaparent.png" />
-                                      <entry key="outputName" value="ic_info" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="D:\Android components\topupwithouttransparent.png" />
+                                      <entry key="outputName" value="ic_topup_white" />
+                                      <entry key="theme" value="HOLO_DARK" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -116,8 +118,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\Android programming file\C300\app\src\main\res\drawable\piggypayicon.png" />
+                                      <entry key="imageAsset" value="D:\Android programming file\C300\app\src\main\res\drawable\topupwithouttransparent.png" />
                                       <entry key="outputName" value="ic_piggy_pay2" />
                                     </map>
                                   </option>
@@ -149,7 +150,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>

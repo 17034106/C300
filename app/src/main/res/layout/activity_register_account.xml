@@ -81,7 +81,7 @@
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_userIcon"
                             android:background="@color/editTextColor"
-                            android:hint="Name"
+                            android:hint="Kid's Name"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
                             android:textSize="18dp" />
@@ -112,7 +112,7 @@
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_nric"
                             android:background="@color/editTextColor"
-                            android:hint="NRIC"
+                            android:hint="Kid's NRIC"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
                             android:textSize="18dp" />
@@ -145,13 +145,14 @@
                             android:layout_toRightOf="@id/etDob"
                             android:src="@drawable/ic_action_down_arrow" />
 
-                        <EditText
+                        <TextView
                             android:id="@+id/etDob"
                             android:layout_width="220dp"
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_dobIcon"
                             android:background="@color/editTextColor"
                             android:hint="Date of Birth (DD/MM/YYYY)"
+                            android:gravity="center_vertical"
                             android:inputType="date"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
@@ -186,7 +187,7 @@
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_phoneIcon"
                             android:background="@color/editTextColor"
-                            android:hint="Phone Number"
+                            android:hint="Kid's Mobile Number"
                             android:inputType="phone"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
@@ -218,7 +219,7 @@
                             android:layout_height="46dp"
                             android:layout_toRightOf="@id/ImageView_school"
                             android:background="@color/editTextColor"
-                            android:hint="School"
+                            android:hint="Kid's School"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
                             android:textSize="18dp" />
@@ -250,7 +251,7 @@
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_emailIcon"
                             android:background="@color/editTextColor"
-                            android:hint="Email as Account"
+                            android:hint="Email as Main Account"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
                             android:textSize="18dp" />
@@ -281,7 +282,7 @@
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_password1Icon"
                             android:background="@color/editTextColor"
-                            android:hint="Account Password"
+                            android:hint="Main Account Password"
                             android:inputType="textPassword"
                             android:paddingLeft="20dp"
                             android:singleLine="true"
@@ -313,6 +314,158 @@
                             android:layout_height="40dp"
                             android:layout_toRightOf="@id/ImageView_password2Icon"
                             android:background="@color/editTextColor"
+                            android:hint="Re-enter the Password (Main)"
+                            android:inputType="textPassword"
+                            android:paddingLeft="20dp"
+                            android:singleLine="true"
+                            android:textSize="18dp" />
+
+
+                    </RelativeLayout>
+
+
+                    <ImageView
+                        android:id="@+id/line1"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_below="@id/relativeLayout8"
+                        android:src="@drawable/border_box"
+                        android:layout_marginTop="10dp"/>
+
+                    <TextView
+                        android:id="@+id/parentTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/line1"
+                        android:layout_marginTop="5dp"
+                        android:text="For Parent Account"
+                        android:textColor="#000"
+                        android:textSize="20dp"
+                        android:layout_centerHorizontal="true"/>
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/parentTitle"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="20dp">
+
+                        <ImageView
+                            android:id="@+id/ImageView_ParentNameIcon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@color/everythingColorSame"
+                            android:src="@drawable/ic_action_lock" />
+
+                        <EditText
+                            android:id="@+id/etParentName"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_toRightOf="@id/ImageView_ParentNameIcon"
+                            android:background="@color/editTextColor"
+                            android:hint="Parent's Name"
+                            android:paddingLeft="20dp"
+                            android:singleLine="true"
+                            android:textSize="18dp" />
+
+
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/relativeLayout9"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="20dp">
+
+                        <ImageView
+                            android:id="@+id/ImageView_parentMobile"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@color/everythingColorSame"
+                            android:src="@drawable/ic_action_lock" />
+
+                        <EditText
+                            android:id="@+id/etParentMobile"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_toRightOf="@id/ImageView_parentMobile"
+                            android:background="@color/editTextColor"
+                            android:hint="Parent's Mobile Number"
+                            android:inputType="number"
+                            android:paddingLeft="20dp"
+                            android:singleLine="true"
+                            android:textSize="18dp" />
+
+
+                    </RelativeLayout>
+
+
+
+
+
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout11"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/relativeLayout10"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="20dp">
+
+                        <ImageView
+                            android:id="@+id/ImageView_parentPasswordIcon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@color/everythingColorSame"
+                            android:src="@drawable/ic_action_lock" />
+
+                        <EditText
+                            android:id="@+id/etParentPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_toRightOf="@id/ImageView_parentPasswordIcon"
+                            android:background="@color/editTextColor"
+                            android:hint="Parent Account Password"
+                            android:inputType="textPassword"
+                            android:paddingLeft="20dp"
+                            android:singleLine="true"
+                            android:textSize="18dp" />
+
+
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout12"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/relativeLayout11"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="20dp">
+
+                        <ImageView
+                            android:id="@+id/ImageView_parentPassword2Icon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@color/everythingColorSame"
+                            android:src="@drawable/ic_action_lock" />
+
+                        <EditText
+                            android:id="@+id/etParentPassword2"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_toRightOf="@id/ImageView_parentPassword2Icon"
+                            android:background="@color/editTextColor"
                             android:hint="Re-enter the Password"
                             android:inputType="textPassword"
                             android:paddingLeft="20dp"
@@ -323,11 +476,13 @@
                     </RelativeLayout>
 
 
+
+
                     <RelativeLayout
-                        android:id="@+id/relativeLayout9"
+                        android:id="@+id/relativeLayout20"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/relativeLayout8"
+                        android:layout_below="@+id/relativeLayout12"
                         android:layout_marginLeft="20dp"
                         android:layout_marginBottom="20dp"
                         android:layout_marginRight="20dp">
@@ -351,11 +506,14 @@
                     </RelativeLayout>
 
 
+
+
+
                     <RelativeLayout
-                        android:id="@+id/relativeLayout10"
+                        android:id="@+id/relativeLayout21"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/relativeLayout9"
+                        android:layout_below="@+id/relativeLayout20"
                         android:layout_marginLeft="20dp"
                         android:layout_marginBottom="10dp"
                         android:layout_marginRight="20dp">

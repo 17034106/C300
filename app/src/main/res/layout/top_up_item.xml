@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/draw_line"
+        android:layout_margin="8dp">
+
+       <TextView
+           android:id="@+id/dateTime"
+           android:layout_width="215dp"
+           android:layout_height="75dp"
+           android:textColor="#010A29"
+           android:gravity="center_vertical"
+           android:paddingLeft="20dp"
+           android:text="02/04/2019 12:25:36 pm"
+           android:textSize="25dp"
+           />
+
+        <TextView
+            android:id="@+id/amount"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_toRightOf="@id/dateTime"
+            android:textColor="#010A29"
+            android:gravity="center"
+            android:layout_marginRight="5dp"
+            android:text="$25.00"
+            android:textSize="25dp"
+            android:background="@drawable/border_box"
+            />
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>

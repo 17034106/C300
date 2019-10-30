@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ParentCategorizationLimit">
+
+    <ImageView
+        android:id="@+id/top_half_background"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/custom_background_half"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Categorization limit"
+        android:textSize="35dp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        android:gravity="center_horizontal" />
+
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/DefaultBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:background="@drawable/custom_background_loading_button_goal_saving_add"
+        android:text="Default"
+        android:textSize="20dp"
+        app:spinning_bar_color="#fff"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/ChangeBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/DefaultBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/custom_background_loading_button_goal_saving_add"
+        android:text="Change"
+        android:textSize="20dp"
+        app:spinning_bar_color="#fff"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+
+
+    <Switch
+        android:id="@+id/allowMultipleChange"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:text="Allow Multiple Changes"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/ChangeBtn"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/allowMultipleChange"
+        android:text="                                             Take note:\n If 'Allow Multiple Changes' is enabled, Kid can reallocate their SOS request amount for other other categories"/>
+
+
+</RelativeLayout>

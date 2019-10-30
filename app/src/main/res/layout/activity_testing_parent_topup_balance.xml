@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TestingParentTopupBalance">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/top_half_background"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/custom_background_half"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Top Up Balance"
+                android:textSize="35dp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:gravity="center_horizontal" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_topup_white"
+                android:layout_below="@+id/title"/>
+
+
+            <ImageButton
+                android:id="@+id/historyBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/oval"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_history_time"
+                />
+
+
+
+            <ImageView
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/image"
+                android:layout_marginTop="27dp"
+                android:layout_marginBottom="20dp"/>
+
+
+            <com.braintreepayments.cardform.view.CardForm
+                android:id="@+id/cardFormInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line2"></com.braintreepayments.cardform.view.CardForm>
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/relativeAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cardFormInfo"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="5dp">
+
+                <TextView
+                    android:id="@+id/amount"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Amount (S$):"
+                    android:textSize="15dp"
+                    android:textColor="#000"
+                    android:gravity="center"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:id="@+id/etAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15dp"
+                    android:background="@drawable/border_box"
+                    android:layout_toRightOf="@id/amount"
+                    android:inputType="numberDecimal"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                android:id="@+id/topUpBtn"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_background_loading_button_goal_saving_add"
+                android:text="Top Up"
+                android:textSize="25dp"
+                app:spinning_bar_color="#fff"
+                app:spinning_bar_padding="6dp"
+                app:spinning_bar_width="4dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/relativeAmount"/>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

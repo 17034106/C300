@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 import com.google.zxing.qrcode.encoder.QRCode;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
@@ -88,6 +89,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     double overallTotalPrice; // find out the total price
 
     boolean enoughBudget; //Check whether there is enough budget or not
+    boolean enoughBalance; //Check whether there is enough enough or not
 
     Budget budget;
     double customerBalance;
@@ -116,9 +118,17 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
     public static ArrayList<Integer> singaporePolytechnicDenyList = new ArrayList<>();
     boolean allow;
 
+
+    double totalSpentInPrePayment; //check the total prePayment amount in firebase
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getTotalSpentInPrePayment(); //check the total prePayment amount in firebase
+
 
         directOrderReceiveList = new ArrayList<>();
 
@@ -241,33 +251,59 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 if (allow) {
                     if (enoughBudget) { //if enough budget
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
-                        builder.setTitle("Order Details");
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                makePayment();
-                            }
-                        });
-                        builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mScannerView.resumeCameraPreview(QrCodeScannerPay.this);
-                                directOrderReceiveList.clear();
+                        if (enoughBalance) {
 
-                                categoryFoodList.clear();
-                                categoryDrinkList.clear();
-                                categoryStationeryList.clear();
-                                categoryOthersList.clear();
-                                allCategoryList.clear();
-                            }
-                        });
-                        builder.setMessage(foodOrder);
-                        builder.setCancelable(false);
-                        AlertDialog alert1 = builder.create();
-                        alert1.show();
-                    } else { // not enough budget
+                            AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
+                            builder.setTitle("Order Details");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    makePayment();
+                                }
+                            });
+                            builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mScannerView.resumeCameraPreview(QrCodeScannerPay.this);
+                                    directOrderReceiveList.clear();
 
+                                    categoryFoodList.clear();
+                                    categoryDrinkList.clear();
+                                    categoryStationeryList.clear();
+                                    categoryOthersList.clear();
+                                    allCategoryList.clear();
+                                }
+                            });
+                            builder.setMessage(foodOrder);
+                            builder.setCancelable(false);
+                            AlertDialog alert1 = builder.create();
+                            alert1.show();
+                        } else { // not enough budget
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
+                            builder.setTitle("Error");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mScannerView.resumeCameraPreview(QrCodeScannerPay.this);
+                                    directOrderReceiveList.clear();
+
+                                    categoryFoodList.clear();
+                                    categoryDrinkList.clear();
+                                    categoryStationeryList.clear();
+                                    categoryOthersList.clear();
+                                    allCategoryList.clear();
+                                }
+                            });
+
+                            builder.setMessage("Insufficient Balance");
+                            builder.setCancelable(false);
+                            AlertDialog alert1 = builder.create();
+                            alert1.show();
+                        }
+
+                    }
+                    else{
                         AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
                         builder.setTitle("Error");
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -290,6 +326,9 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                         alert1.show();
                     }
 
+
+
+
                 }
                 else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(QrCodeScannerPay.this);
@@ -308,14 +347,14 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                         }
                     });
 
-                    builder.setMessage("Deny purchase from this stall\nPlease contact your parent");
+                    builder.setMessage("Purchase from this stall is denied\nPlease contact your parent");
                     builder.setCancelable(false);
                     AlertDialog alert1 = builder.create();
                     alert1.show();
                 }
 
             }
-        }, 600);
+        }, 800);
 
 
     }
@@ -450,6 +489,14 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     enoughBudget = false;
                 }
 
+                if ((customerBalance - (totalSpentInPrePayment + overallTotalPrice) <0)) {
+                    enoughBalance = false;
+                }
+                else{
+                    enoughBalance = true;
+                }
+
+
 
             }
             //endregion the role is non-coffee shop
@@ -504,6 +551,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                             allCategoryList.add(new OutsideReceiveOrder(name, price, quantity, barcode, category, image, stallName, stallId, foodID, stallUID, customerUID, school));
 
                         }
+
 
                     }
 
@@ -568,6 +616,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                 }
 
 
+
                 if (categoryOthersList.size() != 0) {
                     returnString += "==================================\n";
                     returnString += "Others Category\n";
@@ -594,6 +643,13 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
                     enoughBudget = true;
                 } else {
                     enoughBudget = false;
+                }
+
+                if ((customerBalance - (totalSpentInPrePayment + totalPriceForOutside) <0)) {
+                    enoughBalance = false;
+                }
+                else{
+                    enoughBalance = true;
                 }
 
 
@@ -775,7 +831,7 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
 
 
             //---------------------------------------------------------------------------------------------
-            //region add money to owner
+            //region add money to owner balance
 
             final DatabaseReference drOwnerBalance = FirebaseDatabase.getInstance().getReference().child("Owner").child(ownerUID).child("balance");
             drOwnerBalance.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -792,6 +848,28 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
             });
 
             //endregion
+
+
+            //---------------------------------------------------------------------------------------------
+            //region add money to owner graph
+
+            updateGraph((MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy")), overallTotalPrice, ownerUID);
+
+
+            //endregion
+
+
+
+
+            //---------------------------------------------------------------------------------------------
+            //region add money to customer spending graph
+
+            updateCustomerGraph((MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy")), overallTotalPrice, FirebaseAuth.getInstance().getCurrentUser().getUid(), "spending");
+
+            //endregion
+
+
+
 
             stallNameIntent = directOrderReceiveList.get(0).getStallName();
             dateTimeIntent = dateTimeOrder;
@@ -944,6 +1022,48 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
             //endregion
 
 
+            //---------------------------------------------------------------------------------------------
+            //region add money to owner graph
+
+            updateGraph((MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy")), totalPriceForOutside, ownerUID);
+
+
+            //endregion
+
+
+
+
+            //---------------------------------------------------------------------------------------------
+            //region add money to customer spending graph
+
+            updateCustomerGraph((MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy")), totalPriceForOutside, FirebaseAuth.getInstance().getCurrentUser().getUid(), "spending");
+
+            //endregion
+
+
+            //region update the stock taking
+
+            final DatabaseReference drMenu = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(outsideSendOrder.getSchool()).child("stall").child(outsideSendOrder.getStallID()+"").child("item");
+            drMenu.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (int i =0; i<outsideSendOrder.getItem().size(); i++){
+                        int quantity = Integer.parseInt(dataSnapshot.child(outsideSendOrder.getItem().get(i).getFoodID()+"").child("stock").getValue().toString());
+                        drMenu.child(outsideSendOrder.getItem().get(i).getFoodID()+"").child("stock").setValue(quantity-(outsideSendOrder.getItem().get(i).getQuantity()));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            //endregion
+
+
+
+
             stallNameIntent = outsideSendOrder.getStallName();
             dateTimeIntent = outsideSendOrder.getDateTimeOrder();
             schoolIntent = outsideSendOrder.getSchool();
@@ -1052,5 +1172,193 @@ public class QrCodeScannerPay extends AppCompatActivity  implements ZXingScanner
 
     }
     //endregion
+
+
+
+
+    //Update the owner graph
+    private void updateGraph(final String date1, final double price1, final String stallUID1){
+        //Get the price
+        final DatabaseReference dbAccessGraph = FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1);
+        dbAccessGraph.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                int day = Integer.valueOf(date1.substring(0, 2));
+                int month = Integer.valueOf(date1.substring(3, 5));
+                int year = Integer.valueOf(date1.substring(6, 10));
+                String yearString = String.valueOf(year);
+
+
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.DAY_OF_MONTH, day);
+                c.set(Calendar.MONTH, month - 1);
+
+                System.out.println("Month: " + new SimpleDateFormat("MMMM").format(c.getTime()));
+                System.out.println("Day: " + c.get(Calendar.DAY_OF_MONTH));
+
+                int numOfYears = Integer.valueOf(dataSnapshot.child("year").child("numOfYears").getValue().toString());
+
+                //Check HO dates against Graph Dates then setValue of the profits from HO into Graph date's profit
+
+                for (int a = 0; a < numOfYears; a++) {
+                    if (yearString.equals(dataSnapshot.child("year").child(String.valueOf(a)).child("year").getValue().toString())) {
+
+
+                        String fbDate = dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                .child("date").getValue().toString();
+
+
+                        System.out.println("Input Date: " + date1.substring(0,10));
+                        System.out.println("Firebase Date: " + fbDate);
+                        if (date1.substring(0,10).equals(fbDate)) {
+                            System.out.println("Matched!");
+                            double currentProfit = 0;
+                            currentProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                    .child("profit").getValue().toString());
+
+                            double newProfit = currentProfit + price1;
+                            System.out.println("New Profit: " + newProfit);
+
+                            FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1).child("year")
+                                    .child(String.valueOf(a)).child("months").child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH)-1)).child("profit").setValue(newProfit);
+
+
+                            //Update Month Profit
+                            double currentMonthProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("profit").getValue().toString());
+
+                            double newMonthProfit = currentMonthProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1).child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("profit").setValue(newMonthProfit);
+
+                            //Update Year Profit
+                            double currentYearProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("profit").getValue().toString());
+
+                            double newYearProfit = currentYearProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graph").child(stallUID1).child("year").child(String.valueOf(a)).child("profit").setValue(newYearProfit);
+
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    //update the customer spending graph
+    private void updateCustomerGraph(final String date1, final double price1, final String customerUID1,final String css){
+        final String cssPlusS = css + "s";
+
+//        //Get the price
+        final DatabaseReference dbAccessGraph = FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css);
+        dbAccessGraph.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
+                int day = Integer.valueOf(date1.substring(0, 2));
+                int month = Integer.valueOf(date1.substring(3, 5));
+                int year = Integer.valueOf(date1.substring(6, 10));
+                String yearString = String.valueOf(year);
+
+
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.DAY_OF_MONTH, day);
+                c.set(Calendar.MONTH, month - 1);
+
+                System.out.println("Month: " + new SimpleDateFormat("MMMM").format(c.getTime()));
+                System.out.println("Day: " + c.get(Calendar.DAY_OF_MONTH));
+
+                int numOfYears = Integer.valueOf(dataSnapshot.child("year").child("numOfYears").getValue().toString());
+
+                //Check HO dates against Graph Dates then setValue of the profits from HO into Graph date's profit
+
+                for (int a = 0; a < numOfYears; a++) {
+                    if (yearString.equals(dataSnapshot.child("year").child(String.valueOf(a)).child("year").getValue().toString())) {
+
+
+                        String fbDate = dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                .child("date").getValue().toString();
+
+
+                        System.out.println("Input Date: " + date1.substring(0,10));
+                        System.out.println("Firebase Date: " + fbDate);
+                        if (date1.substring(0,10).equals(fbDate)) {
+                            System.out.println("Matched!");
+                            double currentProfit = 0;
+                            currentProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                    .child(cssPlusS).getValue().toString());
+
+                            double newProfit = currentProfit + price1;
+                            System.out.println("New Profit: " + newProfit);
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year")
+                                    .child(String.valueOf(a)).child("months").child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH)-1)).child(cssPlusS).setValue(newProfit);
+
+
+                            //Update Month Profit
+                            double currentMonthProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child(cssPlusS).getValue().toString());
+
+                            double newMonthProfit = currentMonthProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child(cssPlusS).setValue(newMonthProfit);
+
+                            //Update Year Profit
+                            double currentYearProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child(cssPlusS).getValue().toString());
+
+                            double newYearProfit = currentYearProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year").child(String.valueOf(a)).child(cssPlusS).setValue(newYearProfit);
+
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void getTotalSpentInPrePayment(){
+        DatabaseReference drPrePayment = FirebaseDatabase.getInstance().getReference().child("prePayment").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        drPrePayment.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int numOfPrePayment = Integer.parseInt(dataSnapshot.child("numOfPrePayment").getValue().toString());
+                for (int i =0; i<numOfPrePayment;i++){
+                    totalSpentInPrePayment+= Double.parseDouble(dataSnapshot.child(i+"").child("amount").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
 }

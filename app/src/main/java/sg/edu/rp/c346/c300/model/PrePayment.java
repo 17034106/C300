@@ -23,6 +23,10 @@ public class PrePayment {
         this.tID = tID;
     }
 
+    public PrePayment(){
+
+    }
+
 
     public String getStallUID() {
         return stallUID;

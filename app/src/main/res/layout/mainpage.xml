@@ -38,25 +38,25 @@
             android:id="@+id/btnFoodMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_weight="0.33"
             android:background="#E0DADA"
             android:text="Menu"
             android:onClick="changeFragment"/>
 
-        <Button
-            android:id="@+id/btnFeed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:background="#E0DADA"
-            android:text="Feed"
-            android:onClick="changeFragment"/>
+        <!--<Button-->
+            <!--android:id="@+id/btnFeed"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.25"-->
+            <!--android:background="#E0DADA"-->
+            <!--android:text="Feed"-->
+            <!--android:onClick="changeFragment"/>-->
 
         <Button
             android:id="@+id/btnNotification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_weight="0.33"
             android:background="#E0DADA"
             android:text="Notification"
             android:onClick="changeFragment"/>
@@ -65,7 +65,7 @@
             android:id="@+id/btnAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_weight="0.33"
             android:background="#E0DADA"
             android:text="Account"
             android:onClick="changeFragment"/>

@@ -3,6 +3,7 @@ package sg.edu.rp.c346.c300;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -80,10 +81,14 @@ public class BudgetInformation extends AppCompatActivity {
     boolean allowToChange = FoodMenu.allowToChange; // check whether the parent allow the kid to change multiple times after the kid confirm the categorization
     String changeBudgetTiming = FoodMenu.changeBudgetTiming; // check whether the kid has already confirm the categorization
 
+    int counter =0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget_information);
+
+        counter =0;
 
         getChangeBudgetTimingAndChangeAllow();
 
@@ -300,6 +305,9 @@ public class BudgetInformation extends AppCompatActivity {
 
         if(!todayDate.equals(changeBudgetTiming) || allowToChange) { //the kid haven't confirm the budget OR the parent allow the kid to change
 
+            TextView allowToChange = findViewById(R.id.allowToChange);
+            allowToChange.setText("Allow to Change");
+
             //region seekBar
             //------------------------------------------------------------------------------------------------------------------------------------------
             seekBarFood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -313,7 +321,25 @@ public class BudgetInformation extends AppCompatActivity {
 
                     if ((progressSeekBarFood / 10.0) < currentFoodUsed) {
                         foodValue.setTextColor(Color.RED);
-                        currentFoodLeftOkay = false;
+                        if(!getIntent().getBooleanExtra("firstTime", false)) {
+                            if (counter!=0) {
+                                final Toast toast = Toast.makeText(BudgetInformation.this, String.format("Must at least $%.2f", currentFoodUsed), Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                final Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // Do something after 5s = 5000ms
+                                        toast.cancel();
+                                    }
+                                }, 600);
+
+                            }
+                            counter++;
+
+                            currentFoodLeftOkay = false;
+                        }
                     } else {
                         foodValue.setTextColor(Color.BLACK);
                         currentFoodLeftOkay = true;
@@ -348,7 +374,18 @@ public class BudgetInformation extends AppCompatActivity {
 
                     if ((progressSeekBarDrink / 10.0) < currentDrinkUsed) {
                         drinkValue.setTextColor(Color.RED);
-                        currentDrinkLeftOkay = false;
+                        if(!getIntent().getBooleanExtra("firstTime", false)) {
+                            final Toast toast =Toast.makeText(BudgetInformation.this, String.format("Must at least $%.2f", currentDrinkUsed), Toast.LENGTH_SHORT);
+                            toast.show();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    toast.cancel();
+                                }
+                            }, 600);                            currentDrinkLeftOkay = false;
+                        }
                     } else {
                         drinkValue.setTextColor(Color.BLACK);
                         currentDrinkLeftOkay = true;
@@ -383,7 +420,20 @@ public class BudgetInformation extends AppCompatActivity {
 
                     if ((progressSeekBarStationery / 10.0) < currentStationeryUsed) {
                         stationeryValue.setTextColor(Color.RED);
-                        currentStationeryLeftOkay = false;
+                        if(!getIntent().getBooleanExtra("firstTime", false)) {
+                            final Toast toast =Toast.makeText(BudgetInformation.this, String.format("Must at least $%.2f", currentStationeryUsed), Toast.LENGTH_SHORT);
+                            toast.show();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    toast.cancel();
+                                }
+                            }, 500);                            currentStationeryLeftOkay = false;
+                        }
+
+
                     } else {
                         stationeryValue.setTextColor(Color.BLACK);
                         currentStationeryLeftOkay = true;
@@ -420,7 +470,19 @@ public class BudgetInformation extends AppCompatActivity {
 
                     if ((progressSeekBarCharity / 10.0) < currentCharityUsed) {
                         charityValue.setTextColor(Color.RED);
-                        currentCharityLeftOkay = false;
+                        if(!getIntent().getBooleanExtra("firstTime", false)) {
+
+                            final Toast toast =Toast.makeText(BudgetInformation.this, String.format("Must at least $%.2f", currentCharityUsed), Toast.LENGTH_SHORT);
+                            toast.show();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    toast.cancel();
+                                }
+                            }, 500);                            currentCharityLeftOkay = false;
+                        }
                     } else {
                         charityValue.setTextColor(Color.BLACK);
                         currentCharityLeftOkay = true;
@@ -456,7 +518,18 @@ public class BudgetInformation extends AppCompatActivity {
 
                     if ((progressSeekBarOthers / 10.0) < currentOthersUsed) {
                         othersValue.setTextColor(Color.RED);
-                        currentOthersLeftOkay = false;
+                        if(!getIntent().getBooleanExtra("firstTime", false)) {
+                            final Toast toast =Toast.makeText(BudgetInformation.this, String.format("Must at least $%.2f", currentOthersUsed    ), Toast.LENGTH_SHORT);
+                            toast.show();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    toast.cancel();
+                                }
+                            }, 500);                            currentOthersLeftOkay = false;
+                        }
                     } else {
                         othersValue.setTextColor(Color.BLACK);
                         currentOthersLeftOkay = true;
@@ -497,11 +570,21 @@ public class BudgetInformation extends AppCompatActivity {
                                         case DialogInterface.BUTTON_POSITIVE:
 
 
-                                            budget.getCategory().getFood().setLeft(((progressSeekBarFood / 10.0) - currentFoodUsed));
-                                            budget.getCategory().getDrink().setLeft(((progressSeekBarDrink / 10.0) - currentDrinkUsed));
-                                            budget.getCategory().getStationery().setLeft(((progressSeekBarStationery / 10.0) - currentStationeryUsed));
-                                            budget.getCategory().getCharity().setLeft(((progressSeekBarCharity / 10.0) - currentCharityUsed));
-                                            budget.getCategory().getOthers().setLeft(((progressSeekBarOthers / 10.0) - currentOthersUsed));
+                                            String todayDate = MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy");
+                                            if (!todayDate.equals(changeBudgetTiming)){
+                                                budget.getCategory().getFood().setLeft(((progressSeekBarFood / 10.0) ));
+                                                budget.getCategory().getDrink().setLeft(((progressSeekBarDrink / 10.0) ));
+                                                budget.getCategory().getStationery().setLeft(((progressSeekBarStationery / 10.0) ));
+                                                budget.getCategory().getCharity().setLeft(((progressSeekBarCharity / 10.0) ));
+                                                budget.getCategory().getOthers().setLeft(((progressSeekBarOthers / 10.0) ));
+                                            }
+                                            else{
+                                                budget.getCategory().getFood().setLeft(((progressSeekBarFood / 10.0) - currentFoodUsed));
+                                                budget.getCategory().getDrink().setLeft(((progressSeekBarDrink / 10.0) - currentDrinkUsed));
+                                                budget.getCategory().getStationery().setLeft(((progressSeekBarStationery / 10.0) - currentStationeryUsed));
+                                                budget.getCategory().getCharity().setLeft(((progressSeekBarCharity / 10.0) - currentCharityUsed));
+                                                budget.getCategory().getOthers().setLeft(((progressSeekBarOthers / 10.0) - currentOthersUsed));
+                                            }
 
 
                                             budget.getCategory().getFood().setAmount(progressSeekBarFood / 10.0);
@@ -509,6 +592,8 @@ public class BudgetInformation extends AppCompatActivity {
                                             budget.getCategory().getStationery().setAmount(progressSeekBarStationery / 10.0);
                                             budget.getCategory().getCharity().setAmount(progressSeekBarCharity / 10.0);
                                             budget.getCategory().getOthers().setAmount(progressSeekBarOthers / 10.0);
+
+
 
 
                                             drBudget.child(dayOfWeekInDB + "").setValue(budget);
@@ -523,7 +608,7 @@ public class BudgetInformation extends AppCompatActivity {
                                             Log.d("Food Progress Without", "left is: "+ (progressSeekBarFood));
                                             Log.d("Food Last", "left is: "+((progressSeekBarFood / 10.0) - currentFoodUsed));
 
-
+                                            finish();
                                             break;
 
                                         case DialogInterface.BUTTON_NEGATIVE:
@@ -550,6 +635,11 @@ public class BudgetInformation extends AppCompatActivity {
 
         }
         else{
+
+            TextView allowToChange = findViewById(R.id.allowToChange);
+            allowToChange.setText("Unable to Change Now");
+
+
             seekBarFood.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -590,7 +680,7 @@ public class BudgetInformation extends AppCompatActivity {
             btnConfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(BudgetInformation.this, "Unable to change", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BudgetInformation.this, "Unable to change for today", Toast.LENGTH_SHORT).show();
                 }
             });
 

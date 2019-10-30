@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Random;
+
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 
 
@@ -28,12 +31,42 @@ public class TestingParentMain extends AppCompatActivity {
 
     int count =0;
 
+    TextView balance, parentName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testing_parent_main);
 
+        parentName = findViewById(R.id.accountName);
+        balance = findViewById(R.id.ewallet);
 
+
+        DatabaseReference dbAccessCustomer = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        dbAccessCustomer.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                double ewallet = Double.parseDouble(dataSnapshot.child("balance").getValue().toString());
+                balance.setText("Balance: " + String.format("$%.2f",ewallet));
+
+                parentName.setText(dataSnapshot.child("Parent").child("parentname").getValue().toString());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        findViewById(R.id.xLimit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TestingParentMain.this, ParentCategorizationLimit.class);
+                startActivity(intent);
+            }
+        });
 
 
         findViewById(R.id.emergencyWalletRequest).setOnClickListener(new View.OnClickListener() {
@@ -53,7 +86,32 @@ public class TestingParentMain extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.profile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TestingParentMain.this, TestingParentProfile.class);
+                startActivity(intent);
+            }
+        });
 
+
+        findViewById(R.id.topUp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TestingParentMain.this, TestingParentTopupBalance.class);
+                startActivity(intent);
+            }
+        });
+
+
+        findViewById(R.id.denyList).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TestingParentMain.this, DenyListMain.class);
+                intent.putExtra("parent", true);
+                startActivity(intent);
+            }
+        });
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("pushNotificationParent").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -86,7 +144,31 @@ public class TestingParentMain extends AppCompatActivity {
         });
 
 
-        MainpageActivity.drPushNotificationCustomer.removeEventListener(MainpageActivity.listener);
+        MainpageActivity.drPushNotificationCustomer.removeEventListener(MainpageActivity.listener); // remove the listener in the kid app
+
+
+        DatabaseReference drRemind = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        drRemind.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                double balance = Double.parseDouble(dataSnapshot.child("balance").getValue().toString());
+                double remind = Double.parseDouble(dataSnapshot.child("remind").getValue().toString());
+
+                if (balance<remind){
+                    DatabaseReference drPushNotificationParent = FirebaseDatabase.getInstance().getReference().child("pushNotificationParent").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    drPushNotificationParent.child("title").setValue("Top Up Balance");
+                    drPushNotificationParent.child("body").setValue("Low Balance");
+                    drPushNotificationParent.child("situation").setValue("TopUp");
+                    drPushNotificationParent.child("numOfRequest").setValue(new Random().nextInt(100));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
 
@@ -99,6 +181,9 @@ public class TestingParentMain extends AppCompatActivity {
 
         if (situation.equalsIgnoreCase("emergency")) {
             typeOfClass = TestingParentEmergencyWallet.class;
+        }
+        else if (situation.equalsIgnoreCase("TopUp")){
+            typeOfClass = TestingParentTopupBalance.class;
         }
 
         Intent intent = new Intent(context, typeOfClass);

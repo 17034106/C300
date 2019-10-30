@@ -54,7 +54,7 @@
         android:layout_below="@id/paidTitle"
         android:layout_marginTop="70dp"
         android:layout_marginLeft="70dp"
-        android:text="Stall:"
+        android:text="Stall: Four Leaf"
         android:textSize="19dp"
         android:textColor="#000"/>
 
@@ -68,7 +68,7 @@
         android:layout_below="@id/stall"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="70dp"
-        android:text="Date:"
+        android:text="Date: 29/07/2019 1:18 pm"
         android:textSize="19dp"
         android:textColor="#000"/>
 
@@ -80,7 +80,7 @@
         android:layout_below="@id/dateTime"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="70dp"
-        android:text="Location:"
+        android:text="Location:Jurong Point"
         android:textSize="19dp"
         android:textColor="#000"/>
 
@@ -93,7 +93,7 @@
         android:layout_below="@id/location"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="70dp"
-        android:text="Total Price:"
+        android:text="Total Price: $3.55"
         android:textSize="19dp"
         android:textColor="#000"/>
 

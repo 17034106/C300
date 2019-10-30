@@ -47,6 +47,7 @@ public class GoalSavingDetails extends AppCompatActivity {
     GoalSaving goalSavingIntentReceive;
 
     double remainingAmountRequired;
+    boolean completed; // check whether the goal saving is completed or not
 
     ArrayList<GoalSaving> goalSavingList = new ArrayList<>();
     int goalPosition; //identify the position of the goal selected in the arraylist - for deletion
@@ -75,6 +76,8 @@ public class GoalSavingDetails extends AppCompatActivity {
         goalPosition = intentReceive.getIntExtra("goalPosition", -1);
         currentSavingDouble = intentReceive.getDoubleExtra("saving", 0);
 
+        currentSaving.setText(String.format("$%.2f", currentSavingDouble));
+
         goalSavingList = GoalSavingAll.goalSavingList;
 
         goalName.setText(goalSavingIntentReceive.getName());
@@ -87,22 +90,43 @@ public class GoalSavingDetails extends AppCompatActivity {
         goalSavingWaveLoadingView.setProgressValue(percentageOfCompletion);
 
         remainingAmountRequired = goalSavingIntentReceive.getPrice() - currentSavingDouble;
-        goalRemainingAmountRequire.setText(String.format("$%.2f", remainingAmountRequired));
+        if (remainingAmountRequired<=0){
+            goalRemainingAmountRequire.setText("$0.00");
 
-
-        if ((int) ((currentSavingDouble / goalSavingIntentReceive.getPrice()) * 100) < 50) {
-            goalSavingWaveLoadingView.setBottomTitle(String.format("%d%%", percentageOfCompletion));
-            goalSavingWaveLoadingView.setCenterTitle("");
-            goalSavingWaveLoadingView.setTopTitle("");
-        } else if (percentageOfCompletion < 80) {
-            goalSavingWaveLoadingView.setBottomTitle("");
-            goalSavingWaveLoadingView.setCenterTitle(String.format("%d%%", percentageOfCompletion));
-            goalSavingWaveLoadingView.setTopTitle("");
-        } else {
+            goalSavingWaveLoadingView.setProgressValue(100);
             goalSavingWaveLoadingView.setBottomTitle("");
             goalSavingWaveLoadingView.setCenterTitle("");
-            goalSavingWaveLoadingView.setTopTitle(String.format("%d%%", percentageOfCompletion));
+            goalSavingWaveLoadingView.setTopTitle(String.format("%d%%", 100));
+
+            completed = true;
+
         }
+        else {
+            goalRemainingAmountRequire.setText(String.format("$%.2f", remainingAmountRequired));
+
+            goalSavingWaveLoadingView.setProgressValue(percentageOfCompletion);
+
+            if ((int) ((currentSavingDouble / goalSavingIntentReceive.getPrice()) * 100) < 50) {
+                goalSavingWaveLoadingView.setBottomTitle(String.format("%d%%", percentageOfCompletion));
+                goalSavingWaveLoadingView.setCenterTitle("");
+                goalSavingWaveLoadingView.setTopTitle("");
+            } else if (percentageOfCompletion < 80) {
+                goalSavingWaveLoadingView.setBottomTitle("");
+                goalSavingWaveLoadingView.setCenterTitle(String.format("%d%%", percentageOfCompletion));
+                goalSavingWaveLoadingView.setTopTitle("");
+            } else {
+                goalSavingWaveLoadingView.setBottomTitle("");
+                goalSavingWaveLoadingView.setCenterTitle("");
+                goalSavingWaveLoadingView.setTopTitle(String.format("%d%%", percentageOfCompletion));
+            }
+
+            completed = false;
+
+        }
+
+
+
+
 
 
         //region Display DatePicker
@@ -136,164 +160,192 @@ public class GoalSavingDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (goalSavingNumberOfDay != null) {
+                if (!completed) {
 
-                    Date currentDate = MainpageActivity.convertStringToDate(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy"), "dd/MM/yyyy");
-                    Date userSelected = MainpageActivity.convertStringToDate(goalSavingNumberOfDay.getText().toString(), "dd/MM/yyyy");
+                    if (goalSavingNumberOfDay.getText().length() != 0) {
 
-                    Calendar currentDateCalendar = Calendar.getInstance();
-                    currentDateCalendar.setTime(currentDate);
-                    Calendar userSelectedCalendar = Calendar.getInstance();
-                    userSelectedCalendar.setTime(userSelected);
+                        Date currentDate = MainpageActivity.convertStringToDate(MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy"), "dd/MM/yyyy");
+                        Date userSelected = MainpageActivity.convertStringToDate(goalSavingNumberOfDay.getText().toString(), "dd/MM/yyyy");
 
-                    int numOfWeekDays = 0;
-                    int numOfDays = 0;
-                    while (userSelectedCalendar.compareTo(currentDateCalendar) >= 0) {
-                        if (currentDateCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || currentDateCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+                        Calendar currentDateCalendar = Calendar.getInstance();
+                        currentDateCalendar.setTime(currentDate);
+                        Calendar userSelectedCalendar = Calendar.getInstance();
+                        userSelectedCalendar.setTime(userSelected);
 
-                        } else {
-                            numOfWeekDays++;
+                        int numOfWeekDays = 0;
+                        int numOfDays = 0;
+                        while (userSelectedCalendar.compareTo(currentDateCalendar) >= 0) {
+                            if (currentDateCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || currentDateCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+
+                            } else {
+                                numOfWeekDays++;
+                            }
+                            numOfDays++;
+                            currentDateCalendar.add(Calendar.DATE, 1);
                         }
-                        numOfDays++;
-                        currentDateCalendar.add(Calendar.DATE, 1);
-                    }
 
 
-                    double eachDaySavingDeductedAndWeekdays = remainingAmountRequired / (double) numOfWeekDays;
-                    double eachDaySavingDeducted = remainingAmountRequired / (double) numOfDays;
 
-                    double eachDaySavingWeekdays = goalSavingIntentReceive.getPrice() / (double) numOfWeekDays;
-                    double eachDaySaving = goalSavingIntentReceive.getPrice() / (double) numOfDays;
+                        double eachDaySavingDeductedAndWeekdays = remainingAmountRequired / (double) numOfWeekDays;
+                        double eachDaySavingDeducted = remainingAmountRequired / (double) numOfDays;
 
-
-                    final LinearLayout linearLayout = findViewById(R.id.resultOfWhen);
+                        double eachDaySavingWeekdays = goalSavingIntentReceive.getPrice() / (double) numOfWeekDays;
+                        double eachDaySaving = goalSavingIntentReceive.getPrice() / (double) numOfDays;
 
 
-                    linearLayout.removeAllViews();
-
-                    RelativeLayout.LayoutParams layoutParamsBiggestTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsBiggestTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParamsBiggestTitle.setMargins(35, 20, 0, 70);
-
-                    RelativeLayout.LayoutParams layoutParamsSecondTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsSecondTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParamsSecondTitle.setMargins(35, 20, 0, 60);
-
-                    RelativeLayout.LayoutParams layoutParamsThirdTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsThirdTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParamsThirdTitle.setMargins(35, 20, 0, 50);
-
-                    RelativeLayout.LayoutParams layoutParamsFouthTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsFouthTitle.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    layoutParamsFouthTitle.setMargins(35, 20, 0, 20);
+                        final LinearLayout linearLayout = findViewById(R.id.resultOfWhen);
 
 
-                    TextView tvResult = new TextView(getApplication());
-                    tvResult.setLayoutParams(layoutParamsBiggestTitle);
-                    tvResult.setText("Result: ");
-                    tvResult.setTextSize(24);
-                    tvResult.setTextColor(Color.BLACK);
-                    tvResult.setTypeface(tvResult.getTypeface(), Typeface.BOLD_ITALIC);
+                        linearLayout.removeAllViews();
+
+                        RelativeLayout.LayoutParams layoutParamsBiggestTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsBiggestTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                        layoutParamsBiggestTitle.setMargins(35, 20, 0, 70);
+
+                        RelativeLayout.LayoutParams layoutParamsSecondTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsSecondTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                        layoutParamsSecondTitle.setMargins(35, 20, 0, 60);
+
+                        RelativeLayout.LayoutParams layoutParamsThirdTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsThirdTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                        layoutParamsThirdTitle.setMargins(35, 20, 0, 50);
+
+                        RelativeLayout.LayoutParams layoutParamsFouthTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsFouthTitle.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                        layoutParamsFouthTitle.setMargins(35, 20, 0, 20);
 
 
-                    TextView tvWithDeductedTitle = new TextView(getApplication());
-                    tvWithDeductedTitle.setLayoutParams(layoutParamsSecondTitle);
-                    tvWithDeductedTitle.setText("With Current Saving Balance ");
-                    tvWithDeductedTitle.setTextSize(22);
-                    tvWithDeductedTitle.setTextColor(Color.BLACK);
-                    tvWithDeductedTitle.setTypeface(tvWithDeductedTitle.getTypeface(), Typeface.BOLD_ITALIC);
+                        TextView tvResult = new TextView(getApplication());
+                        tvResult.setLayoutParams(layoutParamsBiggestTitle);
+                        tvResult.setText("Result: ");
+                        tvResult.setTextSize(24);
+                        tvResult.setTextColor(Color.BLACK);
+                        tvResult.setTypeface(tvResult.getTypeface(), Typeface.BOLD_ITALIC);
 
 
-                    TextView tvDeductedWeekday = new TextView(getApplication());
-                    tvDeductedWeekday.setLayoutParams(layoutParamsThirdTitle);
-                    tvDeductedWeekday.setText("Only Weekday: ");
-                    tvDeductedWeekday.setTextSize(20);
-                    tvDeductedWeekday.setTextColor(Color.BLACK);
-                    tvDeductedWeekday.setTypeface(tvDeductedWeekday.getTypeface(), Typeface.BOLD_ITALIC);
+                        TextView tvWithDeductedTitle = new TextView(getApplication());
+                        tvWithDeductedTitle.setLayoutParams(layoutParamsSecondTitle);
+                        tvWithDeductedTitle.setText("With Current Saving Balance ");
+                        tvWithDeductedTitle.setTextSize(22);
+                        tvWithDeductedTitle.setTextColor(Color.BLACK);
+                        tvWithDeductedTitle.setTypeface(tvWithDeductedTitle.getTypeface(), Typeface.BOLD_ITALIC);
 
 
-                    TextView tvEachDaySavingDeductedAndWeekdays = new TextView(getApplication());
-                    tvEachDaySavingDeductedAndWeekdays.setLayoutParams(layoutParamsFouthTitle);
-                    if (numOfWeekDays != 0) {
-                        tvEachDaySavingDeductedAndWeekdays.setText(String.format("$%.2f", eachDaySavingDeductedAndWeekdays));
+                        TextView tvDeductedWeekday = new TextView(getApplication());
+                        tvDeductedWeekday.setLayoutParams(layoutParamsThirdTitle);
+                        tvDeductedWeekday.setText("Only Weekday: ");
+                        tvDeductedWeekday.setTextSize(20);
+                        tvDeductedWeekday.setTextColor(Color.BLACK);
+                        tvDeductedWeekday.setTypeface(tvDeductedWeekday.getTypeface(), Typeface.BOLD_ITALIC);
+
+
+                        TextView tvEachDaySavingDeductedAndWeekdays = new TextView(getApplication());
+                        tvEachDaySavingDeductedAndWeekdays.setLayoutParams(layoutParamsFouthTitle);
+                        if (numOfWeekDays > 0) {
+                            tvEachDaySavingDeductedAndWeekdays.setText(String.format("$%.2f", eachDaySavingDeductedAndWeekdays));
+                        } else {
+                            tvEachDaySavingDeductedAndWeekdays.setText("Unable to achieve");
+                        }
+                        tvEachDaySavingDeductedAndWeekdays.setTextSize(18);
+                        tvEachDaySavingDeductedAndWeekdays.setTextColor(Color.GRAY);
+
+
+                        TextView tvDeducted = new TextView(getApplication());
+                        tvDeducted.setLayoutParams(layoutParamsThirdTitle);
+                        tvDeducted.setText("All Days: ");
+                        tvDeducted.setTextSize(20);
+                        tvDeducted.setTextColor(Color.BLACK);
+                        tvDeducted.setTypeface(tvDeducted.getTypeface(), Typeface.BOLD_ITALIC);
+
+
+                        TextView tvEachDaySavingDeducted = new TextView(getApplication());
+                        tvEachDaySavingDeducted.setLayoutParams(layoutParamsFouthTitle);
+                        if (numOfDays>0) {
+                            tvEachDaySavingDeducted.setText(String.format("$%.2f", eachDaySavingDeducted));
+                        }
+                        else{
+                            tvEachDaySavingDeducted.setText("Unable to achieve");
+                        }
+                        tvEachDaySavingDeducted.setTextSize(18);
+                        tvEachDaySavingDeducted.setTextColor(Color.GRAY);
+
+
+                        TextView tvWithoutDeductedTitle = new TextView(getApplication());
+                        tvWithoutDeductedTitle.setLayoutParams(layoutParamsSecondTitle);
+                        tvWithoutDeductedTitle.setText("Without Current Saving Balance ");
+                        tvWithoutDeductedTitle.setTextSize(22);
+                        tvWithoutDeductedTitle.setTextColor(Color.BLACK);
+                        tvWithoutDeductedTitle.setTypeface(tvWithoutDeductedTitle.getTypeface(), Typeface.BOLD_ITALIC);
+
+
+                        TextView tvWeekday = new TextView(getApplication());
+                        tvWeekday.setLayoutParams(layoutParamsThirdTitle);
+                        tvWeekday.setText("Only Weekday: ");
+                        tvWeekday.setTextSize(20);
+                        tvWeekday.setTextColor(Color.BLACK);
+                        tvWeekday.setTypeface(tvWeekday.getTypeface(), Typeface.BOLD_ITALIC);
+
+
+                        TextView tvEachDaySavingWeekdays = new TextView(getApplication());
+                        tvEachDaySavingWeekdays.setLayoutParams(layoutParamsFouthTitle);
+                        if (numOfWeekDays > 0) {
+                            tvEachDaySavingWeekdays.setText(String.format("$%.2f", eachDaySavingWeekdays));
+                        } else {
+                            tvEachDaySavingWeekdays.setText("Unable to achieve");
+                        }
+                        tvEachDaySavingWeekdays.setTextSize(18);
+                        tvEachDaySavingWeekdays.setTextColor(Color.GRAY);
+
+
+                        TextView tvEachDay = new TextView(getApplication());
+                        tvEachDay.setLayoutParams(layoutParamsThirdTitle);
+                        tvEachDay.setText("All Days: ");
+                        tvEachDay.setTextSize(20);
+                        tvEachDay.setTextColor(Color.BLACK);
+                        tvEachDay.setTypeface(tvEachDay.getTypeface(), Typeface.BOLD_ITALIC);
+
+
+                        TextView tvEachDaySaving = new TextView(getApplication());
+                        tvEachDaySaving.setLayoutParams(layoutParamsFouthTitle);
+                        if (numOfDays>0) {
+                            tvEachDaySaving.setText(String.format("$%.2f", eachDaySaving));
+                        }
+                        else{
+                            tvEachDaySaving.setText("Unable to achieve");
+                        }
+                        tvEachDaySaving.setTextSize(18);
+                        tvEachDaySaving.setTextColor(Color.GRAY);
+
+
+                        if (userSelectedCalendar.compareTo(currentDateCalendar) < 0){
+                            Toast.makeText(GoalSavingDetails.this, "Please choose a day that is in the future", Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+                        linearLayout.addView(tvResult);
+                        linearLayout.addView(tvWithDeductedTitle);
+                        linearLayout.addView(tvDeductedWeekday);
+                        linearLayout.addView(tvEachDaySavingDeductedAndWeekdays);
+                        linearLayout.addView(tvDeducted);
+                        linearLayout.addView(tvEachDaySavingDeducted);
+                        linearLayout.addView(tvWithoutDeductedTitle);
+                        linearLayout.addView(tvWeekday);
+                        linearLayout.addView(tvEachDaySavingWeekdays);
+                        linearLayout.addView(tvEachDay);
+                        linearLayout.addView(tvEachDaySaving);
+
+
+
+
+
                     } else {
-                        tvEachDaySavingDeductedAndWeekdays.setText("Unable to achieve");
+                        Toast.makeText(GoalSavingDetails.this, "Please Choose a Date", Toast.LENGTH_SHORT).show();
                     }
-                    tvEachDaySavingDeductedAndWeekdays.setTextSize(18);
-                    tvEachDaySavingDeductedAndWeekdays.setTextColor(Color.GRAY);
 
-
-                    TextView tvDeducted = new TextView(getApplication());
-                    tvDeducted.setLayoutParams(layoutParamsThirdTitle);
-                    tvDeducted.setText("All Days: ");
-                    tvDeducted.setTextSize(20);
-                    tvDeducted.setTextColor(Color.BLACK);
-                    tvDeducted.setTypeface(tvDeducted.getTypeface(), Typeface.BOLD_ITALIC);
-
-
-                    TextView tvEachDaySavingDeducted = new TextView(getApplication());
-                    tvEachDaySavingDeducted.setLayoutParams(layoutParamsFouthTitle);
-                    tvEachDaySavingDeducted.setText(String.format("$%.2f", eachDaySavingDeducted));
-                    tvEachDaySavingDeducted.setTextSize(18);
-                    tvEachDaySavingDeducted.setTextColor(Color.GRAY);
-
-
-                    TextView tvWithoutDeductedTitle = new TextView(getApplication());
-                    tvWithoutDeductedTitle.setLayoutParams(layoutParamsSecondTitle);
-                    tvWithoutDeductedTitle.setText("Without Current Saving Balance ");
-                    tvWithoutDeductedTitle.setTextSize(22);
-                    tvWithoutDeductedTitle.setTextColor(Color.BLACK);
-                    tvWithoutDeductedTitle.setTypeface(tvWithoutDeductedTitle.getTypeface(), Typeface.BOLD_ITALIC);
-
-
-                    TextView tvWeekday = new TextView(getApplication());
-                    tvWeekday.setLayoutParams(layoutParamsThirdTitle);
-                    tvWeekday.setText("Only Weekday: ");
-                    tvWeekday.setTextSize(20);
-                    tvWeekday.setTextColor(Color.BLACK);
-                    tvWeekday.setTypeface(tvWeekday.getTypeface(), Typeface.BOLD_ITALIC);
-
-
-                    TextView tvEachDaySavingWeekdays = new TextView(getApplication());
-                    tvEachDaySavingWeekdays.setLayoutParams(layoutParamsFouthTitle);
-                    if (numOfWeekDays != 0) {
-                        tvEachDaySavingWeekdays.setText(String.format("$%.2f", eachDaySavingWeekdays));
-                    } else {
-                        tvEachDaySavingWeekdays.setText("Unable to achieve");
-                    }
-                    tvEachDaySavingWeekdays.setTextSize(18);
-                    tvEachDaySavingWeekdays.setTextColor(Color.GRAY);
-
-
-                    TextView tvEachDay = new TextView(getApplication());
-                    tvEachDay.setLayoutParams(layoutParamsThirdTitle);
-                    tvEachDay.setText("All Days: ");
-                    tvEachDay.setTextSize(20);
-                    tvEachDay.setTextColor(Color.BLACK);
-                    tvEachDay.setTypeface(tvEachDay.getTypeface(), Typeface.BOLD_ITALIC);
-
-
-                    TextView tvEachDaySaving = new TextView(getApplication());
-                    tvEachDaySaving.setLayoutParams(layoutParamsFouthTitle);
-                    tvEachDaySaving.setText(String.format("$%.2f", eachDaySaving));
-                    tvEachDaySaving.setTextSize(18);
-                    tvEachDaySaving.setTextColor(Color.GRAY);
-
-
-                    linearLayout.addView(tvResult);
-                    linearLayout.addView(tvWithDeductedTitle);
-                    linearLayout.addView(tvDeductedWeekday);
-                    linearLayout.addView(tvEachDaySavingDeductedAndWeekdays);
-                    linearLayout.addView(tvDeducted);
-                    linearLayout.addView(tvEachDaySavingDeducted);
-                    linearLayout.addView(tvWithoutDeductedTitle);
-                    linearLayout.addView(tvWeekday);
-                    linearLayout.addView(tvEachDaySavingWeekdays);
-                    linearLayout.addView(tvEachDay);
-                    linearLayout.addView(tvEachDaySaving);
-
-                } else {
-                    Toast.makeText(GoalSavingDetails.this, "Please Choose a Date", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(GoalSavingDetails.this, "Congratulations, You have completed your goal ", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -306,83 +358,89 @@ public class GoalSavingDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (dailySaving.getText() != null) {
+                if (!completed) {
 
-                    double dailySavingDouble = Double.parseDouble(dailySaving.getText().toString());
+                    if (dailySaving.getText().length() != 0) {
 
-                    double withCurrentSaving = goalSavingIntentReceive.getPrice() - currentSavingDouble;
-                    int numOfDayWithSaving = (int) (withCurrentSaving / dailySavingDouble);
-                    if (withCurrentSaving % dailySavingDouble > 0) {
-                        numOfDayWithSaving++;
+                        double dailySavingDouble = Double.parseDouble(dailySaving.getText().toString());
+
+                        double withCurrentSaving = goalSavingIntentReceive.getPrice() - currentSavingDouble;
+                        int numOfDayWithSaving = (int) (withCurrentSaving / dailySavingDouble);
+                        if (withCurrentSaving % dailySavingDouble > 0) {
+                            numOfDayWithSaving++;
+                        }
+
+                        int numOfDayWithoutSaving = (int) (goalSavingIntentReceive.getPrice() / dailySavingDouble);
+                        if (goalSavingIntentReceive.getPrice() % dailySavingDouble > 0) {
+                            numOfDayWithoutSaving++;
+                        }
+
+
+                        final LinearLayout linearLayout = findViewById(R.id.resultOfNumberOfDay);
+
+
+                        linearLayout.removeAllViews();
+
+                        RelativeLayout.LayoutParams layoutParamsBiggestTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsBiggestTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                        layoutParamsBiggestTitle.setMargins(35, 20, 0, 50);
+
+                        RelativeLayout.LayoutParams layoutParamsSecondTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsSecondTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                        layoutParamsSecondTitle.setMargins(35, 20, 0, 40);
+
+                        RelativeLayout.LayoutParams layoutParamsFouthTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        layoutParamsFouthTitle.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                        layoutParamsFouthTitle.setMargins(35, 20, 0, 20);
+
+                        TextView tvResult = new TextView(getApplication());
+                        tvResult.setLayoutParams(layoutParamsBiggestTitle);
+                        tvResult.setText("Result: ");
+                        tvResult.setTextSize(24);
+                        tvResult.setTextColor(Color.BLACK);
+                        tvResult.setTypeface(tvResult.getTypeface(), Typeface.BOLD_ITALIC);
+
+                        TextView tvWithSavingTitle = new TextView(getApplication());
+                        tvWithSavingTitle.setLayoutParams(layoutParamsSecondTitle);
+                        tvWithSavingTitle.setText("With Current Saving Balance ");
+                        tvWithSavingTitle.setTextSize(22);
+                        tvWithSavingTitle.setTextColor(Color.BLACK);
+                        tvWithSavingTitle.setTypeface(tvWithSavingTitle.getTypeface(), Typeface.BOLD_ITALIC);
+
+                        TextView tvWithSaving = new TextView(getApplication());
+                        tvWithSaving.setLayoutParams(layoutParamsFouthTitle);
+                        tvWithSaving.setText(String.format("%d days", numOfDayWithSaving));
+                        tvWithSaving.setTextSize(18);
+                        tvWithSaving.setTextColor(Color.GRAY);
+
+
+                        TextView tvWithoutSavingTitle = new TextView(getApplication());
+                        tvWithoutSavingTitle.setLayoutParams(layoutParamsSecondTitle);
+                        tvWithoutSavingTitle.setText("Without Current Saving Balance ");
+                        tvWithoutSavingTitle.setTextSize(22);
+                        tvWithoutSavingTitle.setTextColor(Color.BLACK);
+                        tvWithoutSavingTitle.setTypeface(tvWithoutSavingTitle.getTypeface(), Typeface.BOLD_ITALIC);
+
+                        TextView tvWithoutSaving = new TextView(getApplication());
+                        tvWithoutSaving.setLayoutParams(layoutParamsFouthTitle);
+                        tvWithoutSaving.setText(String.format("%d days", numOfDayWithoutSaving));
+                        tvWithoutSaving.setTextSize(18);
+                        tvWithoutSaving.setTextColor(Color.GRAY);
+
+
+                        linearLayout.addView(tvResult);
+                        linearLayout.addView(tvWithSavingTitle);
+                        linearLayout.addView(tvWithSaving);
+                        linearLayout.addView(tvWithoutSavingTitle);
+                        linearLayout.addView(tvWithoutSaving);
+
+
+                    } else {
+                        Toast.makeText(GoalSavingDetails.this, "Please enter the daily Saving", Toast.LENGTH_SHORT).show();
                     }
-
-                    int numOfDayWithoutSaving = (int) (goalSavingIntentReceive.getPrice() / dailySavingDouble);
-                    if (goalSavingIntentReceive.getPrice() % dailySavingDouble > 0) {
-                        numOfDayWithoutSaving++;
-                    }
-
-
-                    final LinearLayout linearLayout = findViewById(R.id.resultOfNumberOfDay);
-
-
-                    linearLayout.removeAllViews();
-
-                    RelativeLayout.LayoutParams layoutParamsBiggestTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsBiggestTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParamsBiggestTitle.setMargins(35, 20, 0, 50);
-
-                    RelativeLayout.LayoutParams layoutParamsSecondTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsSecondTitle.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    layoutParamsSecondTitle.setMargins(35, 20, 0, 40);
-
-                    RelativeLayout.LayoutParams layoutParamsFouthTitle = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    layoutParamsFouthTitle.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    layoutParamsFouthTitle.setMargins(35, 20, 0, 20);
-
-                    TextView tvResult = new TextView(getApplication());
-                    tvResult.setLayoutParams(layoutParamsBiggestTitle);
-                    tvResult.setText("Result: ");
-                    tvResult.setTextSize(24);
-                    tvResult.setTextColor(Color.BLACK);
-                    tvResult.setTypeface(tvResult.getTypeface(), Typeface.BOLD_ITALIC);
-
-                    TextView tvWithSavingTitle = new TextView(getApplication());
-                    tvWithSavingTitle.setLayoutParams(layoutParamsSecondTitle);
-                    tvWithSavingTitle.setText("With Current Saving Balance ");
-                    tvWithSavingTitle.setTextSize(22);
-                    tvWithSavingTitle.setTextColor(Color.BLACK);
-                    tvWithSavingTitle.setTypeface(tvWithSavingTitle.getTypeface(), Typeface.BOLD_ITALIC);
-
-                    TextView tvWithSaving = new TextView(getApplication());
-                    tvWithSaving.setLayoutParams(layoutParamsFouthTitle);
-                    tvWithSaving.setText(String.format("%d days", numOfDayWithSaving));
-                    tvWithSaving.setTextSize(18);
-                    tvWithSaving.setTextColor(Color.GRAY);
-
-
-                    TextView tvWithoutSavingTitle = new TextView(getApplication());
-                    tvWithoutSavingTitle.setLayoutParams(layoutParamsSecondTitle);
-                    tvWithoutSavingTitle.setText("Without Current Saving Balance ");
-                    tvWithoutSavingTitle.setTextSize(22);
-                    tvWithoutSavingTitle.setTextColor(Color.BLACK);
-                    tvWithoutSavingTitle.setTypeface(tvWithoutSavingTitle.getTypeface(), Typeface.BOLD_ITALIC);
-
-                    TextView tvWithoutSaving = new TextView(getApplication());
-                    tvWithoutSaving.setLayoutParams(layoutParamsFouthTitle);
-                    tvWithoutSaving.setText(String.format("%d days", numOfDayWithoutSaving));
-                    tvWithoutSaving.setTextSize(18);
-                    tvWithoutSaving.setTextColor(Color.GRAY);
-
-
-                    linearLayout.addView(tvResult);
-                    linearLayout.addView(tvWithSavingTitle);
-                    linearLayout.addView(tvWithSaving);
-                    linearLayout.addView(tvWithoutSavingTitle);
-                    linearLayout.addView(tvWithoutSaving);
-
-
-                } else {
-                    Toast.makeText(GoalSavingDetails.this, "Please enter the daily Saving", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(GoalSavingDetails.this, "Congratulations, You have completed your goal ", Toast.LENGTH_SHORT).show();
                 }
 
 

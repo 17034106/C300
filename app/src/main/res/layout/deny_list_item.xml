@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/draw_line"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id="@+id/denyListNo"
+            android:layout_width="30dp"
+            android:layout_height="147dp"
+            android:background="@drawable/draw_line"
+            android:text="1"
+            android:textSize="35dp"
+            android:gravity="center"/>
+
+
+        <TextView
+            android:id="@+id/denylistStallName"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="Stall: "
+            android:textSize="25dp"
+            android:paddingLeft="8dp"
+            android:layout_toRightOf="@id/denyListNo"/>
+
+        <ImageView
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:src="@drawable/draw_line"
+            android:layout_below="@id/denylistStallName"
+            android:layout_toRightOf="@id/denyListNo"/>
+
+
+        <TextView
+            android:id="@+id/denyListStallLocation"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="Location: "
+            android:textSize="25dp"
+            android:layout_below="@+id/line1"
+            android:layout_toRightOf="@id/denyListNo"
+            android:paddingLeft="8dp"/>
+
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+
+</android.support.v7.widget.CardView>

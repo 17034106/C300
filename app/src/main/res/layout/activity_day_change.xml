@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DayChange">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#1A53E6"
+                android:id="@+id/topPanel">
+
+                <ImageButton
+                    android:id="@+id/btnCartBack"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="#00FFFFFF"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="Categorization Settings"
+                    android:textSize="28dp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"/>
+
+
+
+            </RelativeLayout>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Food:"
+                android:id="@+id/food"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"
+                android:layout_below="@id/topPanel"
+                android:textAlignment="center"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="120dp"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defaultFood"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_toRightOf="@id/food"
+                android:layout_below="@id/topPanel"
+                android:text="Default"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:id="@+id/MinFood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/food"
+                android:hint="Min Value"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="#0000FF"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MaxFood"
+                android:hint="Max Value"
+                android:layout_below="@id/MinFood"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                />
+
+            <ImageView
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/MaxFood"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Drink:"
+                android:id="@+id/drink"
+                android:textSize="20sp"
+                android:layout_alignParentLeft="true"
+                android:textAlignment="center"
+                android:layout_below="@id/line1"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_marginLeft="130dp"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defaultDrink"
+                android:layout_below="@id/line1"
+                android:layout_toRightOf="@id/drink"
+                android:text="Default"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimaryDark"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MinDrink"
+                android:hint="Min Value"
+                android:layout_below="@id/drink"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MaxDrink"
+                android:hint="Max Value"
+                android:layout_below="@id/MinDrink"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                />
+
+            <ImageView
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/MaxDrink"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stationery:"
+                android:id="@+id/stationery"
+                android:textSize="20sp"
+                android:layout_alignParentLeft="true"
+                android:textAlignment="center"
+                android:layout_below="@id/line2"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_marginLeft="100dp"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defaultStationery"
+                android:layout_below="@id/line2"
+                android:layout_toRightOf="@id/stationery"
+                android:text="Default"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:textSize="20sp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MinStationery"
+                android:hint="Min Value"
+                android:layout_below="@id/stationery"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MaxStationery"
+                android:hint="Max Value"
+                android:layout_below="@id/MinStationery"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                />
+
+            <ImageView
+                android:id="@+id/line3"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/MaxStationery"
+                android:layout_marginTop="10dp"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Charity:"
+                android:id="@+id/charity"
+                android:textSize="20sp"
+                android:layout_alignParentLeft="true"
+                android:textAlignment="center"
+                android:layout_below="@id/line3"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_marginLeft="120dp"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defaultCharity"
+                android:layout_below="@id/line3"
+                android:layout_toRightOf="@id/charity"
+                android:text="Default"
+                android:textColor="@color/colorPrimaryDark"
+
+                android:textSize="20sp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MinCharity"
+                android:hint="Min Value"
+                android:layout_below="@id/charity"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MaxCharity"
+                android:hint="Max Value"
+                android:layout_below="@id/MinCharity"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                />
+
+            <ImageView
+                android:id="@+id/line4"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/MaxCharity"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Others:"
+                android:id="@+id/others"
+                android:textSize="20sp"
+                android:layout_alignParentLeft="true"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_below="@id/line4"
+                android:layout_marginLeft="125dp"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defaultOthers"
+                android:layout_below="@id/line4"
+                android:layout_toRightOf="@id/others"
+                android:text="Default"
+                android:textColor="@color/colorPrimaryDark"
+
+
+                android:textSize="20sp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MinOthers"
+                android:hint="Min Value"
+                android:layout_below="@id/others"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/MaxOthers"
+                android:hint="Max Value"
+                android:layout_below="@id/MinOthers"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColorHint="#0000FF"
+                />
+
+            <ImageView
+                android:id="@+id/line5"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:src="@drawable/border_box"
+                android:layout_below="@id/MaxOthers"
+                android:layout_marginTop="10dp"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/amount"
+                android:hint="Allowance Set:"
+                android:layout_below="@id/line5"
+                android:textSize="30sp"
+                android:inputType="numberDecimal"
+                android:textColorHint="#0000FF"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/defaultAmount"
+                android:layout_below="@id/line5"
+                android:layout_toRightOf="@id/amount"
+                android:text="Default"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_marginTop="17dp"
+                android:layout_marginLeft="10dp"
+                />
+
+
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+                android:id="@+id/change"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/defaultAmount"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/custom_background_loading_button_goal_saving_add"
+                android:text="Change"
+                android:textSize="20dp"
+                app:spinning_bar_color="#fff"
+                app:spinning_bar_padding="6dp"
+                app:spinning_bar_width="4dp" />
+
+
+
+    </RelativeLayout>
+</ScrollView>
+
+</RelativeLayout>

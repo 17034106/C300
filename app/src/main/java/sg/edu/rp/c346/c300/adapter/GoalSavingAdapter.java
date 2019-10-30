@@ -52,6 +52,7 @@ public class GoalSavingAdapter extends BaseAdapter {
 
         name.setText("Name: "+goalSaving.getName());
         price.setText(String.format("Price: $%.2f", goalSaving.getPrice()));
+        status.setText("Status: "+goalSaving.getStatus());
         num.setText((position+1)+"");
 
 

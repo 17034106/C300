@@ -10,9 +10,14 @@ public class GoalSaving implements Serializable {
     private String status;
 
 
-    public GoalSaving(String name, double price) {
+    public GoalSaving(String name, double price, String status) {
         this.name = name;
         this.price = price;
+        this.status = status;
+    }
+
+    public GoalSaving(){
+
     }
 
 
@@ -30,5 +35,13 @@ public class GoalSaving implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -30,11 +30,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import sg.edu.rp.c346.c300.adapter.FoodAdapter;
 import sg.edu.rp.c346.c300.app.MainpageActivity;
 import sg.edu.rp.c346.c300.model.AddOn;
+import sg.edu.rp.c346.c300.model.Budget;
 import sg.edu.rp.c346.c300.model.Collection;
 
 public class IndividualEditFoodDisplay extends AppCompatActivity {
@@ -59,7 +61,6 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
     final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     final FirebaseUser mUser = mAuth.getCurrentUser();
-    public static String school ="";
 
     boolean isClicked = false;
 
@@ -77,6 +78,10 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
     static IndividualEditFoodDisplay thisActivy; // finish this activity from another activity
 
+    Budget budget; //for checking whether the user have enough budget to change
+
+    double initialTotalPrice; // get the initial price of the food
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +89,11 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
             thisActivy = this;
 
+            getBudget();
 
             final Intent intentReceived = getIntent();
             collectionReceived = (Collection) intentReceived.getSerializableExtra("collection");
+            initialTotalPrice = collectionReceived.getTotalPrice();
 
 
             quantityValue = 1;
@@ -110,7 +117,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
             eachPrice = collectionReceived.getPrice();
             totalPrice =  eachPrice * quantityValue;
 
-            school = MainpageActivity.school; //got it from MainpageActivity
+
 
             quantityDisplay.setText(Integer.toString(quantityValue));
 
@@ -142,7 +149,7 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 
             //region display all AddOn && getting the lastChanges
             //---------------------------------------------------------------------------------------------------------------
-            final DatabaseReference databaseReferenceAddOn = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(school).child("stall").child(Integer.toString(stallId)).child("food").child(Integer.toString(foodId));
+            final DatabaseReference databaseReferenceAddOn = FirebaseDatabase.getInstance().getReference().child("menu").child("school").child(collectionReceived.getSchool()).child("stall").child(Integer.toString(stallId)).child("food").child(Integer.toString(foodId));
 
             final LinearLayout linearLayout = findViewById(R.id.linearAddOn);
 
@@ -326,12 +333,23 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
 //                intentDateTime.putExtra("tId", intent.getStringExtra("tId"));
 //                intentDateTime.putExtra("status", intent.getStringExtra("status"));
 //                intentDateTime.putExtra("image", intent.getStringExtra("image"));
-                collectionReceived.setQuantity(quantityValue);
-                collectionReceived.setTotalPrice(totalPrice);
-                collectionReceived.setAdditionalNote(additionalNote.getText().toString().trim());
-                intentDateTime.putExtra("collection", collectionReceived);
 
-                startActivity(intentDateTime);
+                Log.d("What is left", " Food budget left: "+budget.getCategory().getFood().getLeft());
+                Log.d("What is initital", "Intital Total Price" + collectionReceived.getTotalPrice());
+                Log.d("What is current", "Current total price: "+totalPrice);
+
+                if ((budget.getCategory().getFood().getLeft() + initialTotalPrice)>=totalPrice) {
+
+                    collectionReceived.setQuantity(quantityValue);
+                    collectionReceived.setTotalPrice(totalPrice);
+                    collectionReceived.setAdditionalNote(additionalNote.getText().toString().trim());
+                    intentDateTime.putExtra("collection", collectionReceived);
+                    intentDateTime.putExtra("deductFirebase", (budget.getCategory().getFood().getLeft() - totalPrice + initialTotalPrice));
+                    startActivity(intentDateTime);
+                }
+                else{
+                    Toast.makeText(IndividualEditFoodDisplay.this, "Insufficient Budget", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -346,6 +364,34 @@ public class IndividualEditFoodDisplay extends AppCompatActivity {
         totalPrice = (quantityValue*eachPrice) + (totalAddOn * quantityValue);
 
 
+    }
+
+
+    public void getBudget(){
+        // getting the day of the week
+        Date currentTime = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentTime);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int dayOfWeekInDB = dayOfWeek - 2;
+        if (dayOfWeekInDB==-1){
+            dayOfWeekInDB =6;
+        }
+
+
+
+        DatabaseReference drBudget = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day").child(dayOfWeekInDB+"");
+        drBudget.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                budget = dataSnapshot.getValue(Budget.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

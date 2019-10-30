@@ -38,15 +38,15 @@ public class SettingPage extends AppCompatActivity {
 
 
 
-        findViewById(R.id.settingEditableProfile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingPage.this, SettingEditablePage.class);
-
-                startActivity(intent);
-                finish();
-            }
-        });
+//        findViewById(R.id.settingEditableProfile).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(SettingPage.this, SettingEditablePage.class);
+//
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
 
 
         DatabaseReference drCustomerInfo = FirebaseDatabase.getInstance().getReference().child("Customer").child(FirebaseAuth.getInstance().getCurrentUser().getUid());

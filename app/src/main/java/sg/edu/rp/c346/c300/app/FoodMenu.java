@@ -38,6 +38,7 @@ import java.util.Calendar;
 import sg.edu.rp.c346.c300.BudgetInformation;
 import sg.edu.rp.c346.c300.CartDisplay;
 import sg.edu.rp.c346.c300.EmergencyWalletAdd;
+import sg.edu.rp.c346.c300.ParentAuthentication;
 import sg.edu.rp.c346.c300.QrCodeScannerPay;
 import sg.edu.rp.c346.c300.R;
 import sg.edu.rp.c346.c300.TestingParentMain;
@@ -48,6 +49,7 @@ import sg.edu.rp.c346.c300.model.Customer;
 import sg.edu.rp.c346.c300.model.Food;
 import sg.edu.rp.c346.c300.model.ListDetails;
 import sg.edu.rp.c346.c300.model.Menu;
+import sg.edu.rp.c346.c300.model.PrePayment;
 
 
 public class FoodMenu extends Fragment {
@@ -179,6 +181,14 @@ public class FoodMenu extends Fragment {
                 Intent intent = new Intent(getActivity(), CartDisplay.class);
                 startActivity(intent);
 
+            }
+        });
+
+
+        v.findViewById(R.id.relative2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), BudgetInformation.class));
             }
         });
 
@@ -379,7 +389,7 @@ public class FoodMenu extends Fragment {
     public void checkChangeBudgetTiming(){
 
         DatabaseReference drChangeBudgetTiming = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        drChangeBudgetTiming.addValueEventListener(new ValueEventListener() {
+        drChangeBudgetTiming.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 changeBudgetTiming = dataSnapshot.child("changeBudgetTiming").getValue().toString().trim();
@@ -388,30 +398,36 @@ public class FoodMenu extends Fragment {
                 //region check whether the kid has set the categorization or not
                 String todayDate = MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy");
 
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity()); // for the if condition to display the dialog
+                android.support.v7.app.AlertDialog alert1 = builder.create(); // for the if condition to display the dialog
+
                 if (!todayDate.equals(changeBudgetTiming)){
 
-                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
                     builder.setTitle("Categorization");
                     builder.setPositiveButton("Set Now", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(getActivity(), BudgetInformation.class);
+                            intent.putExtra("firstTime", true);
                             startActivity(intent);
                         }
                     });
                     builder.setNeutralButton("Parent Account", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent1 = new Intent(getActivity(), TestingParentMain.class);
+                            Intent intent1 = new Intent(getActivity(), ParentAuthentication.class);
                             startActivity(intent1);
                         }
                     });
                     builder.setMessage("Please set the categorization first");
                     builder.setCancelable(false);
-                    android.support.v7.app.AlertDialog alert1 = builder.create();
+                    alert1 = builder.create();
                     alert1.show();
 
 
+                }
+                else{
+                    alert1.dismiss();
                 }
                 //endregion
 
@@ -432,4 +448,8 @@ public class FoodMenu extends Fragment {
         super.onResume();
         checkChangeBudgetTiming();
     }
+
+
+
+
 }

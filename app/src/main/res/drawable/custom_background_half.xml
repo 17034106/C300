@@ -3,19 +3,19 @@
 
 
 
-    <item android:state_selected="false"
-        android:state_pressed="false">
-
-        
-        <shape android:shape="rectangle">
-            <solid android:color="#202F65"
-                />
+<item android:state_selected="false"
+    android:state_pressed="false">
 
 
+    <shape android:shape="rectangle">
+        <solid android:color="#202F65"
+            />
 
-        </shape>
 
 
-    </item>
+    </shape>
+
+
+</item>
 
 </selector>

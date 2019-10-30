@@ -78,7 +78,7 @@ public class GoalSavingAdd extends AppCompatActivity {
 
                     drGoalSaving.child(numOfGoal+"").child("name").setValue(goalName);
                     drGoalSaving.child(numOfGoal+"").child("price").setValue(goalPrice);
-
+                    drGoalSaving.child(numOfGoal+"").child("status").setValue("In Progress");
 
                     drGoalSaving.child("numOfGoal").setValue(numOfGoal+1);
 

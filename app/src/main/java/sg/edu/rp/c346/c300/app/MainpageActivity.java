@@ -1,5 +1,6 @@
 package sg.edu.rp.c346.c300.app;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,16 +32,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
+import sg.edu.rp.c346.c300.BaseLogoutActivity;
 import sg.edu.rp.c346.c300.CartDisplay;
 import sg.edu.rp.c346.c300.EmergencyWalletNotificationMain;
+import sg.edu.rp.c346.c300.PaymentAlarm;
 import sg.edu.rp.c346.c300.TestingParentEmergencyWallet;
 import sg.edu.rp.c346.c300.TestingParentMain;
+import sg.edu.rp.c346.c300.model.Budget;
 import sg.edu.rp.c346.c300.model.Customer;
 import sg.edu.rp.c346.c300.R;
 
-public class MainpageActivity extends AppCompatActivity {
+public class MainpageActivity extends BaseLogoutActivity {
 
     private FragmentTransaction fragmentTransaction;
     private FragmentManager fragmentManager;
@@ -76,12 +81,18 @@ public class MainpageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainpage);
 
+        count =0;
+
         getAllDenyList();
+        setBackToDefault();//set the budget back to default
+        prepaymentAlarm(); // set an AlarmManager for the prepayment
 
         //Showing the loading
         dialog = new ProgressDialog(this);
 
         dialog.setMessage("Loading. Please wait...");
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
         mAuth = FirebaseAuth.getInstance();
@@ -91,7 +102,7 @@ public class MainpageActivity extends AppCompatActivity {
 
 
         //retrieve data from firebase
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -212,9 +223,9 @@ public class MainpageActivity extends AppCompatActivity {
         android.app.Fragment fragment;
 
         Bundle bundle = new Bundle(); // passing data from activity to fragment
-        bundle.putString("school", school);  // passing data from activity to fragment
-        bundle.putString("name", name);
-        bundle.putDouble("balance", balance);
+//        bundle.putString("school", school);  // passing data from activity to fragment
+//        bundle.putString("name", name);
+//        bundle.putDouble("balance", balance);
 
         if (view == findViewById(R.id.btnFoodMenu)){
             fragment = new FoodMenu();
@@ -224,14 +235,14 @@ public class MainpageActivity extends AppCompatActivity {
             ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
             ft.commit();
         }
-        else if (view == findViewById(R.id.btnFeed)){
-            fragment = new FeedMenu();
-            fragment.setArguments(bundle);  // passing data from activity to fragment
-            FragmentManager fm = getFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
-            ft.commit();
-        }
+//        else if (view == findViewById(R.id.btnFeed)){
+//            fragment = new FeedMenu();
+//            fragment.setArguments(bundle);  // passing data from activity to fragment
+//            FragmentManager fm = getFragmentManager();
+//            FragmentTransaction ft = fm.beginTransaction();
+//            ft.replace(R.id.fragmentMainPage, fragment).addToBackStack(null);
+//            ft.commit();
+//        }
         else if ( view == findViewById(R.id.btnNotification)){
             fragment = new NotificationMenu();
             fragment.setArguments(bundle);  // passing data from activity to fragment
@@ -348,5 +359,205 @@ public class MainpageActivity extends AppCompatActivity {
 
 
 
+    private void setBackToDefault(){
+        Calendar calendar = Calendar.getInstance();
+        int day1 = calendar.get(Calendar.DAY_OF_WEEK)-2;
+
+        if (day1==-1){
+            day1 = 6;
+        }
+        int day2 = day1-1;
+        if (day2==-1){
+            day2=6;
+        }
+
+        final int dayYesterday = day2;
+
+        DatabaseReference drBudgetSaving = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        drBudgetSaving.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String changeBudgetTiming = dataSnapshot.child("changeBudgetTiming").getValue().toString().trim();
+                String todayDate = MainpageActivity.convertDateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy");
+
+                if (!changeBudgetTiming.equals(todayDate)) {
+
+                    Budget budgetSaving = dataSnapshot.child("day").child(dayYesterday + "").getValue(Budget.class);
+
+                    Calendar currentDateCalendar = Calendar.getInstance();
+                    currentDateCalendar.add(Calendar.DATE, -1);
+                    Date previousDayDate = currentDateCalendar.getTime();
+
+                    double totalSavingForYesterday = 0;
+
+                    totalSavingForYesterday += budgetSaving.getCategory().getFood().getLeft();
+                    totalSavingForYesterday += budgetSaving.getCategory().getDrink().getLeft();
+                    totalSavingForYesterday += budgetSaving.getCategory().getStationery().getLeft();
+                    totalSavingForYesterday += budgetSaving.getCategory().getOthers().getLeft();
+
+                    System.out.println((MainpageActivity.convertDateToString(previousDayDate, "dd/MM/yyyy")) + "_+_+_+_+_+_+__++_+_+_+_++_+_+");
+
+                    updateCustomerGraph((MainpageActivity.convertDateToString(previousDayDate, "dd/MM/yyyy")), totalSavingForYesterday, FirebaseAuth.getInstance().getCurrentUser().getUid(), "saving");
+
+
+                    double charity = budgetSaving.getCategory().getCharity().getLeft();
+                    updateCustomerGraph((MainpageActivity.convertDateToString(previousDayDate, "dd/MM/yyyy")), charity,  FirebaseAuth.getInstance().getCurrentUser().getUid(), "charity");
+
+
+
+                }
+
+
+                DatabaseReference drBudget = FirebaseDatabase.getInstance().getReference().child("budget").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("day");
+                drBudget.child(dayYesterday+"").child("changedAllowance").setValue(-1);
+                drBudget.child(dayYesterday+"").child("category").child("food").child("changedValueMax").setValue(-1);
+                drBudget.child(dayYesterday+"").child("category").child("food").child("changedValueMin").setValue(-1);
+
+                drBudget.child(dayYesterday+"").child("category").child("drink").child("changedValueMax").setValue(-1);
+                drBudget.child(dayYesterday+"").child("category").child("drink").child("changedValueMin").setValue(-1);
+
+                drBudget.child(dayYesterday+"").child("category").child("stationery").child("changedValueMax").setValue(-1);
+                drBudget.child(dayYesterday+"").child("category").child("stationery").child("changedValueMin").setValue(-1);
+
+                drBudget.child(dayYesterday+"").child("category").child("charity").child("changedValueMax").setValue(-1);
+                drBudget.child(dayYesterday+"").child("category").child("charity").child("changedValueMin").setValue(-1);
+
+                drBudget.child(dayYesterday+"").child("category").child("others").child("changedValueMax").setValue(-1);
+                drBudget.child(dayYesterday+"").child("category").child("others").child("changedValueMin").setValue(-1);
+
+
+                drBudget.child(dayYesterday+"").child("category").child("food").child("left").setValue(0);
+                drBudget.child(dayYesterday+"").child("category").child("drink").child("left").setValue(0);
+                drBudget.child(dayYesterday+"").child("category").child("stationery").child("left").setValue(0);
+                drBudget.child(dayYesterday+"").child("category").child("others").child("left").setValue(0);
+                drBudget.child(dayYesterday+"").child("category").child("charity").child("left").setValue(0);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
+    }
+
+
+
+
+    //update the customer spending graph
+    private void updateCustomerGraph(final String date1, final double price1, final String customerUID1,final String css){
+        final String cssPlusS = css + "s";
+
+//        //Get the price
+        final DatabaseReference dbAccessGraph = FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css);
+        dbAccessGraph.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
+                int day = Integer.valueOf(date1.substring(0, 2));
+                int month = Integer.valueOf(date1.substring(3, 5));
+                int year = Integer.valueOf(date1.substring(6, 10));
+                String yearString = String.valueOf(year);
+
+
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.DAY_OF_MONTH, day);
+                c.set(Calendar.MONTH, month - 1);
+
+                System.out.println("Month: " + new SimpleDateFormat("MMMM").format(c.getTime()));
+                System.out.println("Day: " + c.get(Calendar.DAY_OF_MONTH));
+
+                int numOfYears = Integer.valueOf(dataSnapshot.child("year").child("numOfYears").getValue().toString());
+
+                //Check HO dates against Graph Dates then setValue of the profits from HO into Graph date's profit
+
+                for (int a = 0; a < numOfYears; a++) {
+                    if (yearString.equals(dataSnapshot.child("year").child(String.valueOf(a)).child("year").getValue().toString())) {
+
+
+                        String fbDate = dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                .child("date").getValue().toString();
+
+
+                        System.out.println("Input Date: " + date1.substring(0,10));
+                        System.out.println("Firebase Date: " + fbDate);
+                        if (date1.substring(0,10).equals(fbDate)) {
+                            System.out.println("Matched!");
+                            double currentProfit = 0;
+                            currentProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH) - 1))
+                                    .child(cssPlusS).getValue().toString());
+
+                            double newProfit = currentProfit + price1;
+                            System.out.println("New Profit: " + newProfit);
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year")
+                                    .child(String.valueOf(a)).child("months").child(String.valueOf(c.get(Calendar.MONTH))).child("dates").child(String.valueOf(c.get(Calendar.DAY_OF_MONTH)-1)).child(cssPlusS).setValue(newProfit);
+
+
+                            //Update Month Profit
+                            double currentMonthProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child(cssPlusS).getValue().toString());
+
+                            double newMonthProfit = currentMonthProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year").child(String.valueOf(a)).child("months")
+                                    .child(String.valueOf(c.get(Calendar.MONTH))).child(cssPlusS).setValue(newMonthProfit);
+
+                            //Update Year Profit
+                            double currentYearProfit = Double.parseDouble(dataSnapshot.child("year").child(String.valueOf(a)).child(cssPlusS).getValue().toString());
+
+                            double newYearProfit = currentYearProfit + price1;
+
+                            FirebaseDatabase.getInstance().getReference().child("graphCustomer").child(customerUID1).child(css).child("year").child(String.valueOf(a)).child(cssPlusS).setValue(newYearProfit);
+
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void prepaymentAlarm(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH),
+                    23,
+                    58,
+                    40);
+
+
+        setAlarm(calendar.getTimeInMillis());
+
+
+
+    }
+
+
+    private void setAlarm(long time){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, PaymentAlarm.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
 
 }

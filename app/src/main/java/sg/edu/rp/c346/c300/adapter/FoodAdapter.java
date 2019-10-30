@@ -155,7 +155,7 @@ public class FoodAdapter extends BaseAdapter {
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Deny purchase from this stall\nPlease contact your parent").setPositiveButton("Okay", dialogClickListener)
+                    builder.setMessage("Purchase from this stall is denied\nPlease contact your parent").setPositiveButton("Okay", dialogClickListener)
                             .show();
                 }
 

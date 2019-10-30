@@ -61,10 +61,17 @@ public class GoalSavingAll extends AppCompatActivity {
                 goalSavingList.clear();
 
                 for (int i =0; i<numOfGoal;i++){
-                    String name = dataSnapshot.child(i+"").child("name").getValue().toString();
-                    double price = Double.parseDouble(dataSnapshot.child(i+"").child("price").getValue().toString());
 
-                    goalSavingList.add(new GoalSaving(name, price));
+                    goalSavingList.add(dataSnapshot.child(i+"").getValue(GoalSaving.class));
+
+                    if (goalSavingList.get(i).getPrice()<=saving){
+                        drGoalSaving.child(i+"").child("status").setValue("Completed");
+                        goalSavingList.get(i).setStatus("Completed");
+                    }
+                    else{
+                        drGoalSaving.child(i+"").child("status").setValue("In progress");
+                        goalSavingList.get(i).setStatus("In Progress");
+                    }
 
                 }
 

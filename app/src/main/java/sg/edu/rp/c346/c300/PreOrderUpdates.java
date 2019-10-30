@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import sg.edu.rp.c346.c300.model.WalkIn;
 
 public class PreOrderUpdates extends AppCompatActivity {
 
+    TextView noNoification;
 
     private ExpandableListView listView;
     private PreOrderNotificationAdapter preOrderListAdapter;
@@ -57,6 +59,7 @@ public class PreOrderUpdates extends AppCompatActivity {
         String page = getIntent().getStringExtra("page");
 
         notificationTitle = findViewById(R.id.notificationTitle);
+        noNoification = findViewById(R.id.noNotification);
 
         if (page.equals("PreOrder")) {
 
@@ -73,6 +76,8 @@ public class PreOrderUpdates extends AppCompatActivity {
 
                     preOrderListAdapter = new PreOrderNotificationAdapter(PreOrderUpdates.this, listDataHeader, preOrderListHash);
                     listView.setAdapter(preOrderListAdapter);
+
+
 
 
                 }
@@ -93,6 +98,8 @@ public class PreOrderUpdates extends AppCompatActivity {
 
                     walkInListAdapter = new WalkInNotificationAdapter(PreOrderUpdates.this, listDataHeader, walkInListHash);
                     listView.setAdapter(walkInListAdapter);
+
+
 
 
                 }
@@ -167,6 +174,13 @@ public class PreOrderUpdates extends AppCompatActivity {
                 }
 
 
+                if (preOrderHeaderList.size()==0){
+                    noNoification.setVisibility(View.VISIBLE);
+                }
+                else{
+                    noNoification.setVisibility(View.INVISIBLE);
+
+                }
 
             }
 
@@ -238,6 +252,14 @@ public class PreOrderUpdates extends AppCompatActivity {
                     stringList.add(walkInContentList.get(i));
 
                     walkInListHash.put(listDataHeader.get(i), stringList);
+                }
+
+                if (walkInHeaderList.size()==0){
+                    noNoification.setVisibility(View.VISIBLE);
+                }
+                else{
+                    noNoification.setVisibility(View.INVISIBLE);
+
                 }
 
 

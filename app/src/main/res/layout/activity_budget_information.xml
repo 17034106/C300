@@ -61,6 +61,17 @@
                 android:layout_below="@id/relativeTitle"/>
 
 
+            <TextView
+                android:id="@+id/allowToChange"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Allow To Change"
+                android:textSize="25dp"
+                android:textColor="#000"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:layout_below="@id/dateSelected"/>
+
 
 //-----------------------------------------------------------------------------------------
 
@@ -69,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@drawable/draw_line"
-                android:layout_below="@id/dateSelected"
+                android:layout_below="@id/allowToChange"
                 android:layout_marginTop="10dp"/>
 
             <TextView

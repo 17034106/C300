@@ -128,7 +128,7 @@ public class TestingParentTransactionPreOrderAll extends AppCompatActivity {
                     preOrderList.add(collection);
                 }
 
-                collectionPreOrderAdapter = new CollectionAdapter(TestingParentTransactionPreOrderAll.this, preOrderList);
+                collectionPreOrderAdapter = new CollectionAdapter(TestingParentTransactionPreOrderAll.this, preOrderList, true);
                 preOrderListView.setAdapter(collectionPreOrderAdapter);
                 collectionPreOrderAdapter.notifyDataSetChanged();
 
