@@ -64,6 +64,7 @@ public class FoodMenu extends Fragment {
 
     String customerSchool;
 
+    byte testing;
 
     private ArrayList<Food> menuList = new ArrayList<>();
 
